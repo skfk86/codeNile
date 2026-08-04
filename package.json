@@ -1,0 +1,17 @@
+{
+  "name": "codenile",
+  "version": "1.0.0",
+  "description": "تعلم JavaScript من الصفر حتى الاحتراف",
+  "scripts": {
+    "build": "mkdir -p www && cp index.html www/",
+    "sync":  "npm run build && npx cap sync android",
+    "open":  "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core":    "^6.2.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "appId":   "com.codenile.app",
+  "appName": "CodeNile",
+  "webDir":  "www",
+  "android": {
+    "allowMixedContent": true,
+    "captureInput":      true,
+    "webContentsDebuggingEnabled": false
+  },
+  "server": {
+    "androidScheme": "https",
+    "cleartext":     true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor":    "#0D1F0F",
+      "showSpinner":        false,
+      "androidScaleType":   "CENTER_CROP"
+    }
+  }
+}

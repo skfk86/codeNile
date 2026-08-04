@@ -1,0 +1,81 @@
+name: 📱 Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:          # تشغيل يدوي من GitHub
+
+jobs:
+  build:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      # ── 1. سحب الكود ──────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── 2. إعداد Node.js ──────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ── 3. تثبيت الحزم ────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 4. نسخ index.html للـwww ──────────────
+      - name: Build web assets
+        run: |
+          mkdir -p www
+          cp index.html www/
+          echo "✅ www/index.html ready ($(wc -c < www/index.html) bytes)"
+
+      # ── 5. إضافة Android platform ─────────────
+      - name: Add Capacitor Android
+        run: npx cap add android
+
+      # ── 6. مزامنة الأصول ─────────────────────
+      - name: Sync Capacitor
+        run: npx cap sync android --no-build
+
+      # ── 7. إعداد Java 17 ──────────────────────
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+          cache: gradle
+
+      # ── 8. صلاحيات Gradle ────────────────────
+      - name: Grant Gradle permissions
+        run: chmod +x android/gradlew
+
+      # ── 9. بناء الـAPK ────────────────────────
+      - name: Build Debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug \
+            --no-daemon \
+            --stacktrace \
+            -Dorg.gradle.jvmargs="-Xmx2g"
+
+      # ── 10. رفع الـAPK كـArtifact ─────────────
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: CodeNile-debug-v${{ github.run_number }}
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      # ── 11. طباعة معلومات الـAPK ──────────────
+      - name: APK info
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          SIZE=$(du -sh $APK | cut -f1)
+          echo "✅ APK built successfully"
+          echo "📦 Size: $SIZE"
+          echo "🔢 Build: #${{ github.run_number }}"
