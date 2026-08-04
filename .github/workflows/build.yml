@@ -39,7 +39,7 @@ jobs:
 
       # ── 6. مزامنة الأصول ─────────────────────
       - name: Sync Capacitor
-        run: npx cap sync android --no-build
+        run: npx cap sync android
 
       # ── 7. إعداد Java 17 ──────────────────────
       - name: Setup Java
