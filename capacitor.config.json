@@ -9,6 +9,7 @@
   },
   "server": {
     "androidScheme": "https",
+    "hostname":      "code-nile.firebaseapp.com",
     "cleartext":     true
   },
   "plugins": {

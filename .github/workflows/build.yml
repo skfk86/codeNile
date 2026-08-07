@@ -3,7 +3,7 @@ name: 📱 Build APK
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch:          # تشغيل يدوي من GitHub
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,28 +20,71 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
+          cache: npm
 
       # ── 3. تثبيت الحزم ────────────────────────
       - name: Install dependencies
-        run: npm install 
+        run: npm ci
 
-      # ── 4. نسخ index.html للـwww ──────────────
+      # ── 4. نسخ ملفات الويب ────────────────────
       - name: Build web assets
         run: |
           mkdir -p www
           cp index.html www/
-          echo "✅ www/index.html ready ($(wc -c < www/index.html) bytes)"
+          cp privacy-policy.html www/ 2>/dev/null || true
+          cp delete-data.html    www/ 2>/dev/null || true
+          echo "✅ Web assets ready"
 
-      # ── 5. إضافة Android platform ─────────────
+      # ── 5. إضافة Android ──────────────────────
       - name: Add Capacitor Android
         run: npx cap add android
 
       # ── 6. مزامنة الأصول ─────────────────────
       - name: Sync Capacitor
-        run: npx cap sync android
+        run: npx cap sync android --no-build
 
-      # ── 7. إعداد Java 17 ──────────────────────
+      # ── 7. نسخ أيقونات التطبيق ────────────────
+      - name: Copy app icons
+        run: |
+          ICONS_SRC="android-icons"
+          ICONS_DST="android/app/src/main/res"
+
+          for DENSITY in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
+            mkdir -p "$ICONS_DST/$DENSITY"
+            cp "$ICONS_SRC/$DENSITY/ic_launcher.png"            "$ICONS_DST/$DENSITY/"
+            cp "$ICONS_SRC/$DENSITY/ic_launcher_round.png"      "$ICONS_DST/$DENSITY/"
+            cp "$ICONS_SRC/$DENSITY/ic_launcher_foreground.png" "$ICONS_DST/$DENSITY/"
+            echo "✅ Copied $DENSITY"
+          done
+
+          # Adaptive icon background (dark green)
+          for DENSITY in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
+            cat > "$ICONS_DST/$DENSITY/ic_launcher_background.xml" << 'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <shape xmlns:android="http://schemas.android.com/apk/res/android">
+              <solid android:color="#0D1F0F"/>
+          </shape>
+          XML
+          done
+          echo "✅ Icons done"
+
+      # ── 8. تحديث اسم التطبيق ─────────────────
+      - name: Set app name in strings.xml
+        run: |
+          STRINGS="android/app/src/main/res/values/strings.xml"
+          cat > "$STRINGS" << 'XML'
+          <?xml version='1.0' encoding='utf-8'?>
+          <resources>
+              <string name="app_name">CodeNile</string>
+              <string name="title_activity_main">CodeNile</string>
+              <string name="package_name">com.codenile.app</string>
+              <string name="custom_url_scheme">com.codenile.app</string>
+          </resources>
+          XML
+          echo "✅ App name set"
+
+      # ── 9. إعداد Java 17 ──────────────────────
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -49,11 +92,11 @@ jobs:
           distribution: temurin
           cache: gradle
 
-      # ── 8. صلاحيات Gradle ────────────────────
+      # ── 10. صلاحيات Gradle ───────────────────
       - name: Grant Gradle permissions
         run: chmod +x android/gradlew
 
-      # ── 9. بناء الـAPK ────────────────────────
+      # ── 11. بناء الـAPK ───────────────────────
       - name: Build Debug APK
         run: |
           cd android
@@ -62,19 +105,18 @@ jobs:
             --stacktrace \
             -Dorg.gradle.jvmargs="-Xmx2g"
 
-      # ── 10. رفع الـAPK كـArtifact ─────────────
+      # ── 12. رفع الـAPK ────────────────────────
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: CodeNile-debug-v${{ github.run_number }}
+          name: CodeNile-v${{ github.run_number }}
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      # ── 11. طباعة معلومات الـAPK ──────────────
-      - name: APK info
+      # ── 13. معلومات البناء ────────────────────
+      - name: Build summary
         run: |
-          APK=android/app/build/outputs/apk/debug/app-debug.apk
-          SIZE=$(du -sh $APK | cut -f1)
-          echo "✅ APK built successfully"
-          echo "📦 Size: $SIZE"
-          echo "🔢 Build: #${{ github.run_number }}"
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          SIZE=$(du -sh "$APK" | cut -f1)
+          echo "✅ APK: $SIZE | Build #${{ github.run_number }}"
+          echo "📥 Download from: Actions → CodeNile-v${{ github.run_number }}"
