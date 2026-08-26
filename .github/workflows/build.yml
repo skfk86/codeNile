@@ -1,4 +1,4 @@
-name: 📱 Build APK
+name: 📱 Build Signed AAB
 
 on:
   push:
@@ -7,58 +7,45 @@ on:
 
 jobs:
   build:
-    name: Build Debug APK
+    name: Build Release AAB (Signed)
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
-      # ── 1. سحب الكود ──────────────────────────
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ── 2. إعداد Node.js ──────────────────────
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          
 
-      # ── 3. تثبيت الحزم ────────────────────────
       - name: Install dependencies
-        run: npm install 
+        run: npm install
 
-      # ── 4. نسخ ملفات الويب ────────────────────
       - name: Build web assets
         run: |
           mkdir -p www
           cp index.html www/
           cp privacy-policy.html www/ 2>/dev/null || true
           cp delete-data.html    www/ 2>/dev/null || true
-          echo "✅ Web assets ready"
 
-      # ── 5. إضافة Android ──────────────────────
       - name: Add Capacitor Android
         run: npx cap add android
 
-      # ── 6. مزامنة الأصول ─────────────────────
       - name: Sync Capacitor
-        run: npx cap sync android 
+        run: npx cap sync android
 
-      # ── 7. نسخ أيقونات التطبيق ────────────────
       - name: Copy app icons
         run: |
           ICONS_SRC="android-icons"
           ICONS_DST="android/app/src/main/res"
-
           for DENSITY in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
             mkdir -p "$ICONS_DST/$DENSITY"
             cp "$ICONS_SRC/$DENSITY/ic_launcher.png"            "$ICONS_DST/$DENSITY/"
             cp "$ICONS_SRC/$DENSITY/ic_launcher_round.png"      "$ICONS_DST/$DENSITY/"
             cp "$ICONS_SRC/$DENSITY/ic_launcher_foreground.png" "$ICONS_DST/$DENSITY/"
-            echo "✅ Copied $DENSITY"
           done
-
-          # Adaptive icon background (dark green)
           for DENSITY in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
             cat > "$ICONS_DST/$DENSITY/ic_launcher_background.xml" << 'XML'
           <?xml version="1.0" encoding="utf-8"?>
@@ -67,13 +54,10 @@ jobs:
           </shape>
           XML
           done
-          echo "✅ Icons done"
 
-      # ── 8. تحديث اسم التطبيق ─────────────────
-      - name: Set app name in strings.xml
+      - name: Set app name
         run: |
-          STRINGS="android/app/src/main/res/values/strings.xml"
-          cat > "$STRINGS" << 'XML'
+          cat > "android/app/src/main/res/values/strings.xml" << 'XML'
           <?xml version='1.0' encoding='utf-8'?>
           <resources>
               <string name="app_name">CodeNile</string>
@@ -82,9 +66,7 @@ jobs:
               <string name="custom_url_scheme">com.codenile.app</string>
           </resources>
           XML
-          echo "✅ App name set"
 
-      # ── 9. إعداد Java 17 ──────────────────────
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -92,31 +74,51 @@ jobs:
           distribution: temurin
           cache: gradle
 
-      # ── 10. صلاحيات Gradle ───────────────────
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/codenile.jks
+
       - name: Grant Gradle permissions
         run: chmod +x android/gradlew
 
-      # ── 11. بناء الـAPK ───────────────────────
-      - name: Build Debug APK
+      - name: Build Signed Release AAB
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           cd android
-          ./gradlew assembleDebug \
-            --no-daemon \
-            --stacktrace \
-            -Dorg.gradle.jvmargs="-Xmx2g"
+          ./gradlew bundleRelease \
+            -Pandroid.injected.signing.store.file=codenile.jks \
+            -Pandroid.injected.signing.store.password="${KEY_STORE_PASSWORD}" \
+            -Pandroid.injected.signing.key.alias="${KEY_ALIAS}" \
+            -Pandroid.injected.signing.key.password="${KEY_PASSWORD}" \
+            --no-daemon -Dorg.gradle.jvmargs="-Xmx2g"
 
-      # ── 12. رفع الـAPK ────────────────────────
+      - name: Build Signed Release APK
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          cd android
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=codenile.jks \
+            -Pandroid.injected.signing.store.password="${KEY_STORE_PASSWORD}" \
+            -Pandroid.injected.signing.key.alias="${KEY_ALIAS}" \
+            -Pandroid.injected.signing.key.password="${KEY_PASSWORD}" \
+            --no-daemon -Dorg.gradle.jvmargs="-Xmx2g"
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: CodeNile-AAB-v${{ github.run_number }}
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: CodeNile-v${{ github.run_number }}
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: CodeNile-APK-v${{ github.run_number }}
+          path: android/app/build/outputs/apk/release/app-release.apk
           retention-days: 30
-
-      # ── 13. معلومات البناء ────────────────────
-      - name: Build summary
-        run: |
-          APK="android/app/build/outputs/apk/debug/app-debug.apk"
-          SIZE=$(du -sh "$APK" | cut -f1)
-          echo "✅ APK: $SIZE | Build #${{ github.run_number }}"
-          echo "📥 Download from: Actions → CodeNile-v${{ github.run_number }}"
