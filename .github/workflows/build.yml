@@ -36,6 +36,20 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
+      - name: Fix targetSdk to 35
+        run: |
+          sed -i 's/targetSdkVersion = 34/targetSdkVersion = 35/' android/app/build.gradle
+          sed -i 's/targetSdk = 34/targetSdk = 35/' android/app/build.gradle
+          grep "targetSdk" android/app/build.gradle
+          echo "✅ targetSdk = 35"
+
+      - name: Add AD_ID permission
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          sed -i 's|</manifest>|    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>\n</manifest>|' "$MANIFEST"
+          grep "AD_ID" "$MANIFEST"
+          echo "✅ AD_ID permission added"
+
       - name: Copy app icons
         run: |
           ICONS_SRC="android-icons"
@@ -77,7 +91,6 @@ jobs:
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/android/app/codenile.jks
-          echo "✅ Keystore at: $GITHUB_WORKSPACE/android/app/codenile.jks"
 
       - name: Grant Gradle permissions
         run: chmod +x android/gradlew
