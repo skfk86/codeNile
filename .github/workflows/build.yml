@@ -47,6 +47,12 @@ jobs:
           # versionCode — يستبدل أي رقم بـ 2
           sed -i 's/versionCode [0-9]*/versionCode 2/g' "$GRADLE"
           sed -i 's/versionCode = [0-9]*/versionCode = 2/g' "$GRADLE"
+          # targetSdk في ملف المشروع الرئيسي
+          sed -i 's/targetSdkVersion = [0-9]*/targetSdkVersion = 35/g' android/build.gradle
+          sed -i 's/ext.targetSdkVersion = [0-9]*/ext.targetSdkVersion = 35/g' android/build.gradle
+          sed -i 's/targetSdkVersion [0-9]*/targetSdkVersion 35/g' android/build.gradle
+          echo "=== android/build.gradle ==="
+          grep -i "targetSdk" android/build.gradle
           echo "=== بعد التعديل ==="
           cat "$GRADLE" | grep -i "versionCode\|targetSdk\|targetSdkVersion"
 
