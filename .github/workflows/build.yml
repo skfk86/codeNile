@@ -76,7 +76,8 @@ jobs:
 
       - name: Decode Keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/codenile.jks
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/android/app/codenile.jks
+          echo "✅ Keystore at: $GITHUB_WORKSPACE/android/app/codenile.jks"
 
       - name: Grant Gradle permissions
         run: chmod +x android/gradlew
@@ -89,7 +90,7 @@ jobs:
         run: |
           cd android
           ./gradlew bundleRelease \
-            -Pandroid.injected.signing.store.file=codenile.jks \
+            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/android/app/codenile.jks \
             -Pandroid.injected.signing.store.password="${KEY_STORE_PASSWORD}" \
             -Pandroid.injected.signing.key.alias="${KEY_ALIAS}" \
             -Pandroid.injected.signing.key.password="${KEY_PASSWORD}" \
@@ -103,7 +104,7 @@ jobs:
         run: |
           cd android
           ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file=codenile.jks \
+            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/android/app/codenile.jks \
             -Pandroid.injected.signing.store.password="${KEY_STORE_PASSWORD}" \
             -Pandroid.injected.signing.key.alias="${KEY_ALIAS}" \
             -Pandroid.injected.signing.key.password="${KEY_PASSWORD}" \
