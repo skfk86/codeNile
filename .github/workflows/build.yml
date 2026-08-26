@@ -49,7 +49,7 @@ jobs:
           sed -i 's/versionCode = [0-9]*/versionCode = 2/g' "$GRADLE"
           # targetSdk في ملف المشروع الرئيسي
           sed -i 's/targetSdkVersion = [0-9]*/targetSdkVersion = 35/g' android/build.gradle
-          sed -i 's/ext.targetSdkVersion = [0-9]*/ext.targetSdkVersion = 35/g' android/build.gradle
+          sed -i 's/targetSdkVersion = 34/targetSdkVersion = 35/g' android/variables.gradle
           sed -i 's/targetSdkVersion [0-9]*/targetSdkVersion 35/g' android/build.gradle
           echo "=== android/build.gradle ==="
           grep -ri "targetSdk" android/ --include="*.gradle" || true
