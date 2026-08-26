@@ -52,7 +52,7 @@ jobs:
           sed -i 's/ext.targetSdkVersion = [0-9]*/ext.targetSdkVersion = 35/g' android/build.gradle
           sed -i 's/targetSdkVersion [0-9]*/targetSdkVersion 35/g' android/build.gradle
           echo "=== android/build.gradle ==="
-          grep -i "targetSdk" android/build.gradle
+          grep -ri "targetSdk" android/ --include="*.gradle" || true
           echo "=== بعد التعديل ==="
           cat "$GRADLE" | grep -i "versionCode\|targetSdk\|targetSdkVersion"
 
