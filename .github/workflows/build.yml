@@ -43,6 +43,12 @@ jobs:
           grep "targetSdk" android/app/build.gradle
           echo "✅ targetSdk = 35"
 
+      - name: Bump version code
+        run: |
+          sed -i 's/versionCode = 1/versionCode = 2/' android/app/build.gradle
+          grep "versionCode" android/app/build.gradle
+          echo "✅ versionCode = 2"
+
       - name: Add AD_ID permission
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
