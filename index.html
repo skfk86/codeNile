@@ -26,7 +26,7 @@
   --shadow:0 4px 24px rgba(0,0,0,.4);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-top:env(safe-area-inset-top);
   font-family:'Cairo',sans-serif;overflow:hidden}
 #app{width:100%;height:100%;position:relative;overflow:hidden}
 .scr{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
@@ -1017,16 +1017,30 @@ window._fbReady=true;
     </button>
   </div>
   <div id="tab-hint" class="tbc">
-    <div class="hint-box">
-      <div class="hint-ttl"><i class="fa-solid fa-lightbulb"></i> تلميح</div>
-      <div class="hint-txt" id="det-hint"></div>
+    <!-- حالة: قبل مشاهدة الإعلان -->
+    <div id="hint-locked">
+      <div style="text-align:center;padding:32px 16px">
+        <div style="font-size:48px;margin-bottom:12px">💡</div>
+        <div style="font-size:16px;font-weight:800;color:var(--text1);margin-bottom:8px">شاهد إعلاناً قصيراً</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.7">شاهد إعلاناً مجانياً للحصول على التلميح</div>
+        <button class="gbtn" onclick="watchAdForHint()" id="btn-watch-ad">
+          <i class="fa-solid fa-play"></i> شاهد واحصل على التلميح
+        </button>
+      </div>
     </div>
-    <div class="ex-ttl"><i class="fa-solid fa-thumbtack" style="color:var(--gold)"></i> مثال</div>
-    <div id="det-exs2"></div>
-    <br>
-    <button class="gbtn" onclick="switchTabById('code')">
-      <i class="fa-solid fa-pencil"></i> ابدأ الحل
-    </button>
+    <!-- حالة: بعد مشاهدة الإعلان -->
+    <div id="hint-unlocked" style="display:none">
+      <div class="hint-box">
+        <div class="hint-ttl"><i class="fa-solid fa-lightbulb"></i> تلميح</div>
+        <div class="hint-txt" id="det-hint"></div>
+      </div>
+      <div class="ex-ttl"><i class="fa-solid fa-thumbtack" style="color:var(--gold)"></i> مثال</div>
+      <div id="det-exs2"></div>
+      <br>
+      <button class="gbtn" onclick="switchTabById('code')">
+        <i class="fa-solid fa-pencil"></i> ابدأ الحل
+      </button>
+    </div>
   </div>
   <div id="tab-code" class="tbc">
     <div class="editor-wrap">
@@ -2603,6 +2617,7 @@ async function submitCode(){
       delete S._pendingDailyBonus;
     }
     saveState();
+    if(wasNew) onChallengeCompleted();
     showResult(c, wasNew, dailyBonus);
   } else { showFail(c,passed,total,fails); }
 }
@@ -3431,4 +3446,108 @@ const _origOnAuthSuccess = onAuthSuccess;
 // Track Google sign-in
 document.addEventListener('_googleSignIn', ()=>{
   localStorage.setItem('_authProvider','google');
-});</script></body></html>
+});
+
+// ════════════════════════════════════════════════════════
+// AdMob — CodeNile
+// admob v8 + Capacitor 8
+// ════════════════════════════════════════════════════════
+const ADMOB_BANNER_ID       = 'ca-app-pub-7608701150166997/1425385970';
+const ADMOB_INTERSTITIAL_ID = 'ca-app-pub-7608701150166997/3121988322';
+const ADMOB_REWARDED_ID     = 'ca-app-pub-7608701150166997/3804137301';
+
+let _admobReady         = false;
+let _interstitialLoaded = false;
+let _hintUnlocked       = false;
+let _challengesDone     = 0;
+
+function initAdMob(){
+  if(!window.Capacitor || !window.CapacitorAdmob) return;
+  const { AdMob, BannerAdSize, BannerAdPosition } = window.CapacitorAdmob;
+
+  // ✅ أسماء events صحيحة لـ admob v8
+  AdMob.addListener('onRewardedVideoAdReward', function(){
+    _hintUnlocked = true;
+    _showHintContent();
+  });
+  AdMob.addListener('onRewardedVideoAdClosed', function(){
+    if(!_hintUnlocked) toast('لم تكتمل مشاهدة الإعلان');
+    _hintUnlocked = false;
+  });
+  AdMob.addListener('onInterstitialAdClosed', function(){
+    _interstitialLoaded = false;
+    setTimeout(_loadInterstitial, 1000);
+  });
+
+  AdMob.initialize({ initializeForTesting: false }).then(function(){
+    _admobReady = true;
+    // Banner دائم أسفل الشاشة
+    AdMob.showBanner({
+      adId: ADMOB_BANNER_ID,
+      adSize: BannerAdSize.ADAPTIVE_BANNER,
+      position: BannerAdPosition.BOTTOM_CENTER,
+      margin: 0,
+      isTesting: false
+    });
+    // تحميل Interstitial مسبقاً
+    _loadInterstitial();
+  });
+}
+
+function _loadInterstitial(){
+  if(!_admobReady || !window.CapacitorAdmob) return;
+  window.CapacitorAdmob.AdMob.prepareInterstitial({
+    adId: ADMOB_INTERSTITIAL_ID,
+    isTesting: false
+  }).then(()=>{ _interstitialLoaded = true; })
+    .catch(()=>{ _interstitialLoaded = false; });
+}
+
+// يُستدعى من submitCode عند حل تحدي جديد
+function onChallengeCompleted(){
+  _challengesDone++;
+  if(_challengesDone % 3 === 0 && _admobReady && _interstitialLoaded){
+    window.CapacitorAdmob.AdMob.showInterstitial().catch(()=>{});
+  }
+}
+
+// زر "شاهد إعلاناً للحصول على التلميح"
+async function watchAdForHint(){
+  // إعادة تعيين قفل التلميح عند فتح تحدي جديد
+  if(!_admobReady || !window.CapacitorAdmob){
+    _showHintContent(); // fallback بدون إعلان
+    return;
+  }
+  const btn = document.getElementById('btn-watch-ad');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحميل...';
+  try{
+    await window.CapacitorAdmob.AdMob.prepareRewardVideoAd({
+      adId: ADMOB_REWARDED_ID,
+      isTesting: false
+    });
+    await window.CapacitorAdmob.AdMob.showRewardVideoAd();
+  }catch(e){
+    console.error('Rewarded error:', e);
+    _showHintContent(); // fallback
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-play"></i> شاهد واحصل على التلميح';
+}
+
+function _showHintContent(){
+  document.getElementById('hint-locked').style.display   = 'none';
+  document.getElementById('hint-unlocked').style.display = 'block';
+}
+
+// إعادة قفل التلميح عند فتح تحدي جديد
+const _origOpenChallenge = typeof openChallenge === 'function' ? openChallenge : null;
+function openChallenge(c){
+  document.getElementById('hint-locked').style.display   = 'block';
+  document.getElementById('hint-unlocked').style.display = 'none';
+  if(_origOpenChallenge) _origOpenChallenge(c);
+}
+
+// ✅ انتظار deviceready
+document.addEventListener('deviceready', function(){ initAdMob(); }, { once: true });
+if(window.Capacitor) setTimeout(function(){ if(!_admobReady) initAdMob(); }, 800);</script></body></html>
