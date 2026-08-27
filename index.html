@@ -3541,12 +3541,12 @@ function _showHintContent(){
 }
 
 // إعادة قفل التلميح عند فتح تحدي جديد
-const _origOpenChallenge = typeof openChallenge === 'function' ? openChallenge : null;
-function openChallenge(c){
+const _origOpenChallenge = openChallenge;
+openChallenge = function(id){
   document.getElementById('hint-locked').style.display   = 'block';
   document.getElementById('hint-unlocked').style.display = 'none';
-  if(_origOpenChallenge) _origOpenChallenge(c);
-}
+  _origOpenChallenge(id);
+};
 
 // ✅ انتظار deviceready
 document.addEventListener('deviceready', function(){ initAdMob(); }, { once: true });
