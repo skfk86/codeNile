@@ -9,7 +9,7 @@ jobs:
   build:
     name: Build Release AAB (Signed)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
       - name: Checkout code
@@ -18,10 +18,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm install @capacitor-community/admob@8.0.0
 
       - name: Build web assets
         run: |
@@ -36,32 +38,37 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Fix targetSdk to 35 + versionCode
+      - name: Fix variables.gradle
+        run: |
+          VARS="android/variables.gradle"
+          sed -i 's/targetSdkVersion = [0-9]*/targetSdkVersion = 35/g' "$VARS"
+          sed -i 's/compileSdkVersion = [0-9]*/compileSdkVersion = 36/g' "$VARS"
+          sed -i 's/minSdkVersion = [0-9]*/minSdkVersion = 23/g' "$VARS"
+          grep -i "SdkVersion\|minSdk" "$VARS"
+
+      - name: Fix app/build.gradle versionCode
         run: |
           GRADLE="android/app/build.gradle"
-          cat "$GRADLE" | grep -i "versionCode\|targetSdk\|targetSdkVersion"
-          # targetSdk
-          sed -i 's/targetSdkVersion 34/targetSdkVersion 35/g' "$GRADLE"
-          sed -i 's/targetSdkVersion = 34/targetSdkVersion = 35/g' "$GRADLE"
-          sed -i 's/targetSdk = 34/targetSdk = 35/g' "$GRADLE"
-          # versionCode — يستبدل أي رقم بـ 2
-          sed -i 's/versionCode [0-9]*/versionCode 2/g' "$GRADLE"
-          sed -i 's/versionCode = [0-9]*/versionCode = 2/g' "$GRADLE"
-          # targetSdk في ملف المشروع الرئيسي
-          sed -i 's/targetSdkVersion = [0-9]*/targetSdkVersion = 35/g' android/build.gradle
-          sed -i 's/targetSdkVersion = 34/targetSdkVersion = 35/g' android/variables.gradle
-          sed -i 's/targetSdkVersion [0-9]*/targetSdkVersion 35/g' android/build.gradle
-          echo "=== android/build.gradle ==="
-          grep -ri "targetSdk" android/ --include="*.gradle" || true
-          echo "=== بعد التعديل ==="
-          cat "$GRADLE" | grep -i "versionCode\|targetSdk\|targetSdkVersion"
+          sed -i 's/versionCode [0-9]*/versionCode 4/g' "$GRADLE"
+          sed -i 's/versionCode = [0-9]*/versionCode = 4/g' "$GRADLE"
+          grep -i "versionCode" "$GRADLE"
 
-      - name: Add AD_ID permission
+      - name: Upgrade AGP to 8.5.0
+        run: |
+          sed -i 's/com\.android\.tools\.build:gradle:[0-9.]*/com.android.tools.build:gradle:8.5.0/g' android/build.gradle
+          grep "tools.build:gradle" android/build.gradle
+
+      - name: Upgrade Gradle to 8.7
+        run: |
+          sed -i 's|gradle-[0-9.]*-all.zip|gradle-8.7-all.zip|g' android/gradle/wrapper/gradle-wrapper.properties
+          grep "distributionUrl" android/gradle/wrapper/gradle-wrapper.properties
+
+      - name: Add AdMob to AndroidManifest
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
+          sed -i 's|</application>|    <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-7608701150166997~8374315008"/>\n        <meta-data android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT" android:value="true"/>\n    </application>|' "$MANIFEST"
           sed -i 's|</manifest>|    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>\n</manifest>|' "$MANIFEST"
-          grep "AD_ID" "$MANIFEST"
-          echo "✅ AD_ID permission added"
+          grep -i "gms.ads\|AD_ID" "$MANIFEST"
 
       - name: Copy app icons
         run: |
@@ -97,7 +104,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: temurin
           cache: gradle
 
