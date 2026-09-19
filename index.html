@@ -24,7 +24,21 @@
   --border:rgba(255,255,255,0.07);
   --nav:62px;--hdr:54px;
   --shadow:0 4px 24px rgba(0,0,0,.4);
+  --cm-bg:#1e2124;--cm-text:#fff;
 }
+:root[data-theme="light"]{
+  --bg:#F4F7F4;--bg2:#FFFFFF;--bg3:#E8EEE8;--bg4:#D8E4D8;
+  --text:#0B1A0C;--text2:#3D5C3A;--text3:#7A9A78;
+  --border:rgba(0,0,0,0.08);
+  --shadow:0 4px 24px rgba(0,0,0,.10);
+  --green3:#C8E6C9;
+  --cm-bg:#f5f5f5;--cm-text:#0B1A0C;
+}
+
+[data-theme="light"] .CodeMirror{background:var(--cm-bg)!important;color:var(--cm-text)!important}
+[data-theme="light"] .CodeMirror-gutters{background:#e8e8e8!important;border-color:#ccc!important}
+[data-theme="light"] .CodeMirror-linenumber{color:#666!important}
+[data-theme="light"] .auth-inp{background:#FFFFFF!important;border:1px solid var(--border)!important}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-top:env(safe-area-inset-top);
   font-family:'Cairo',sans-serif;overflow:hidden}
@@ -50,7 +64,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .spl-name{font-size:28px;font-weight:800;margin-top:16px;position:relative;z-index:1}
 .spl-name em{color:var(--gold);font-style:normal}
 .spl-tag{font-size:13px;color:var(--text2);margin-top:4px;
-  background:rgba(255,255,255,.05);padding:4px 14px;border-radius:20px;
+  background:var(--item-bg);padding:4px 14px;border-radius:20px;
   position:relative;z-index:1;border:1px solid rgba(255,255,255,.08)}
 .spl-bar{width:56px;height:3px;background:var(--bg3);border-radius:2px;margin-top:40px;
   overflow:hidden;position:relative;z-index:1}
@@ -77,14 +91,14 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .auth-hero-ttl{font-size:24px;font-weight:900;color:var(--text)}
 .auth-hero-sub{font-size:13px;color:var(--text2);margin-top:6px}
 .auth-body{padding:20px 18px;flex:1}
-.auth-tabs{display:flex;background:rgba(255,255,255,.05);border-radius:12px;
+.auth-tabs{display:flex;background:var(--item-bg);border-radius:12px;
   padding:4px;gap:4px;margin-bottom:22px}
 .auth-tab{flex:1;text-align:center;padding:9px 0;border-radius:9px;
   font-size:14px;font-weight:700;color:var(--text2);cursor:pointer;transition:.2s}
 .auth-tab.act{background:var(--gold);color:#000}
 .auth-field{margin-bottom:14px}
 .auth-lbl{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
-.auth-inp{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);
+.auth-inp{width:100%;background:var(--item-bg);border:1px solid var(--border);
   border-radius:12px;padding:13px 14px;color:var(--text);font-size:15px;
   outline:none;box-sizing:border-box;font-family:inherit;transition:.2s;-webkit-appearance:none}
 .auth-inp:focus{border-color:var(--gold);background:rgba(245,193,0,.05)}
@@ -99,7 +113,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .auth-div-line{flex:1;height:1px;background:var(--border)}
 .auth-div-txt{font-size:12px;color:var(--text3);font-weight:600}
 .auth-google{width:100%;padding:13px;border-radius:14px;border:1px solid var(--border);
-  background:rgba(255,255,255,.05);color:var(--text);font-size:15px;font-weight:700;
+  background:var(--item-bg);color:var(--text);font-size:15px;font-weight:700;
   cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
   font-family:inherit;transition:.2s}
 .auth-google:active{background:rgba(255,255,255,.1)}
@@ -125,7 +139,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .ob-ttl em{color:var(--gold);font-style:normal}
 .ob-feats{width:100%;display:flex;flex-direction:column;gap:10px}
 .ob-feat{display:flex;align-items:center;gap:14px;
-  background:rgba(255,255,255,.04);padding:12px 14px;
+  background:var(--card-bg);padding:12px 14px;
   border-radius:14px;border:1px solid var(--border)}
 .ob-fi{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;
   justify-content:center;font-size:18px;flex-shrink:0}
@@ -137,35 +151,56 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
   font-weight:800;cursor:pointer;font-family:'Cairo',sans-serif;
   box-shadow:0 6px 20px rgba(245,193,0,.35);letter-spacing:.3px}
 .gbtn:active{transform:scale(.98)}
-.btn-ol{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border);
+.btn-ol{background:var(--item-bg);color:var(--text);border:1px solid var(--border);
   border-radius:14px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;
   font-family:'Cairo',sans-serif;width:100%}
 
 /* ── HEADER ── */
 .hdr{height:var(--hdr);display:flex;align-items:center;padding:0 14px;
-  flex-shrink:0;gap:10px;background:rgba(11,26,12,.9);
+  flex-shrink:0;gap:10px;background:var(--bg2);
   border-bottom:1px solid var(--border)}
-.hdr-title{flex:1;text-align:center;font-size:17px;font-weight:800}
+.hdr-title{flex:1;text-align:center;font-size:17px;font-weight:800;color:var(--text)}
 .hbtn{width:36px;height:36px;border-radius:10px;
-  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  background:var(--item-bg);border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
   font-size:15px;cursor:pointer;flex-shrink:0;color:var(--text2)}
 .hbtn:active{background:var(--bg3)}
 .hsp{width:36px;flex-shrink:0}
 
 /* ── BOTTOM NAV ── */
-#bnav{height:var(--nav);background:#091508;
-  border-top:1px solid var(--border);display:none;
-  align-items:center;flex-shrink:0;padding:0 4px}
+#bnav{
+  height:var(--nav);
+  background:var(--bg2);
+  border-top:1.5px solid var(--border);
+  display:none;align-items:center;flex-shrink:0;
+  padding:0 6px 2px;gap:2px;
+}
 #bnav.on{display:flex}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-  cursor:pointer;padding:8px 4px;position:relative}
-.ni-ic{font-size:19px;color:var(--text3);transition:all .2s}
-.ni-lb{font-size:10px;color:var(--text3);font-weight:700;transition:color .2s}
-.ni.act .ni-ic{color:var(--gold)}
-.ni.act .ni-lb{color:var(--gold)}
-.ni-dot{position:absolute;top:6px;width:5px;height:5px;background:var(--gold);
-  border-radius:50%}
+.ni{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:3px;cursor:pointer;padding:7px 2px 4px;position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+.ni-pip{
+  width:28px;height:28px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .18s;
+}
+.ni-ic{font-size:18px;color:var(--text3);transition:color .2s,transform .2s}
+.ni-lb{font-size:9px;color:var(--text3);font-weight:700;transition:color .2s;letter-spacing:.3px;margin-top:1px}
+.ni.act .ni-pip{background:rgba(245,193,0,.18)}
+.ni.act .ni-ic{color:var(--gold);transform:scale(1.1)}
+.ni.act .ni-lb{color:var(--gold);font-weight:800}
+.ni-dot{
+  position:absolute;top:4px;right:calc(50% - 16px);
+  width:6px;height:6px;background:var(--gold);
+  border-radius:50%;border:2px solid var(--bg2);
+}
+.ni-bar{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:20px;height:3px;background:var(--gold);
+  border-radius:3px 3px 0 0;
+}
 
 /* ── COMMON ── */
 .card{background:var(--bg2);border-radius:16px;padding:14px;
@@ -193,7 +228,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .h-nm{font-size:16px;font-weight:800}
 .h-acts{display:flex;gap:8px}
 .bell{width:36px;height:36px;border-radius:50%;
-  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  background:var(--item-bg);border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
   font-size:15px;cursor:pointer;position:relative;color:var(--text2)}
 .bell-dot{position:absolute;top:7px;left:9px;width:7px;height:7px;
@@ -205,7 +240,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .xp-txt{font-size:12px;color:var(--text2);font-weight:600}
 
 .stats-row{display:flex;gap:10px;margin:0 14px 14px}
-.stat-c{flex:1;background:rgba(255,255,255,.04);border-radius:14px;
+.stat-c{flex:1;background:var(--card-bg);border-radius:14px;
   padding:12px 8px;text-align:center;border:1px solid var(--border)}
 .stat-v{font-size:22px;font-weight:800;color:var(--gold)}
 .stat-l{font-size:10px;color:var(--text2);margin-top:2px;font-weight:600}
@@ -237,7 +272,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 /* Challenge items */
 .ch-list{display:flex;flex-direction:column;gap:9px;padding:0 14px}
 .chi{display:flex;align-items:center;gap:12px;
-  background:rgba(255,255,255,.04);border-radius:14px;padding:12px 13px;
+  background:var(--card-bg);border-radius:14px;padding:12px 13px;
   cursor:pointer;border:1px solid var(--border);transition:all .15s}
 .chi:active{background:var(--bg3);border-color:rgba(255,255,255,.12)}
 .chi-num{font-size:10px;color:var(--text3);font-weight:800;width:26px;
@@ -264,7 +299,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 
 /* ── CHALLENGES SCREEN ── */
 .srch{display:flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,.04);border-radius:14px;
+  background:var(--card-bg);border-radius:14px;
   padding:10px 14px;margin:10px 14px;border:1px solid var(--border)}
 .srch i{color:var(--text3);font-size:14px}
 .srch input{flex:1;background:none;border:none;outline:none;color:var(--text);
@@ -273,7 +308,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .ftabs{display:flex;gap:7px;padding:4px 14px 12px;overflow-x:auto}
 .ftabs::-webkit-scrollbar{display:none}
 .ftab{padding:7px 14px;border-radius:10px;font-size:13px;font-weight:700;
-  cursor:pointer;white-space:nowrap;background:rgba(255,255,255,.04);
+  cursor:pointer;white-space:nowrap;background:var(--card-bg);
   color:var(--text2);border:1px solid var(--border);
   font-family:'Cairo',sans-serif;display:flex;align-items:center;gap:5px}
 .ftab.act{background:var(--gold);color:#000;border-color:transparent}
@@ -293,13 +328,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
   overflow-y:auto;flex:1}
 .tbc::-webkit-scrollbar{display:none}
 .tbc.on{display:block}
-.desc-box{background:rgba(255,255,255,.04);border-radius:14px;padding:14px;
+.desc-box{background:var(--card-bg);border-radius:14px;padding:14px;
   margin-bottom:14px;border:1px solid var(--border)}
 .desc-txt{font-size:14px;line-height:1.8;color:var(--text2);font-weight:500}
 .desc-txt strong{color:var(--text);font-size:15px}
-.concept-box{background:linear-gradient(135deg,rgba(245,193,0,.07),rgba(156,137,255,.07));
-  border:1px solid rgba(245,193,0,.25);border-radius:14px;padding:14px 16px;
-  margin-bottom:14px}
+.concept-box{background:linear-gradient(135deg,rgba(245,193,0,.08),rgba(156,137,255,.06));
+  border:1.5px solid rgba(245,193,0,.3);border-radius:14px;padding:15px 16px;
+  margin-bottom:14px;box-shadow:0 2px 10px rgba(245,193,0,.07)}
 .concept-ttl{font-size:12px;font-weight:800;color:var(--gold);
   display:flex;align-items:center;gap:6px;margin-bottom:8px;letter-spacing:.5px}
 .concept-body{font-size:13.5px;line-height:1.85;color:var(--text2);font-weight:500}
@@ -308,12 +343,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
   padding:1px 6px;border-radius:5px;font-family:'Courier New',monospace;font-size:12.5px}
 .ex-ttl{font-size:14px;font-weight:800;margin-bottom:10px;
   display:flex;align-items:center;gap:7px;color:var(--text)}
-.ex-row{background:rgba(255,255,255,.04);border-radius:10px;padding:10px 13px;
+.ex-row{background:var(--card-bg);border-radius:10px;padding:10px 13px;
   margin-bottom:8px;font-family:'Courier New',monospace;font-size:13px;
   display:flex;gap:8px;align-items:center;border:1px solid var(--border);flex-wrap:wrap}
 .ex-in{color:var(--text2)}.ex-ar{color:var(--text3)}.ex-ou{color:var(--green);font-weight:700}
-.hint-box{background:rgba(156,137,255,.08);border:1px solid rgba(156,137,255,.2);
-  border-radius:14px;padding:14px;margin-bottom:14px}
+.hint-box{background:rgba(156,137,255,.08);border:1.5px solid rgba(156,137,255,.25);
+  border-radius:14px;padding:15px;margin-bottom:14px;
+  box-shadow:0 2px 10px rgba(156,137,255,.07)}
 .hint-ttl{font-size:13px;font-weight:800;color:var(--purple);margin-bottom:6px;
   display:flex;align-items:center;gap:6px}
 .hint-txt{font-size:13px;color:var(--text2);line-height:1.75;font-weight:500}
@@ -353,13 +389,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 #code-ed{display:none}
 /* Error line highlight */
 .cm-error-line{background:rgba(255,77,77,.12)!important;border-left:3px solid var(--red)}
-.out-box{background:rgba(255,255,255,.03);border-radius:12px;padding:12px 13px;
+.out-box{background:var(--item-bg);border-radius:12px;padding:12px 13px;
   margin-bottom:12px;min-height:60px;font-family:'Courier New',monospace;font-size:13px;
-  border:1px solid var(--border)}
+  border:1.5px solid var(--border)}
 .ol{margin-bottom:5px;line-height:1.6}
 .op{color:var(--green)}.of{color:var(--red)}.oe{color:var(--orange)}
 .act-btns{display:flex;gap:10px}
-.btn-run{flex:1;background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border);
+.btn-run{flex:1;background:var(--item-bg);color:var(--text);border:1px solid var(--border);
   border-radius:13px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;
   font-family:'Cairo',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px}
 .btn-sub{flex:2;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;
@@ -382,7 +418,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .res-xp{font-size:44px;font-weight:900;color:var(--gold)}
 .res-xp-lbl{font-size:13px;color:var(--text2);margin-bottom:20px;font-weight:600}
 .res-lv{display:flex;align-items:center;gap:14px;
-  background:rgba(255,255,255,.05);padding:14px 18px;
+  background:var(--item-bg);padding:14px 18px;
   border-radius:16px;margin-bottom:24px;width:100%;border:1px solid var(--border)}
 .res-lv-n{text-align:center}
 .res-lv-num{font-size:20px;font-weight:800;color:var(--gold)}
@@ -400,7 +436,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .fail-ico{font-size:72px;margin-bottom:12px;display:block}
 .fail-ttl{font-size:24px;font-weight:800;margin-bottom:6px}
 .fail-sub{font-size:15px;color:var(--text2);margin-bottom:14px;line-height:1.5;font-weight:600}
-.fail-tests{margin:0 16px 12px;background:rgba(255,255,255,.04);border-radius:16px;
+.fail-tests{margin:0 16px 12px;background:var(--card-bg);border-radius:16px;
   padding:14px;text-align:right;max-height:240px;overflow-y:auto;border:1px solid var(--border)}
 .fail-tests::-webkit-scrollbar{display:none}
 .fail-tests-ttl{font-size:13px;font-weight:800;margin-bottom:10px;color:var(--text2)}
@@ -410,13 +446,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 
 /* ── DAILY ── */
 .streak-card{display:flex;align-items:center;gap:14px;margin:12px 14px;
-  background:rgba(255,255,255,.04);border-radius:16px;padding:15px;
+  background:var(--card-bg);border-radius:16px;padding:15px;
   border:1px solid var(--border)}
 .sk-ico{font-size:34px}
 .sk-num{font-size:22px;font-weight:800;color:var(--gold)}
 .sk-lbl{font-size:12px;color:var(--text2);font-weight:600}
 .sk-days{display:flex;gap:5px;margin-top:8px}
-.sk-day{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);
+.sk-day{width:26px;height:26px;border-radius:50%;background:var(--item-bg);
   display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
 .sk-day.done{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000}
 .sk-day.today{background:var(--green3);border:2px solid var(--green);color:var(--green)}
@@ -430,7 +466,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .dh-xp{font-size:14px;color:var(--gold);font-weight:700;margin-bottom:10px}
 .dh-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px;font-weight:500}
 .hist-item{display:flex;align-items:center;gap:12px;margin:0 14px 9px;
-  background:rgba(255,255,255,.04);border-radius:13px;padding:12px 13px;
+  background:var(--card-bg);border-radius:13px;padding:12px 13px;
   border:1px solid var(--border)}
 .hi-date{font-size:11px;color:var(--text3);width:68px;flex-shrink:0;font-weight:700}
 .hi-inf{flex:1}
@@ -439,7 +475,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .hi-status{font-size:19px;flex-shrink:0}
 
 /* ── PATHS ── */
-.path-card{margin:0 14px 11px;background:rgba(255,255,255,.04);border-radius:16px;
+.path-card{margin:0 14px 11px;background:var(--card-bg);border-radius:16px;
   padding:15px;display:flex;align-items:center;gap:13px;cursor:pointer;
   border:1px solid var(--border);transition:all .15s}
 .path-card:active{background:var(--bg3)}
@@ -455,7 +491,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 
 /* ── BADGES ── */
 .badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 14px}
-.badge-c{background:rgba(255,255,255,.04);border-radius:16px;padding:15px 8px;
+.badge-c{background:var(--card-bg);border-radius:16px;padding:15px 8px;
   text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;
   border:1px solid var(--border)}
 .badge-c.locked{opacity:.3;filter:grayscale(1)}
@@ -467,7 +503,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 
 /* ── LEADERBOARD ── */
 /* ── LEADERBOARD ── */
-.lb-period{display:flex;background:rgba(255,255,255,.04);margin:0 14px 16px;
+.lb-period{display:flex;background:var(--card-bg);margin:0 14px 16px;
   border-radius:13px;padding:4px;gap:4px;border:1px solid var(--border)}
 .lb-ptab{flex:1;text-align:center;padding:9px 4px;border-radius:10px;font-size:13px;
   font-weight:700;cursor:pointer;color:var(--text2);transition:.2s}
@@ -492,7 +528,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 /* list rows */
 .lb-list{padding:0 14px;display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .lb-row{display:flex;align-items:center;gap:12px;
-  background:rgba(255,255,255,.04);border-radius:14px;padding:12px 14px;
+  background:var(--card-bg);border-radius:14px;padding:12px 14px;
   border:1px solid var(--border);transition:.15s}
 .lb-row.me{border-color:rgba(245,193,0,.5);background:rgba(245,193,0,.06);
   box-shadow:0 0 0 1px rgba(245,193,0,.15)}
@@ -521,13 +557,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .prof-bio{font-size:13px;color:var(--text2);font-weight:600}
 .prof-badges-row{display:flex;gap:8px;margin-top:4px}
 .prof-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 14px 14px}
-.ps{background:rgba(255,255,255,.04);border-radius:14px;padding:13px 8px;text-align:center;
+.ps{background:var(--card-bg);border-radius:14px;padding:13px 8px;text-align:center;
   border:1px solid var(--border)}
 .ps-v{font-size:22px;font-weight:800;color:var(--gold)}
 .ps-l{font-size:10px;color:var(--text2);margin-top:2px;font-weight:600}
 .pmenu{margin:0 14px;display:flex;flex-direction:column;gap:2px}
 .pm-item{display:flex;align-items:center;gap:12px;padding:13px 14px;
-  background:rgba(255,255,255,.04);border-radius:13px;margin-bottom:2px;
+  background:var(--card-bg);border-radius:13px;margin-bottom:2px;
   cursor:pointer;border:1px solid var(--border)}
 .pm-ic{font-size:17px;width:26px;text-align:center;color:var(--text2)}
 .pm-lb{flex:1;font-size:14px;font-weight:700}
@@ -559,13 +595,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .sb-logo-nm em{color:var(--gold);font-style:normal}
 .sb-logo-sub{font-size:11px;color:var(--text2);font-weight:600}
 .sb-user-card{display:flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,.05);padding:11px 13px;border-radius:12px;
+  background:var(--item-bg);padding:11px 13px;border-radius:12px;
   border:1px solid var(--border)}
 .sb-items{flex:1;overflow-y:auto;padding:8px 0}
 .sb-items::-webkit-scrollbar{display:none}
 .sb-item{display:flex;align-items:center;gap:13px;padding:12px 18px;cursor:pointer;
   transition:background .15s;color:var(--text)}
-.sb-item:active,.sb-item.act{background:rgba(255,255,255,.05)}
+.sb-item:active,.sb-item.act{background:var(--item-bg)}
 .sb-ic{font-size:16px;width:24px;text-align:center;color:var(--text2)}
 .sb-lb{font-size:14px;font-weight:700;flex:1}
 .sb-badge{background:var(--gold);color:#000;font-size:10px;font-weight:800;
@@ -611,6 +647,234 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 /* ── ANIMATIONS ── */
 .fade-up{animation:fdup .25s ease forwards}
 @keyframes fdup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+
+/* ═══════════════════════════════════════════════
+   DESIGN IMPROVEMENTS
+═══════════════════════════════════════════════ */
+
+/* ── متغيرات إضافية ── */
+:root {
+  --radius-sm:10px;--radius-md:14px;--radius-lg:18px;--radius-xl:20px;
+  --card-bg:var(--bg2);
+  --item-bg:var(--bg3);
+}
+:root[data-theme="light"]{
+  --card-bg:#FFFFFF;
+  --item-bg:#F0F4F0;
+}
+
+/* ── HEADER محسّن ── */
+.hdr{
+  background:var(--bg2);
+  border-bottom:1.5px solid var(--border);
+  box-shadow:0 2px 12px rgba(0,0,0,.12);
+}
+.hbtn{
+  background:var(--item-bg);
+  border:1px solid var(--border);
+  border-radius:11px;
+  transition:background .15s;
+}
+.hbtn:active{background:var(--bg4)}
+
+/* ── بطاقات الإحصاء ── */
+.stat-c{
+  background:var(--card-bg);
+  border-radius:var(--radius-md);
+  padding:14px 8px;
+  border:1px solid var(--border);
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.stat-v{font-size:24px;font-weight:900;color:var(--gold)}
+.stat-l{font-size:10px;color:var(--text2);font-weight:700;margin-top:3px}
+
+/* ── XP card ── */
+.xp-card{
+  background:linear-gradient(135deg,var(--bg2),var(--bg3));
+  border:1px solid rgba(82,183,136,.2);
+  box-shadow:0 4px 16px rgba(0,0,0,.1);
+}
+
+/* ── بطاقة التحدي اليومي ── */
+.daily-banner{
+  background:linear-gradient(135deg,#1B3D20 0%,#2A5A2E 100%);
+  box-shadow:0 6px 20px rgba(0,0,0,.2);
+  border:1px solid rgba(82,183,136,.2);
+}
+
+/* ── عناصر قائمة التحديات ── */
+.chi{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  padding:12px 13px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+  transition:transform .12s,box-shadow .12s;
+}
+.chi:active{
+  transform:scale(.985);
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+.chi-ico{border-radius:12px}
+.chi-ttl{font-size:14px;font-weight:800}
+.chi-sub{font-size:11px;color:var(--text2);font-weight:600}
+.chi-xp{
+  background:rgba(245,193,0,.12);
+  color:var(--gold);
+  border-radius:8px;
+  padding:4px 9px;
+  font-size:11px;
+  font-weight:800;
+}
+.chi-done{
+  width:26px;height:26px;
+  background:var(--green);
+  box-shadow:0 2px 8px rgba(82,183,136,.35);
+}
+
+/* ── بحث ── */
+.srch{
+  background:var(--card-bg);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-md);
+  padding:11px 14px;
+  box-shadow:0 1px 4px rgba(0,0,0,.05);
+}
+
+/* ── تبويبات الفلتر ── */
+.ftab{
+  background:var(--card-bg);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  color:var(--text2);
+  font-weight:700;
+  padding:7px 16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.05);
+}
+.ftab.act{
+  background:var(--gold);
+  color:#000;
+  border-color:transparent;
+  box-shadow:0 3px 12px rgba(245,193,0,.3);
+}
+
+/* ── بطاقات المسارات ── */
+.path-card{
+  background:var(--card-bg);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+  padding:16px;
+}
+.path-card:active{transform:scale(.98)}
+.path-ttl{font-size:15px;font-weight:800}
+.path-cnt{font-size:12px;color:var(--text2);font-weight:600}
+
+/* ── لوحة المتصدرين ── */
+.lb-row{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  box-shadow:0 1px 4px rgba(0,0,0,.05);
+}
+.lb-row.me{
+  border-color:rgba(245,193,0,.4);
+  background:rgba(245,193,0,.05);
+  box-shadow:0 0 0 1.5px rgba(245,193,0,.2);
+}
+
+/* ── الملف الشخصي ── */
+.prof-hdr{
+  background:linear-gradient(180deg,var(--bg2) 0%,transparent 100%);
+  padding-top:24px;
+}
+.prof-stats .ps{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.ps-v{font-size:23px;font-weight:900;color:var(--gold)}
+.pm-item{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  margin-bottom:6px;
+  padding:13px 14px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+  transition:background .12s;
+}
+.pm-item:active{background:var(--item-bg)}
+
+/* ── Streak card ── */
+.streak-card{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+/* ── التاريخ اليومي ── */
+.hist-item{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+
+/* ── شارات ── */
+.badge-c{
+  background:var(--card-bg);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
+}
+.badge-c.earned{
+  border-color:rgba(245,193,0,.4);
+  background:rgba(245,193,0,.04);
+  box-shadow:0 2px 12px rgba(245,193,0,.12);
+}
+
+/* ── TOAST محسّن ── */
+#toast{
+  background:rgba(10,22,10,.96);
+  border:1px solid rgba(82,183,136,.25);
+  box-shadow:0 8px 32px rgba(0,0,0,.35);
+  border-radius:14px;
+  padding:11px 22px;
+  font-size:13.5px;
+}
+
+/* ── تأثير انتقال الشاشات ── */
+.scr{transition:opacity .15s}
+.scr.on{opacity:1}
+
+/* ── Sidebar ── */
+#sb{
+  background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+  border-left:1.5px solid var(--border);
+}
+
+/* ── وضع نهاري: تعديلات إضافية ── */
+[data-theme="light"] .hdr{
+  background:#FFFFFF;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
+}
+[data-theme="light"] .chi:active{background:#F5F5F5}
+[data-theme="light"] .daily-banner{
+  background:linear-gradient(135deg,#1B4A20 0%,#2A6A30 100%);
+}
+[data-theme="light"] #sb{
+  background:linear-gradient(180deg,#FFFFFF 0%,#F4F7F4 100%);
+}
+[data-theme="light"] .xp-card{
+  background:linear-gradient(135deg,#E8F5E9,#C8E6C9);
+  border-color:rgba(82,183,136,.3);
+}
+[data-theme="light"] .streak-card{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+[data-theme="light"] #toast{background:rgba(10,30,10,.92)}
+
 </style>
 <!-- Firebase -->
 <script type="module">
@@ -1017,7 +1281,6 @@ window._fbReady=true;
     </button>
   </div>
   <div id="tab-hint" class="tbc">
-    <!-- حالة: قبل مشاهدة الإعلان -->
     <div id="hint-locked">
       <div style="text-align:center;padding:32px 16px">
         <div style="font-size:48px;margin-bottom:12px">💡</div>
@@ -1028,7 +1291,6 @@ window._fbReady=true;
         </button>
       </div>
     </div>
-    <!-- حالة: بعد مشاهدة الإعلان -->
     <div id="hint-unlocked" style="display:none">
       <div class="hint-box">
         <div class="hint-ttl"><i class="fa-solid fa-lightbulb"></i> تلميح</div>
@@ -1242,8 +1504,8 @@ window._fbReady=true;
         <span class="pm-lb">تحدي اليوم</span><i class="pm-ar fa-solid fa-chevron-left"></i>
       </div>
       <div class="pm-item">
-        <i class="pm-ic fa-solid fa-moon" style="color:var(--purple)"></i>
-        <span class="pm-lb">الوضع الداكن</span>
+        <i id="dk-icon" class="pm-ic fa-solid fa-moon" style="color:var(--purple)"></i>
+        <span class="pm-lb" id="dk-label">الوضع الداكن</span>
         <div class="toggle" id="dk-toggle" onclick="toggleDark()"></div>
       </div>
       <div class="pm-item" onclick="resetProgress()">
@@ -1373,7 +1635,31 @@ window._fbReady=true;
 // ══════════════════════════════════════
 const CHALLENGES = [
 // ── المسار 1: أساسي ──────────────────
-{id:1,title:"مرحباً بالعالم",diff:"سهل",xp:10,cat:"أساسي",
+{id:1,title:"المتغيرات وأنواع البيانات",diff:"سهل",xp:10,cat:"أساسي",
+   concept:"المتغيرات هي حاويات للبيانات. <code>let</code> للمتغيرات القابلة للتغيير، <code>const</code> للثوابت. لدى JavaScript 6 أنواع أساسية: <strong>number, string, boolean, null, undefined, object</strong>. <code>typeof</code> يكشف نوع أي قيمة.",
+   desc:"اكتب دالة <strong>getType</strong> تستقبل قيمة وتعيد نوعها كنص باستخدام <code>typeof</code>.",
+   hint:"typeof 42 يعيد 'number'، typeof 'مرحبا' يعيد 'string'، typeof true يعيد 'boolean'",icon:"fa-tag",
+   exs:[{i:"getType(42)",o:"'number'"},{i:"getType('مرحبا')",o:"'string'"},{i:"getType(true)",o:"'boolean'"}],
+   code:"function getType(value) {\n  // اكتب هنا\n  \n}",fn:"getType",
+   tests:[{a:[42],e:"number"},{a:["hello"],e:"string"},{a:[true],e:"boolean"},{a:[undefined],e:"undefined"}]},
+
+{id:2,title:"شروط if / else",diff:"سهل",xp:10,cat:"أساسي",
+   concept:"<code>if/else</code> هي أساس اتخاذ القرارات. الشرط يُقيَّم إلى <code>true</code> أو <code>false</code>. يمكن تسلسل الشروط بـ<code>else if</code> للتعامل مع حالات متعددة.",
+   desc:"اكتب دالة <strong>classify</strong> تستقبل رقماً وتعيد: <code>'موجب'</code> إن كان أكبر من صفر، <code>'سالب'</code> إن كان أصغر من صفر، <code>'صفر'</code> إن كان يساوي صفراً.",
+   hint:"if (n > 0) return 'موجب'; else if (n < 0) return 'سالب'; else return 'صفر';",icon:"fa-code-branch",
+   exs:[{i:"classify(5)",o:"'موجب'"},{i:"classify(-3)",o:"'سالب'"},{i:"classify(0)",o:"'صفر'"}],
+   code:"function classify(n) {\n  // اكتب هنا\n  \n}",fn:"classify",
+   tests:[{a:[5],e:"موجب"},{a:[-3],e:"سالب"},{a:[0],e:"صفر"},{a:[100],e:"موجب"},{a:[-1],e:"سالب"}]},
+
+{id:3,title:"حلقة for",diff:"سهل",xp:10,cat:"أساسي",
+   concept:"حلقة <code>for</code> تنفّذ كوداً عدداً محدداً من المرات. تتكون من: <strong>تهيئة</strong> <code>let i=0</code>، <strong>شرط</strong> <code>i &lt; n</code>، <strong>زيادة</strong> <code>i++</code>. أساس بناء المصفوفات والتكرار.",
+   desc:"اكتب دالة <strong>countUp</strong> تستقبل رقماً <code>n</code> وتعيد مصفوفة من الأرقام من 1 حتى n.",
+   hint:"أنشئ مصفوفة فارغة، استخدم حلقة for من 1 إلى n، وادفع كل رقم بـ arr.push(i)",icon:"fa-repeat",
+   exs:[{i:"countUp(5)",o:"[1,2,3,4,5]"},{i:"countUp(3)",o:"[1,2,3]"}],
+   code:"function countUp(n) {\n  // اكتب هنا\n  \n}",fn:"countUp",
+   tests:[{a:[5],e:[1,2,3,4,5]},{a:[3],e:[1,2,3]},{a:[1],e:[1]},{a:[0],e:[]}]},
+
+{id:4,title:"مرحباً بالعالم",diff:"سهل",xp:10,cat:"أساسي",
    concept:"الدوال في JavaScript هي كتل كود معاد الاستخدام. تُعرَّف بكلمة <code>function</code> ثم الاسم والمعاملات. <strong>Template literals</strong> <code>`${variable}`</code> تُضمّن متغيرات داخل نصوص مباشرةً.",
    desc:"اكتب دالة <strong>greet</strong> تستقبل اسماً وتعيد رسالة ترحيب تحتوي على الاسم.",
    hint:"استخدم return مع اسم الدالة. مثال: return 'Hello ' + name أو return `مرحباً ${name}` (template literal بالـbacktick)",icon:"fa-hand",
@@ -1383,7 +1669,7 @@ const CHALLENGES = [
    customCheckDesc:"نص يحتوي على الاسم",
    tests:[{a:["أحمد"],e:"أحمد"},{a:["Ali"],e:"Ali"},{a:["سارة"],e:"سارة"}]},
 
-{id:2,title:"جمع رقمين",diff:"سهل",xp:10,cat:"أساسي",
+{id:5,title:"جمع رقمين",diff:"سهل",xp:10,cat:"أساسي",
    concept:"المعاملات (parameters) هي متغيرات الدالة، والوسيطات (arguments) هي القيم عند الاستدعاء. <code>return</code> ترجع القيمة للمستدعي. أبسط دالة رياضية: تستقبل قيمتين وتُعيد نتيجة.",
    desc:"اكتب دالة <strong>sum</strong> تستقبل رقمين a و b وتعيد مجموعهما.",
    hint:"return a + b",icon:"fa-plus",
@@ -1391,7 +1677,7 @@ const CHALLENGES = [
    code:"function sum(a, b) {\n  // اكتب هنا\n  \n}",fn:"sum",
    tests:[{a:[2,3],e:5},{a:[-1,1],e:0},{a:[10,5],e:15},{a:[0.5,0.5],e:1}]},
 
-{id:3,title:"عكس النص",diff:"سهل",xp:10,cat:"أساسي",
+{id:6,title:"عكس النص",diff:"سهل",xp:10,cat:"أساسي",
    concept:"النصوص في JS مصفوفات من الحروف. <code>split('')</code> تحوّلها لمصفوفة، <code>reverse()</code> تقلبها، <code>join('')</code> تجمعها. النمط <strong>split → transform → join</strong> شائع جداً في معالجة النصوص.",
    desc:"اكتب دالة <strong>reverseStr</strong> تستقبل نصاً وتعيده معكوساً حرفاً بحرف.",
    hint:"ثلاث خطوات: (1) split('') تحوّل النص لمصفوفة حروف، (2) reverse() تعكسها، (3) join('') تجمعها مجدداً. مثال: 'hi'.split('')→['h','i']",icon:"fa-rotate",
@@ -1399,7 +1685,7 @@ const CHALLENGES = [
    code:"function reverseStr(str) {\n  // اكتب هنا\n  \n}",fn:"reverseStr",
    tests:[{a:["hello"],e:"olleh"},{a:["abcde"],e:"edcba"},{a:["JavaScript"],e:"tpircSavaJ"},{a:["12345"],e:"54321"}]},
 
-{id:4,title:"هل الرقم زوجي؟",diff:"سهل",xp:10,cat:"أساسي",
+{id:7,title:"هل الرقم زوجي؟",diff:"سهل",xp:10,cat:"أساسي",
    concept:"<strong>باقي القسمة</strong> <code>%</code> يعيد الباقي بعد القسمة. <code>4 % 2 === 0</code> يعني زوجي، <code>3 % 2 === 1</code> يعني فردي. يُستخدم كثيراً في التحقق من الزوجية والفردية والتكرار الدوري.",
    desc:"اكتب دالة <strong>isEven</strong> تستقبل رقماً وتعيد true إذا كان زوجياً أو false إذا كان فردياً.",
    hint:"استخدم باقي القسمة: n % 2 === 0",icon:"fa-divide",
@@ -1407,7 +1693,7 @@ const CHALLENGES = [
    code:"function isEven(n) {\n  // اكتب هنا\n  \n}",fn:"isEven",
    tests:[{a:[4],e:true},{a:[7],e:false},{a:[0],e:true},{a:[-3],e:false},{a:[100],e:true}]},
 
-{id:5,title:"مجموع مصفوفة",diff:"سهل",xp:10,cat:"أساسي",
+{id:8,title:"مجموع مصفوفة",diff:"سهل",xp:10,cat:"أساسي",
    concept:"<code>reduce()</code> هي أقوى دوال المصفوفات — تحوّل مصفوفة كاملة لقيمة واحدة. تستقبل <strong>accumulator</strong> (القيمة المتراكمة) والعنصر الحالي. القيمة الابتدائية <code>0</code> هي نقطة البداية للجمع.",
    desc:"اكتب دالة <strong>sumArray</strong> تستقبل مصفوفة من الأرقام وتعيد مجموع عناصرها.",
    hint:"arr.reduce((acc, n) => acc + n, 0)",icon:"fa-sigma",
@@ -1415,7 +1701,7 @@ const CHALLENGES = [
    code:"function sumArray(arr) {\n  // اكتب هنا\n  \n}",fn:"sumArray",
    tests:[{a:[[1,2,3,4,5]],e:15},{a:[[-1,1,-1,1]],e:0},{a:[[10,20,30]],e:60},{a:[[0]],e:0}]},
 
-{id:6,title:"أكبر رقم في مصفوفة",diff:"متوسط",xp:20,cat:"أساسي",
+{id:9,title:"أكبر رقم في مصفوفة",diff:"متوسط",xp:20,cat:"أساسي",
    concept:"<code>Math.max()</code> تقبل أرقاماً منفصلة لكن لا تقبل مصفوفة مباشرة. نستخدم <strong>Spread operator</strong> <code>...</code> لتفكيك المصفوفة: <code>Math.max(...arr)</code>. بديلاً، <code>reduce</code> يُقارن عنصراً بعنصر.",
    desc:"اكتب دالة <strong>maxNum</strong> تستقبل مصفوفة من الأرقام وتعيد أكبر رقم فيها.",
    hint:"Math.max(...arr)  أو  arr.reduce((a,b) => a > b ? a : b)",icon:"fa-arrow-up",
@@ -1423,7 +1709,7 @@ const CHALLENGES = [
    code:"function maxNum(arr) {\n  // اكتب هنا\n  \n}",fn:"maxNum",
    tests:[{a:[[3,1,9,2,5]],e:9},{a:[[-5,-1,-3]],e:-1},{a:[[100]],e:100},{a:[[0,0,0]],e:0}]},
 
-{id:7,title:"التحقق من الباليندروم",diff:"متوسط",xp:20,cat:"أساسي",
+{id:10,title:"التحقق من الباليندروم",diff:"متوسط",xp:20,cat:"أساسي",
    concept:"<strong>Palindrome</strong> هو نص يُقرأ بنفس الطريقة من الاتجاهين مثل 'racecar'. المنطق: عكس النص ومقارنته بالأصل. مسألة كلاسيكية في المقابلات التقنية تختبر فهم النصوص والمصفوفات.",
    desc:"اكتب دالة <strong>isPalindrome</strong> تتحقق إذا كان النص يُقرأ بنفس الطريقة من الاتجاهين.",
    hint:"قارن النص مع معكوسه: str === str.split('').reverse().join('')",icon:"fa-arrows-left-right",
@@ -1432,7 +1718,7 @@ const CHALLENGES = [
    tests:[{a:["racecar"],e:true},{a:["hello"],e:false},{a:["level"],e:true},{a:["a"],e:true},{a:["abba"],e:true}]},
 
 // ── المسار 2: هياكل البيانات ─────────
-{id:8,title:"تجزئة المصفوفة",diff:"متوسط",xp:20,cat:"هياكل البيانات",
+{id:11,title:"تجزئة المصفوفة",diff:"متوسط",xp:20,cat:"هياكل البيانات",
    concept:"<strong>Chunking</strong>: تقسيم مصفوفة كبيرة لمجموعات صغيرة بحجم ثابت. مفيد في pagination وmini-batches. <code>slice(start, end)</code> تقتطع جزءاً من مصفوفة بدون تعديل الأصلية — وهو مبدأ الـ<strong>immutability</strong>.",
    desc:"اكتب دالة <strong>chunk</strong> تقسم مصفوفة إلى مجموعات بحجم معين.",
    hint:"استخدم حلقة تزيد بمقدار size وslice في كل خطوة",icon:"fa-table-cells",
@@ -1440,7 +1726,7 @@ const CHALLENGES = [
    code:"function chunk(arr, size) {\n  // اكتب هنا\n  \n}",fn:"chunk",
    tests:[{a:[[1,2,3,4,5],2],e:[[1,2],[3,4],[5]]},{a:[[1,2,3],3],e:[[1,2,3]]},{a:[[1,2,3,4],2],e:[[1,2],[3,4]]}]},
 
-{id:9,title:"إزالة القيم الزائفة",diff:"متوسط",xp:20,cat:"هياكل البيانات",
+{id:12,title:"إزالة القيم الزائفة",diff:"متوسط",xp:20,cat:"هياكل البيانات",
    concept:"القيم <strong>Falsy</strong> في JavaScript هي: <code>false</code>، <code>0</code>، <code>''</code>، <code>null</code>، <code>undefined</code>، <code>NaN</code>. <code>filter(Boolean)</code> تحوّل كل عنصر لـboolean وتُبقي فقط القيم الـ<strong>Truthy</strong>.",
    desc:"اكتب دالة <strong>removeFalsy</strong> تزيل من المصفوفة: false, null, 0, '', undefined, NaN.",
    hint:"arr.filter(Boolean)",icon:"fa-filter",
@@ -1448,7 +1734,7 @@ const CHALLENGES = [
    code:"function removeFalsy(arr) {\n  // اكتب هنا\n  \n}",fn:"removeFalsy",
    tests:[{a:[[0,1,false,2,"",3]],e:[1,2,3]},{a:[[null,undefined,1]],e:[1]},{a:[[true,"hi",42]],e:[true,"hi",42]}]},
 
-{id:10,title:"الرقم المفقود",diff:"متوسط",xp:20,cat:"هياكل البيانات",
+{id:13,title:"الرقم المفقود",diff:"متوسط",xp:20,cat:"هياكل البيانات",
    concept:"المجموع الرياضي لـ 1 إلى n = <code>n*(n+1)/2</code>. بطرح مجموع المصفوفة الفعلي، نجد الرقم المفقود بكفاءة <strong>O(n)</strong>. من أذكى الخوارزميات الرياضية — حل مشكلة بدون فرز أو بحث.",
    desc:"اكتب دالة <strong>findMissing</strong> تجد الرقم المفقود في مصفوفة من 1 إلى n.",
    hint:"مجموع 1..n = n*(n+1)/2 ، اطرح مجموع المصفوفة",icon:"fa-circle-question",
@@ -1456,7 +1742,7 @@ const CHALLENGES = [
    code:"function findMissing(arr) {\n  // اكتب هنا\n  \n}",fn:"findMissing",
    tests:[{a:[[1,2,4,5,6]],e:3},{a:[[1,3]],e:2},{a:[[2,3,4,5]],e:1},{a:[[1,2,3,5]],e:4}]},
 
-{id:11,title:"ترتيب الأرقام",diff:"متوسط",xp:20,cat:"هياكل البيانات",
+{id:14,title:"ترتيب الأرقام",diff:"متوسط",xp:20,cat:"هياكل البيانات",
    concept:"<code>sort()</code> بدون دالة مقارنة تُرتّب كنصوص وتُعطي نتائج خاطئة للأرقام. <strong>دالة المقارنة</strong> <code>(a,b) => a-b</code> تُرتّب تصاعدياً. <code>[...arr]</code> ينسخ المصفوفة للحفاظ على الأصلية.",
    desc:"اكتب دالة <strong>sortArr</strong> تستقبل مصفوفة أرقام وتعيدها مرتبة تصاعدياً بدون تعديل الأصلية.",
    hint:"[...arr].sort((a,b) => a - b)",icon:"fa-arrow-down-wide-short",
@@ -1464,7 +1750,7 @@ const CHALLENGES = [
    code:"function sortArr(arr) {\n  // لا تعدّل المصفوفة الأصلية\n  \n}",fn:"sortArr",
    tests:[{a:[[3,1,4,1,5,9]],e:[1,1,3,4,5,9]},{a:[[-2,5,0]],e:[-2,0,5]},{a:[[5]],e:[5]}]},
 
-{id:12,title:"تقاطع مصفوفتين",diff:"متوسط",xp:20,cat:"هياكل البيانات",
+{id:15,title:"تقاطع مصفوفتين",diff:"متوسط",xp:20,cat:"هياكل البيانات",
    concept:"<code>filter()</code> تُبقي العناصر التي تحقق شرطاً. <code>includes()</code> تتحقق من وجود قيمة. دمجهما: عناصر arr1 الموجودة في arr2 = التقاطع. للكفاءة مع مصفوفات كبيرة، استخدم <code>Set</code>.",
    desc:"اكتب دالة <strong>intersect</strong> تعيد مصفوفة تحتوي على العناصر المشتركة بين المصفوفتين.",
    hint:"arr1.filter(x => arr2.includes(x))",icon:"fa-circle-nodes",
@@ -1472,7 +1758,7 @@ const CHALLENGES = [
    code:"function intersect(arr1, arr2) {\n  // اكتب هنا\n  \n}",fn:"intersect",
    tests:[{a:[[1,2,3],[2,3,4]],e:[2,3]},{a:[["a","b"],["b","c"]],e:["b"]},{a:[[1],[2]],e:[]}]},
 
-{id:13,title:"دمج مصفوفتين بدون تكرار",diff:"صعب",xp:30,cat:"هياكل البيانات",
+{id:16,title:"دمج مصفوفتين بدون تكرار",diff:"صعب",xp:30,cat:"هياكل البيانات",
    concept:"<strong>Set</strong> هيكل بيانات يحتوي <strong>قيماً فريدة فقط</strong> — يحذف التكرار تلقائياً. <code>new Set([...a,...b])</code> يدمج المصفوفتين ويُزيل المكرر. <code>[...set]</code> يحوّله مجدداً لمصفوفة.",
    desc:"اكتب دالة <strong>mergeArrays</strong> تدمج مصفوفتين وتزيل التكرار.",
    hint:"[...new Set([...arr1, ...arr2])]",icon:"fa-code-merge",
@@ -1480,7 +1766,7 @@ const CHALLENGES = [
    code:"function mergeArrays(arr1, arr2) {\n  // اكتب هنا\n  \n}",fn:"mergeArrays",
    tests:[{a:[[1,2,3],[2,3,4]],e:[1,2,3,4]},{a:[["a","b"],["b","c"]],e:["a","b","c"]},{a:[[1],[2]],e:[1,2]}]},
 
-{id:14,title:"تسطيح مصفوفة متداخلة",diff:"صعب",xp:30,cat:"هياكل البيانات",
+{id:17,title:"تسطيح مصفوفة متداخلة",diff:"صعب",xp:30,cat:"هياكل البيانات",
    concept:"<code>flat(depth)</code> تُسطّح مصفوفة متداخلة. <code>flat(Infinity)</code> تُسطّح بأي عمق. البديل الـrecursive: <code>Array.isArray(item) ? flattenArr(item) : item</code> — تحقق من كل عنصر وسطّحه عند الحاجة.",
    desc:"اكتب دالة <strong>flattenArr</strong> تسطّح مصفوفة متداخلة بأي عمق.",
    hint:"arr.flat(Infinity)  أو  recursion مع concat",icon:"fa-layer-group",
@@ -1488,7 +1774,7 @@ const CHALLENGES = [
    code:"function flattenArr(arr) {\n  // اكتب هنا\n  \n}",fn:"flattenArr",
    tests:[{a:[[1,[2,[3,[4]]]]],e:[1,2,3,4]},{a:[[[1,2],[3,4]]],e:[1,2,3,4]},{a:[[1,2,3]],e:[1,2,3]}]},
 
-{id:15,title:"التحقق من صحة الأقواس",diff:"صعب",xp:30,cat:"هياكل البيانات",
+{id:18,title:"التحقق من صحة الأقواس",diff:"صعب",xp:30,cat:"هياكل البيانات",
    concept:"<strong>Stack</strong> مبدأ LIFO. خوارزمية الأقواس: افتح قوساً → ادفعه للـStack. أغلق قوساً → تحقق إذا كان آخر مفتوح متطابقاً. Stack فارغ في النهاية = صحيح. تُستخدم في compilers ومحرري الكود.",
    desc:"اكتب دالة <strong>isValidBrackets</strong> تتحقق إذا كانت الأقواس () [] {} مرتبة ومتطابقة.",
    hint:"استخدم Stack: اضغط الأقواس الفاتحة واسحب عند الإغلاق",icon:"fa-code",
@@ -1497,7 +1783,7 @@ const CHALLENGES = [
    tests:[{a:["([])"],e:true},{a:["([)]"],e:false},{a:["{}"],e:true},{a:["((()"],e:false},{a:[""],e:true}]},
 
 // ── المسار 3: الدوال المتقدمة ────────
-{id:16,title:"متتالية فيبوناتشي",diff:"متوسط",xp:20,cat:"الدوال المتقدمة",
+{id:19,title:"متتالية فيبوناتشي",diff:"متوسط",xp:20,cat:"الدوال المتقدمة",
    concept:"<strong>Fibonacci</strong>: كل رقم = مجموع السابقَين (0,1,1,2,3,5,8...). الطريقة Iterative أكفأ من Recursive لأنها تتجنب stack overflow. هذه المتتالية مثال كلاسيكي لتعلم Dynamic Programming.",
    desc:"اكتب دالة <strong>fibonacci</strong> تعيد الرقم في موضع n من متتالية فيبوناتشي (تبدأ من 0).",
    hint:"0,1,1,2,3,5,8,13... كل رقم = مجموع السابقَين. استخدم حلقة.",icon:"fa-infinity",
@@ -1505,7 +1791,7 @@ const CHALLENGES = [
    code:"function fibonacci(n) {\n  // اكتب هنا\n  \n}",fn:"fibonacci",
    tests:[{a:[0],e:0},{a:[1],e:1},{a:[6],e:8},{a:[10],e:55},{a:[7],e:13}]},
 
-{id:17,title:"تحويل لعنوان Title Case",diff:"متوسط",xp:20,cat:"الدوال المتقدمة",
+{id:20,title:"تحويل لعنوان Title Case",diff:"متوسط",xp:20,cat:"الدوال المتقدمة",
    concept:"<code>split(' ')</code> تُقسّم النص لكلمات. <code>map()</code> تُطبّق دالة على كل عنصر. <code>toUpperCase()</code> على الحرف الأول فقط، <code>slice(1)</code> لباقي الكلمة. <code>join(' ')</code> يجمعها. نمط map → transform.",
    desc:"اكتب دالة <strong>titleCase</strong> تحوّل الحرف الأول من كل كلمة إلى حرف كبير.",
    hint:"str.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')",icon:"fa-font",
@@ -1513,7 +1799,15 @@ const CHALLENGES = [
    code:"function titleCase(str) {\n  // اكتب هنا\n  \n}",fn:"titleCase",
    tests:[{a:["hello world"],e:"Hello World"},{a:["js is fun"],e:"Js Is Fun"},{a:["test"],e:"Test"},{a:["a b c"],e:"A B C"}]},
 
-{id:18,title:"التحقق من العدد الأولي",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
+{id:21,title:"عدّ الكلمات في نص",diff:"متوسط",xp:20,cat:"الدوال المتقدمة",
+   concept:"<code>split()</code> تقسّم النص عند محدد. المسافات المتعددة تُنتج عناصر فارغة — <code>filter(Boolean)</code> أو <code>/\\s+/</code> يحلّانها. نمط شائع في معالجة النصوص الحقيقية.",
+   desc:"اكتب دالة <strong>wordCount</strong> تستقبل نصاً وتعيد عدد الكلمات فيه متجاهلاً المسافات الزائدة.",
+   hint:"str.trim().split(/\\s+/).filter(Boolean).length",icon:"fa-align-left",
+   exs:[{i:"wordCount('مرحبا بالعالم')",o:"2"},{i:"wordCount('  hello   world  ')",o:"2"}],
+   code:"function wordCount(str) {\n  // اكتب هنا\n  \n}",fn:"wordCount",
+   tests:[{a:["مرحبا بالعالم"],e:2},{a:["  hello   world  "],e:2},{a:["one"],e:1},{a:[""],e:0},{a:["a b c d e"],e:5}]},
+
+{id:22,title:"التحقق من العدد الأولي",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
    concept:"العدد الأولي لا يقبل القسمة إلا على 1 ونفسه. التحسين الذكي: نتحقق حتى <strong>الجذر التربيعي</strong> <code>√n</code> فقط، لأن أي عامل أكبر من √n يقابله عامل أصغر. يُقلّل التعقيد من O(n) إلى O(√n).",
    desc:"اكتب دالة <strong>isPrime</strong> تتحقق إذا كان الرقم عدداً أولياً.",
    hint:"تحقق من 2 حتى √n: for(let i=2; i*i <= n; i++) if(n%i===0) return false",icon:"fa-magnifying-glass",
@@ -1521,7 +1815,7 @@ const CHALLENGES = [
    code:"function isPrime(n) {\n  // اكتب هنا\n  \n}",fn:"isPrime",
    tests:[{a:[7],e:true},{a:[4],e:false},{a:[2],e:true},{a:[1],e:false},{a:[13],e:true},{a:[9],e:false}]},
 
-{id:19,title:"تجميع العناصر حسب خاصية",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
+{id:23,title:"تجميع العناصر حسب خاصية",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
    concept:"<code>reduce()</code> يبني كائناً من مصفوفة. في كل خطوة: طبّق الدالة على العنصر كمفتاح، أضفه للمجموعة المناسبة. نمط <strong>groupBy</strong> موجود في Lodash وسيصبح native في JavaScript قريباً.",
    desc:"اكتب دالة <strong>groupBy</strong> تجمّع عناصر المصفوفة حسب نتيجة دالة معينة.",
    hint:"arr.reduce((acc, item) => { const key = fn(item); acc[key] = acc[key] || []; acc[key].push(item); return acc; }, {})",icon:"fa-object-group",
@@ -1532,7 +1826,7 @@ const CHALLENGES = [
      {a:[['a','bb','ccc','dd'],function(s){return s.length}],e:{1:['a'],2:['bb','dd'],3:['ccc']}}
    ]},
 
-{id:20,title:"ضغط النص RLE",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
+{id:24,title:"ضغط النص RLE",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
    concept:"<strong>RLE</strong> (Run-Length Encoding) خوارزمية ضغط بسيطة: بدل تكرار نفس الحرف، احفظ الحرف وعدد مرات تكراره. مثال: 'aaabbc' → 'a3b2c1'. تُستخدم في ضغط الصور وبروتوكولات الاتصالات.",
    desc:"اكتب دالة <strong>rleEncode</strong> تضغط النص بطريقة Run-Length Encoding.",
    hint:"اعدّ تكرار كل حرف متتالي، مثلاً: 'aaabbc' → 'a3b2c1'",icon:"fa-compress",
@@ -1540,7 +1834,7 @@ const CHALLENGES = [
    code:"function rleEncode(str) {\n  // اكتب هنا\n  \n}",fn:"rleEncode",
    tests:[{a:["aaabbc"],e:"a3b2c1"},{a:["aaa"],e:"a3"},{a:["abc"],e:"a1b1c1"},{a:["aabb"],e:"a2b2"}]},
 
-{id:21,title:"دوران المصفوفة",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
+{id:25,title:"دوران المصفوفة",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
    concept:"<strong>دوران المصفوفة</strong> يُحلّ بـ<code>slice</code>: آخر k عناصر <code>slice(-k)</code> تصبح في البداية، والباقي <code>slice(0,-k)</code> يأتي بعدها. أكثر كفاءة وأوضح من التدوير element-by-element.",
    desc:"اكتب دالة <strong>rotateArray</strong> تدور المصفوفة k خطوات لليمين.",
    hint:"استخدم slice: [...arr.slice(-k), ...arr.slice(0,-k)]",icon:"fa-rotate",
@@ -1548,7 +1842,7 @@ const CHALLENGES = [
    code:"function rotateArray(arr, k) {\n  // اكتب هنا\n  \n}",fn:"rotateArray",
    tests:[{a:[[1,2,3,4,5],2],e:[4,5,1,2,3]},{a:[[1,2,3],1],e:[3,1,2]},{a:[[1,2,3,4],4],e:[1,2,3,4]}]},
 
-{id:22,title:"أعمق مستوى تداخل",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
+{id:26,title:"أعمق مستوى تداخل",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
    concept:"عمق التداخل يُحسب recursively: إذا العنصر ليس مصفوفة عمقه 0. إذا كان مصفوفة: 1 + أقصى عمق لعناصره. <code>Math.max(...arr.map(e => Array.isArray(e) ? 1+maxDepth(e) : 0))</code>.",
    desc:"اكتب دالة <strong>maxDepth</strong> تعيد أعمق مستوى تداخل في مصفوفة متداخلة.",
    hint:"استخدم recursion: إذا كان العنصر مصفوفة، احسب عمقه واجمع 1",icon:"fa-layer-group",
@@ -1556,7 +1850,7 @@ const CHALLENGES = [
    code:"function maxDepth(arr) {\n  // اكتب هنا\n  \n}",fn:"maxDepth",
    tests:[{a:[[1,2,3]],e:1},{a:[[1,[2,[3]]]],e:3},{a:[[[1],[2,[3,[4]]]]],e:4},{a:[[1]],e:1}]},
 
-{id:23,title:"Debounce Function",diff:"صعب",xp:40,cat:"الدوال المتقدمة",
+{id:27,title:"Debounce Function",diff:"صعب",xp:40,cat:"الدوال المتقدمة",
    concept:"<strong>Debounce</strong> يضمن تنفيذ الدالة مرة واحدة فقط بعد توقف المستخدم. مثال: البحث أثناء الكتابة. يعتمد على <strong>Closure</strong> لحفظ الـtimer بين الاستدعاءات. المنطق: <code>clearTimeout</code> ثم <code>setTimeout</code>.",
    desc:"اكتب دالة <strong>debounce</strong> تستقبل دالة fn ووقت delay وتعيد دالة جديدة تؤخر تنفيذ fn حتى يمر delay ms بدون استدعاء جديد.",
    hint:"clearTimeout ثم setTimeout. احفظ timer في closure.\nreturn function(...args){ clearTimeout(timer); timer=setTimeout(()=>fn.apply(this,args),delay); }",
@@ -1567,7 +1861,7 @@ const CHALLENGES = [
    customCheckDesc:"تعيد دالة جديدة",
    tests:[{a:[()=>{},100],e:null}]},
 
-{id:24,title:"Deep Clone — نسخ عميق",diff:"صعب",xp:40,cat:"الدوال المتقدمة",
+{id:28,title:"Deep Clone — نسخ عميق",diff:"صعب",xp:40,cat:"الدوال المتقدمة",
    concept:"<strong>Shallow copy</strong> ينسخ مراجع الكائنات الداخلية. <strong>Deep copy</strong> ينسخ كل شيء بشكل مستقل. الطريقة الصحيحة: تحقق نوع كل عنصر recursively — مصفوفة → map، كائن → forEach، قيمة بسيطة → أعدها.",
    desc:"اكتب دالة <strong>deepClone</strong> تعمل نسخة عميقة من أي كائن أو مصفوفة. تعديل النسخة لا يؤثر على الأصل.",
    hint:"تحقق النوع: Array→map+recurse، Object→forEach+recurse، غير ذلك→أعد القيمة.",
@@ -1576,7 +1870,7 @@ const CHALLENGES = [
    code:"function deepClone(obj) {\n  if(obj === null || typeof obj !== 'object') return obj;\n  // اكتب هنا\n  \n}",fn:"deepClone",
    tests:[{a:[{a:1,b:{c:2}}],e:{a:1,b:{c:2}}},{a:[[1,[2,3]]],e:[1,[2,3]]},{a:[{x:[1,2],y:{z:3}}],e:{x:[1,2],y:{z:3}}}]},
 
-{id:25,title:"Memoize — تخزين النتائج",diff:"صعب",xp:40,cat:"الدوال المتقدمة",
+{id:29,title:"Memoize — تخزين النتائج",diff:"صعب",xp:40,cat:"الدوال المتقدمة",
    concept:"<strong>Memoization</strong>: تخزين نتائج الدوال المكلفة لتجنب إعادة الحساب. يعتمد على <strong>Closure</strong> لحفظ الـcache. مفتاح الكاش = <code>JSON.stringify(args)</code>. يُحسّن الأداء بشكل جذري في الدوال الثقيلة.",
    desc:"اكتب دالة <strong>memoize</strong> تغلّف دالة وتخزّن نتائجها. نفس الحجج = نفس النتيجة من الكاش.",
    hint:"const cache={}; المفتاح=JSON.stringify(args).\nreturn function(...args){ const k=JSON.stringify(args); if(k in cache) return cache[k]; return cache[k]=fn(...args); }",
@@ -1588,7 +1882,7 @@ const CHALLENGES = [
    tests:[{a:[n=>n*2],e:null}]},
 
 // ── المسار 4: خوارزميات ──────────────
-{id:26,title:"Bubble Sort — فرز الفقاعة",diff:"متوسط",xp:25,cat:"خوارزميات",
+{id:30,title:"Bubble Sort — فرز الفقاعة",diff:"متوسط",xp:25,cat:"خوارزميات",
    concept:"<strong>Bubble Sort</strong> أبسط خوارزمية فرز: قارن كل زوج متجاور وبدّل إذا كان الأول أكبر. بعد كل مرور، أكبر عنصر 'يطفو' للنهاية. تعقيد <strong>O(n²)</strong> — بطيئة لكن أساسية لفهم آلية الفرز.",
    desc:"نفّذ خوارزمية <strong>bubbleSort</strong> لفرز مصفوفة تصاعدياً. قارن كل عنصرين متجاورين وبدّل بينهما إذا كان الأول أكبر.",
    hint:"حلقتان متداخلتان. الخارجية n مرة، الداخلية تقارن المتجاورين وتبدّل.",
@@ -1597,7 +1891,7 @@ const CHALLENGES = [
    code:"function bubbleSort(arr) {\n  const a = [...arr];\n  for(let i = 0; i < a.length; i++) {\n    for(let j = 0; j < a.length - i - 1; j++) {\n      // قارن a[j] و a[j+1] وبدّل إذا لزم\n      \n    }\n  }\n  return a;\n}",fn:"bubbleSort",
    tests:[{a:[[5,3,8,1,2]],e:[1,2,3,5,8]},{a:[[64,34,25,12]],e:[12,25,34,64]},{a:[[1]],e:[1]},{a:[[3,1]],e:[1,3]}]},
 
-{id:27,title:"Two Sum",diff:"متوسط",xp:25,cat:"خوارزميات",
+{id:31,title:"Two Sum",diff:"متوسط",xp:25,cat:"خوارزميات",
    concept:"<strong>Hash Map</strong> يجعل البحث O(1). بدل O(n²) من حلقتين متداخلتين، نخزّن كل رقم وموضعه في Map. لكل رقم جديد نتحقق: هل <code>target - num</code> موجود في Map؟ هذا النهج الكلاسيكي للتحسين.",
    desc:"اكتب دالة <strong>twoSum</strong> تستقبل مصفوفة وهدفاً target، وتعيد مواضع أول زوج مجموعهما = target.",
    hint:"استخدم Map لتخزين {value: index}. في كل عنصر تحقق من وجود (target - num) في الـ Map.",
@@ -1606,7 +1900,7 @@ const CHALLENGES = [
    code:"function twoSum(nums, target) {\n  const map = new Map();\n  for(let i = 0; i < nums.length; i++) {\n    // اكتب هنا\n    \n  }\n  return [];\n}",fn:"twoSum",
    tests:[{a:[[2,7,11,15],9],e:[0,1]},{a:[[3,2,4],6],e:[1,2]},{a:[[1,3,4,2],6],e:[2,3]}]},
 
-{id:28,title:"Valid Anagram",diff:"متوسط",xp:25,cat:"خوارزميات",
+{id:32,title:"Valid Anagram",diff:"متوسط",xp:25,cat:"خوارزميات",
    concept:"<strong>Anagram</strong>: كلمتان لهما نفس الحروف بترتيبات مختلفة. الحل الأبسط: رتّب الحروف وقارن O(n log n). الأكثر كفاءة: عدّ تكرار كل حرف في Map وقارن — O(n).",
    desc:"اكتب دالة <strong>isAnagram</strong> تتحقق إذا كانت كلمتان anagram (نفس الحروف بترتيب مختلف).",
    hint:"رتّب كلاهما وقارن: s.split('').sort().join('') === t.split('').sort().join('')",
@@ -1615,7 +1909,7 @@ const CHALLENGES = [
    code:"function isAnagram(s, t) {\n  // اكتب هنا\n  \n}",fn:"isAnagram",
    tests:[{a:["anagram","nagaram"],e:true},{a:["rat","car"],e:false},{a:["listen","silent"],e:true},{a:["ab","ba"],e:true}]},
 
-{id:29,title:"أطول بادئة مشتركة",diff:"متوسط",xp:25,cat:"خوارزميات",
+{id:33,title:"أطول بادئة مشتركة",diff:"متوسط",xp:25,cat:"خوارزميات",
    concept:"خوارزمية <strong>LCP</strong>: ابدأ بالكلمة الأولى بادئةً مبدئية. لكل كلمة تالية: قلّص البادئة حرفاً حرفاً من اليمين حتى تصبح بادئة للكلمة الحالية. تنتهي عند أول عدم تطابق.",
    desc:"اكتب دالة <strong>longestCommonPrefix</strong> تجد أطول بادئة مشتركة بين كل الكلمات في المصفوفة.",
    hint:"ابدأ بالكلمة الأولى، قلّص البادئة حتى تجدها في كل الكلمات.",
@@ -1624,7 +1918,7 @@ const CHALLENGES = [
    code:"function longestCommonPrefix(strs) {\n  if(!strs.length) return '';\n  let prefix = strs[0];\n  // اكتب هنا\n  \n}",fn:"longestCommonPrefix",
    tests:[{a:[["flower","flow","flight"]],e:"fl"},{a:[["dog","racecar"]],e:""},{a:[["interview","inter","internal"]],e:"inter"},{a:[["abc","abc"]],e:"abc"}]},
 
-{id:30,title:"الأرقام الرومانية",diff:"صعب",xp:35,cat:"خوارزميات",
+{id:34,title:"الأرقام الرومانية",diff:"صعب",xp:35,cat:"خوارزميات",
    concept:"<strong>الأرقام الرومانية</strong>: القاعدة — إذا قيمة الحرف أصغر من الذي يليه (كـIV)، اطرح. غير ذلك اجمع. مثال: IV = -1+5=4 ، VI = 5+1=6. قارن كل حرف بالتالي وطبّق القاعدة.",
    desc:"اكتب دالة <strong>romanToInt</strong> تحوّل رقماً رومانياً إلى عدد صحيح. I=1، V=5، X=10، L=50، C=100، D=500، M=1000",
    hint:"إذا قيمة الحرف الحالي أقل من التالي، اطرح. غير ذلك اجمع.",
@@ -1633,7 +1927,7 @@ const CHALLENGES = [
    code:"function romanToInt(s) {\n  const map = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};\n  // اكتب هنا\n  \n}",fn:"romanToInt",
    tests:[{a:["III"],e:3},{a:["IV"],e:4},{a:["IX"],e:9},{a:["LVIII"],e:58},{a:["MCMXCIV"],e:1994}]},
 
-{id:31,title:"Quick Sort — الفرز السريع",diff:"صعب",xp:40,cat:"خوارزميات",
+{id:35,title:"Quick Sort — الفرز السريع",diff:"صعب",xp:40,cat:"خوارزميات",
    concept:"<strong>Quick Sort</strong> يختار <em>pivot</em> ويُقسّم المصفوفة لجزأين: أصغر وأكبر منه. ثم يُطبَّق recursively على الجزأين. متوسط تعقيد <strong>O(n log n)</strong>. من أسرع خوارزميات الفرز العملية.",
    desc:"نفّذ خوارزمية <strong>quickSort</strong> — أسرع خوارزميات الفرز عملياً O(n log n). اختر pivot وقسّم المصفوفة.",
    hint:"اختر pivot (آخر عنصر). قسّم: أصغر يساراً، أكبر يميناً. افرز كلاهما recursively.",
@@ -1642,7 +1936,7 @@ const CHALLENGES = [
    code:"function quickSort(arr) {\n  if(arr.length <= 1) return arr;\n  const pivot = arr[arr.length - 1];\n  const left = [], right = [];\n  for(let i = 0; i < arr.length - 1; i++) {\n    // اكتب هنا\n    \n  }\n  // أعد القسمين المفروزين مع الـ pivot\n}",fn:"quickSort",
    tests:[{a:[[3,6,8,10,1,2,1]],e:[1,1,2,3,6,8,10]},{a:[[5,1,8,3]],e:[1,3,5,8]},{a:[[1]],e:[1]},{a:[[2,1]],e:[1,2]}]},
 
-{id:32,title:"Sliding Window",diff:"صعب",xp:40,cat:"خوارزميات",
+{id:36,title:"Sliding Window",diff:"صعب",xp:40,cat:"خوارزميات",
    concept:"<strong>Sliding Window</strong>: بدل إعادة الحساب من صفر لكل نافذة O(n×k)، نُزيل أول عنصر ونُضيف التالي فقط في كل خطوة. هذا يُقلّل التعقيد لـ<strong>O(n)</strong>. تقنية أساسية لمسائل المصفوفات.",
    desc:"اكتب دالة <strong>maxSumSubarray</strong> تجد أكبر مجموع لـ k عناصر متتالية في مصفوفة بكفاءة O(n).",
    hint:"احسب مجموع أول k عناصر. ثم حرّك النافذة: اطرح الأول وأضف التالي في كل خطوة.",
@@ -1651,7 +1945,7 @@ const CHALLENGES = [
    code:"function maxSumSubarray(arr, k) {\n  if(arr.length < k) return 0;\n  let sum = arr.slice(0, k).reduce((a,b)=>a+b, 0);\n  let max = sum;\n  // اكتب Sliding Window\n  \n}",fn:"maxSumSubarray",
    tests:[{a:[[1,4,2,10,23,3,1,0,20],4],e:39},{a:[[2,3,4,1,5],2],e:7},{a:[[1,2,3],3],e:6}]},
 
-{id:33,title:"Kadane's Algorithm",diff:"صعب",xp:40,cat:"خوارزميات",
+{id:37,title:"Kadane's Algorithm",diff:"صعب",xp:40,cat:"خوارزميات",
    concept:"<strong>Kadane's Algorithm</strong>: لكل عنصر قرر — هل أضمّه للمتتالية الحالية؟ أم أبدأ منه من جديد؟ <code>currentMax = Math.max(n, currentMax + n)</code>. كفاءة <strong>O(n)</strong> مقارنة بـO(n³) من الحل الساذج.",
    desc:"اكتب دالة <strong>maxSubarraySum</strong> تجد أكبر مجموع لمصفوفة فرعية متتالية بكفاءة O(n). (Kadane's Algorithm)",
    hint:"تتبع currentMax وglobalMax. currentMax = Math.max(n, currentMax+n). لكل عنصر.",
@@ -1660,7 +1954,7 @@ const CHALLENGES = [
    code:"function maxSubarraySum(arr) {\n  let currentMax = arr[0];\n  let globalMax = arr[0];\n  // اكتب هنا\n  \n}",fn:"maxSubarraySum",
    tests:[{a:[[-2,1,-3,4,-1,2,1,-5,4]],e:6},{a:[[-1,-2,-3]],e:-1},{a:[[1]],e:1},{a:[[5,4,-1,7,8]],e:23}]},
 
-{id:34,title:"Coin Change — Dynamic Programming",diff:"صعب",xp:45,cat:"خوارزميات",
+{id:38,title:"Coin Change — Dynamic Programming",diff:"صعب",xp:45,cat:"خوارزميات",
    concept:"<strong>Dynamic Programming</strong>: حل مسائل كبيرة عبر تخزين نتائج المسائل الصغيرة. <code>dp[i]</code> = أقل قطع لتغطية مبلغ i. لكل مبلغ وكل قطعة: <code>dp[i] = min(dp[i], dp[i-coin]+1)</code>. نهج Bottom-up.",
    desc:"اكتب دالة <strong>coinChange</strong> تجد أقل عدد من القطع النقدية لتغطية مبلغ معين. تعيد -1 إذا استحال.",
    hint:"Dynamic Programming: dp[i] = min coins for amount i. dp[0]=0. لكل قطعة coin: dp[i]=min(dp[i], dp[i-coin]+1)",
@@ -1669,7 +1963,7 @@ const CHALLENGES = [
    code:"function coinChange(coins, amount) {\n  const dp = new Array(amount + 1).fill(Infinity);\n  dp[0] = 0;\n  // اكتب DP هنا\n  \n}",fn:"coinChange",
    tests:[{a:[[1,5,10,25],36],e:3},{a:[[2],3],e:-1},{a:[[1,2,5],11],e:3},{a:[[1],0],e:0}]},
 
-{id:35,title:"Pascal's Triangle",diff:"متوسط",xp:25,cat:"خوارزميات",
+{id:39,title:"Pascal's Triangle",diff:"متوسط",xp:25,cat:"خوارزميات",
    concept:"<strong>مثلث Pascal</strong>: كل عنصر = مجموع العنصرين فوقه. كل صف يبدأ وينتهي بـ1. يُستخدم في الاحتمالات والتوافيق C(n,k). نمط DP بسيط: ابنِ كل صف من الصف السابق.",
    desc:"اكتب دالة <strong>pascalTriangle</strong> تعيد مثلث Pascal بعدد n صفوف.",
    hint:"كل صف يبدأ وينتهي بـ 1. الباقي: row[j] = prev[j-1] + prev[j]",
@@ -1679,7 +1973,7 @@ const CHALLENGES = [
    tests:[{a:[1],e:[[1]]},{a:[4],e:[[1],[1,1],[1,2,1],[1,3,3,1]]},{a:[5],e:[[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1]]}]},
 
 // ── المسار 5: Async & Promises ────────
-{id:36,title:"Promise الأساسي",diff:"سهل",xp:15,cat:"async",
+{id:40,title:"Promise الأساسي",diff:"سهل",xp:15,cat:"async",
    concept:"<strong>Promise</strong> يمثّل قيمة ستأتي في المستقبل. له 3 حالات: Pending، Resolved، Rejected. <code>new Promise((resolve, reject) => {})</code>. <code>resolve(value)</code> يُحلّ الوعد بعد انتهاء العملية.",
    desc:"اكتب دالة <strong>delay</strong> تعيد Promise يُحلّ بعد ms مللي ثانية.",
    hint:"return new Promise(resolve => setTimeout(resolve, ms))",
@@ -1690,7 +1984,7 @@ const CHALLENGES = [
    customCheckDesc:"تعيد Promise",
    tests:[{a:[10],e:null}]},
 
-{id:37,title:"async/await أساسي",diff:"متوسط",xp:25,cat:"async",
+{id:41,title:"async/await أساسي",diff:"متوسط",xp:25,cat:"async",
    concept:"<code>async function</code> تعيد دائماً Promise. <code>await</code> تُوقف تنفيذ الدالة حتى يُحلّ الـPromise — بدون تجميد Thread الرئيسي. الكود يبدو متزامناً وهو في الحقيقة غير متزامن.",
    desc:"اكتب دالة <strong>fetchUser</strong> async تستقبل id وتعيد بيانات المستخدم المحاكاة بعد تأخير 100ms.",
    hint:"استخدم async/await مع wait:\nasync function fetchUser(id){ await wait(100); return {id, name:'User '+id}; }",
@@ -1701,7 +1995,7 @@ const CHALLENGES = [
    customCheckDesc:"تعيد Promise يُحلّ بكائن المستخدم",
    tests:[{a:[1],e:null}]},
 
-{id:38,title:"Promise Chain",diff:"متوسط",xp:25,cat:"async",
+{id:42,title:"Promise Chain",diff:"متوسط",xp:25,cat:"async",
    concept:"<strong>Promise Chaining</strong>: كل <code>.then()</code> يستقبل نتيجة السابق ويُعيد قيمة جديدة. يصنع سلسلة تحويلات نظيفة بدل callback hell. كل <code>.then()</code> يُنشئ Promise جديداً تلقائياً.",
    desc:"اكتب دالة <strong>processData</strong> تعيد Promise يمر على 3 خطوات: double ثم addTen ثم toString.",
    hint:"Promise.resolve(n).then(v=>v*2).then(v=>v+10).then(v=>String(v))",
@@ -1712,7 +2006,7 @@ const CHALLENGES = [
    customCheckDesc:"Promise يُحلّ بـ '20' للرقم 5",
    tests:[{a:[5],e:null}]},
 
-{id:39,title:"معالجة الأخطاء في Promises",diff:"متوسط",xp:30,cat:"async",
+{id:43,title:"معالجة الأخطاء في Promises",diff:"متوسط",xp:30,cat:"async",
    concept:"<strong>Error handling في Async</strong>: بدل رمي الأخطاء للأعلى، نلتقطها ونُعيد كائناً موحداً <code>{data, error}</code>. هذا النمط مستوحى من Go وRust. يجعل الكود أكثر توقعاً وأسهل في الاختبار.",
    desc:"اكتب دالة <strong>safeFetch</strong> async تنفذ دالة async وتعيد {data, error} — لا ترمي أخطاء أبداً.",
    hint:"try{ const data = await fn(); return {data, error:null}; }catch(e){ return {data:null, error:e.message}; }",
@@ -1723,7 +2017,7 @@ const CHALLENGES = [
    customCheckDesc:"تعيد {data, error} دائماً بدون throw",
    tests:[{a:[()=>Promise.resolve(42)],e:null}]},
 
-{id:40,title:"Retry — إعادة المحاولة",diff:"صعب",xp:40,cat:"async",
+{id:44,title:"Retry — إعادة المحاولة",diff:"صعب",xp:40,cat:"async",
    concept:"<strong>Retry pattern</strong>: إعادة المحاولة عند الفشل مفيد مع network requests غير مستقرة. نستخدم <strong>recursion</strong>: إذا فشل وبقيت محاولات، استدعِ نفسك بمحاولة ناقصة. <code>try/catch</code> مع async/await.",
    desc:"اكتب دالة <strong>retry</strong> تستقبل دالة async وعدد محاولات، وتعيد Promise يعيد المحاولة عند الفشل.",
    hint:"async function retry(fn, attempts){ try{return await fn();}catch(e){if(attempts<=1)throw e; return retry(fn, attempts-1);} }",
@@ -1734,7 +2028,7 @@ const CHALLENGES = [
    customCheckDesc:"تعيد Promise يعيد المحاولة",
    tests:[{a:[()=>Promise.resolve('ok'),3],e:null}]},
 
-{id:41,title:"Promises المتسلسلة",diff:"صعب",xp:40,cat:"async",
+{id:45,title:"Promises المتسلسلة",diff:"صعب",xp:40,cat:"async",
    concept:"<strong>Sequential vs Parallel</strong>: <code>Promise.all()</code> تُشغّل كل شيء معاً. <code>for...of + await</code> يُشغّل واحداً واحداً بالترتيب المضمون. Sequential ضروري عندما كل مهمة تعتمد على نتيجة السابقة.",
    desc:"اكتب دالة <strong>runSequential</strong> تشغّل مصفوفة من الدوال الـ async بالترتيب وتجمع النتائج.",
    hint:"استخدم for...of مع await: const results=[]; for(const fn of fns){ results.push(await fn()); } return results;",
@@ -1745,7 +2039,7 @@ const CHALLENGES = [
    customCheckDesc:"تعيد Promise بمصفوفة النتائج بالترتيب",
    tests:[{a:[[()=>Promise.resolve(1),()=>Promise.resolve(2)]],e:null}]},
 
-{id:42,title:"Observable بسيط",diff:"صعب",xp:50,cat:"async",
+{id:46,title:"Observable بسيط",diff:"صعب",xp:50,cat:"async",
    concept:"<strong>Observable pattern</strong> (أساس RxJS) يسمح بمراقبة تدفق مستمر من القيم عبر الزمن. المشترك يُسجّل دوالّ تُنادى عند كل قيمة/خطأ/إنهاء. هذا النمط أساس reactive programming الحديث.",
    desc:"اكتب <strong>createObservable</strong> تعيد كائناً يدعم subscribe(observer) لمراقبة قيم تصل عبر الزمن. Observer له: next(val).",
    hint:"استخدم مصفوفة subscribers: {subscribe(obs){subscribers.push(obs)}, emit(v){subscribers.forEach(s=>s.next&&s.next(v))}}",
@@ -1757,7 +2051,7 @@ const CHALLENGES = [
    tests:[{a:[],e:null}]},
 
 // ── المسار 6: OOP & Classes ──────────
-{id:43,title:"كلاس Animal",diff:"متوسط",xp:25,cat:"OOP",
+{id:47,title:"كلاس Animal",diff:"متوسط",xp:25,cat:"OOP",
    concept:"<strong>Class</strong> في JavaScript هي syntactic sugar فوق prototype-based inheritance. <code>constructor</code> يُنفَّذ عند <code>new</code>. <code>this</code> يُشير للكائن الحالي. <code>this.name = name</code> يُضيف خاصية للكائن.",
    desc:"أنشئ كلاس <strong>Animal</strong> يستقبل name وsound في constructor، وله method speak() تعيد النص: 'الـ [name] يقول [sound]!'",
    hint:"class Animal { constructor(name,sound){...} speak(){ return `الـ ${this.name} يقول ${this.sound}!`; } }",
@@ -1768,7 +2062,7 @@ const CHALLENGES = [
    customCheckDesc:"new Animal('قطة','مياو').speak() = 'الـ قطة يقول مياو!'",
    tests:[{a:[],e:null}]},
 
-{id:44,title:"كلاس Rectangle",diff:"متوسط",xp:25,cat:"OOP",
+{id:48,title:"كلاس Rectangle",diff:"متوسط",xp:25,cat:"OOP",
    concept:"<strong>Methods</strong> هي دوال مرتبطة بالكائن وتصل للخصائص عبر <code>this</code>. عكس الدوال العادية، لها سياق (context) مرتبط بالكائن الذي استُدعيت منه. كل method تُعرَّف مباشرة داخل جسم الكلاس.",
    desc:"أنشئ كلاس <strong>Rectangle</strong> يستقبل width وheight، مع methods: area() للمساحة، perimeter() للمحيط، isSquare() للتحقق.",
    hint:"area: width*height | perimeter: 2*(width+height) | isSquare: width===height",
@@ -1779,7 +2073,7 @@ const CHALLENGES = [
    customCheckDesc:"area=20, perimeter=18, isSquare=false للـ(4,5)",
    tests:[{a:[],e:null}]},
 
-{id:45,title:"كلاس Stack",diff:"متوسط",xp:25,cat:"OOP",
+{id:49,title:"كلاس Stack",diff:"متوسط",xp:25,cat:"OOP",
    concept:"<strong>Stack</strong> هيكل بيانات LIFO (Last In First Out). التطبيق بمصفوفة: <code>push</code>→<code>array.push()</code>، <code>pop</code>→<code>array.pop()</code>، <code>peek</code>→آخر عنصر بدون حذف. يُستخدم في call stack وundo/redo.",
    desc:"نفّذ كلاس <strong>Stack</strong> بالعمليات: push(item)، pop()، peek()، isEmpty()، size(). المبدأ: آخر داخل أول خارج (LIFO).",
    hint:"استخدم مصفوفة داخلية. push: push للمصفوفة. pop: تعيد وتحذف الأخير. peek: الأخير بدون حذف.",
@@ -1790,7 +2084,7 @@ const CHALLENGES = [
    customCheckDesc:"push/pop/peek/isEmpty/size تعمل صحيح",
    tests:[{a:[],e:null}]},
 
-{id:46,title:"كلاس Queue",diff:"متوسط",xp:25,cat:"OOP",
+{id:50,title:"كلاس Queue",diff:"متوسط",xp:25,cat:"OOP",
    concept:"<strong>Queue</strong> هيكل بيانات FIFO (First In First Out). التطبيق بمصفوفة: <code>enqueue</code>→<code>push()</code>، <code>dequeue</code>→<code>shift()</code> (من البداية). مثل طابور الانتظار. يُستخدم في task scheduling وBFS.",
    desc:"نفّذ كلاس <strong>Queue</strong> بالعمليات: enqueue(item)، dequeue()، front()، isEmpty()، size(). المبدأ: أول داخل أول خارج (FIFO).",
    hint:"استخدم مصفوفة. enqueue: push. dequeue: shift (من البداية). front: [0].",
@@ -1801,7 +2095,7 @@ const CHALLENGES = [
    customCheckDesc:"enqueue/dequeue/front بمبدأ FIFO",
    tests:[{a:[],e:null}]},
 
-{id:47,title:"الوراثة — Inheritance",diff:"صعب",xp:35,cat:"OOP",
+{id:51,title:"الوراثة — Inheritance",diff:"صعب",xp:35,cat:"OOP",
    concept:"<strong>Inheritance</strong> تسمح لكلاس بوراثة خصائص وميثودز كلاس آخر. <code>extends</code> يُوسّع الكلاس الأب. <code>super()</code> يستدعي constructor الأب ويجب أن يأتي قبل استخدام <code>this</code> في الكلاس الابن.",
    desc:"أنشئ كلاس <strong>Vehicle</strong> بخصائص make وspeed، وmethod describe(). ثم كلاس <strong>Car</strong> يرث منه ويضيف doors وmethod fullInfo().",
    hint:"class Car extends Vehicle { constructor(make,speed,doors){ super(make,speed); this.doors=doors; } fullInfo(){ return this.describe()+' - '+this.doors+' أبواب'; } }",
@@ -1812,7 +2106,7 @@ const CHALLENGES = [
    customCheckDesc:"Car يرث من Vehicle ويضيف fullInfo()",
    tests:[{a:[],e:null}]},
 
-{id:48,title:"Private Fields #",diff:"صعب",xp:35,cat:"OOP",
+{id:52,title:"Private Fields #",diff:"صعب",xp:35,cat:"OOP",
    concept:"<strong>Private Fields</strong> (ES2022) تبدأ بـ<code>#</code> ولا يمكن الوصول إليها خارج الكلاس — حتى من الكلاس الابن! هذا <strong>true encapsulation</strong>، بعكس الـ<code>_</code> التقليدي الذي كان اتفاقاً غير مُلزِم.",
    desc:"أنشئ كلاس <strong>BankAccount</strong> بحقل خاص #balance. Methods: deposit(amount)، withdraw(amount)، getBalance(). لا يمكن الوصول لـ #balance مباشرة.",
    hint:"class BankAccount { #balance=0; deposit(n){this.#balance+=n;} withdraw(n){if(n>this.#balance)throw new Error('رصيد غير كافٍ');this.#balance-=n;} getBalance(){return this.#balance;} }",
@@ -1823,7 +2117,7 @@ const CHALLENGES = [
    customCheckDesc:"deposit+withdraw+getBalance تعمل صحيح",
    tests:[{a:[],e:null}]},
 
-{id:49,title:"Iterator & Generator",diff:"صعب",xp:40,cat:"OOP",
+{id:53,title:"Iterator & Generator",diff:"صعب",xp:40,cat:"OOP",
    concept:"<strong>Generator Function</strong> تُعرَّف بـ<code>function*</code>. <code>yield</code> تُوقف التنفيذ وتُعيد قيمة، ثم تكمل عند الاستدعاء التالي. تُنشئ <strong>Iterator</strong> يعمل مع <code>for...of</code> وSpread operator تلقائياً.",
    desc:"اكتب دالة <strong>range</strong> Generator تولّد أرقاماً من start إلى end بخطوة step.",
    hint:"function* range(start,end,step=1){ for(let i=start;i<=end;i+=step) yield i; }",
@@ -1834,7 +2128,7 @@ const CHALLENGES = [
    customCheckDesc:"Generator يولّد النطاق الصحيح",
    tests:[{a:[1,5],e:null}]},
 
-{id:50,title:"Chainable Calculator",diff:"صعب",xp:35,cat:"OOP",
+{id:54,title:"Chainable Calculator",diff:"صعب",xp:35,cat:"OOP",
    concept:"<strong>Method Chaining</strong> يجعل الكود قابلاً للقراءة كجُمَل: <code>calc.add(5).multiply(2).getResult()</code>. السر: كل method تُعيد <code>this</code> بدل undefined، فتبقى على نفس الكائن وتتابع الاستدعاءات.",
    desc:"أنشئ كلاس <strong>Calculator</strong> بالعمليات add، subtract، multiply، divide — كلها تعيد this لتمكين method chaining. وgetResult() للنتيجة.",
    hint:"add(n){ this.result += n; return this; } // أعد this دائماً",
@@ -2009,11 +2303,10 @@ function buildBNav(screen){
   const el = document.getElementById(id);
   if(!el) return;
   el.id = id;
-  el.style.cssText = 'height:64px;background:#0A1609;border-top:1px solid #1C2E1E;display:flex;align-items:center;flex-shrink:0';
   el.innerHTML = navSlots.map(n=>{
     const act = n.s===screen||( n.s==='more'&&['profile','badges','leaderboard'].includes(screen));
     return `<div class="ni${act?' act':''}" onclick="${n.s==='more'?"openSB()":"go('"+n.s+"')"}">
-      <div class="ni-ic">${n.ic}</div>
+      <div class="ni-pip"><div class="ni-ic">${n.ic}</div></div>
       <div class="ni-lb">${n.lb}</div>
     </div>`;
   }).join('');
@@ -2061,12 +2354,13 @@ function buildBNavGeneric(activeScreen, targetId){
   ];
   const el=document.getElementById(targetId||'bnav-home');
   if(!el) return;
-  el.style.cssText='height:64px;background:#0A1609;border-top:1px solid #1C2E1E;display:flex;align-items:center;flex-shrink:0';
+  el.className='on';
   el.innerHTML=navItems.map(n=>{
     const act=n.s===activeScreen;
     return `<div class="ni${act?' act':''}" onclick="go('${n.s}')">
-      <div class="ni-ic">${n.ic}</div>
+      <div class="ni-pip"><div class="ni-ic">${n.ic}</div></div>
       <div class="ni-lb">${n.lb}</div>
+      ${act?'<div class="ni-bar"></div>':''}
     </div>`;
   }).join('');
 }
@@ -3099,10 +3393,24 @@ function editProfile(){
 }
 
 function toggleDark(){
-  // Already dark! Toggle is just for UI effect
   const t=document.getElementById('dk-toggle');
-  t.classList.toggle('off');
-  toast(t.classList.contains('off')?'🌞 تم التبديل للوضع الفاتح (قريباً)':'🌙 تم التبديل للوضع الداكن');
+  const isLight = document.documentElement.getAttribute('data-theme')==='light';
+  if(isLight){
+    document.documentElement.removeAttribute('data-theme');
+    t.classList.remove('off');
+    S.darkMode=true;
+    const ic=document.getElementById('dk-icon');
+    if(ic){ic.className='pm-ic fa-solid fa-moon';ic.style.color='var(--purple)';}
+    toast('🌙 الوضع الداكن');
+  } else {
+    document.documentElement.setAttribute('data-theme','light');
+    t.classList.add('off');
+    S.darkMode=false;
+    const ic=document.getElementById('dk-icon');
+    if(ic){ic.className='pm-ic fa-solid fa-sun';ic.style.color='var(--gold)';}
+    toast('🌞 الوضع النهاري');
+  }
+  saveState();
 }
 
 function resetProgress(){
@@ -3448,106 +3756,93 @@ document.addEventListener('_googleSignIn', ()=>{
   localStorage.setItem('_authProvider','google');
 });
 
-// ════════════════════════════════════════════════════════
-// AdMob — CodeNile
-// admob v8 + Capacitor 8
-// ════════════════════════════════════════════════════════
-const ADMOB_BANNER_ID       = 'ca-app-pub-7608701150166997/1425385970';
-const ADMOB_INTERSTITIAL_ID = 'ca-app-pub-7608701150166997/3121988322';
-const ADMOB_REWARDED_ID     = 'ca-app-pub-7608701150166997/3804137301';
-
-let _admobReady         = false;
-let _interstitialLoaded = false;
-let _hintUnlocked       = false;
-let _challengesDone     = 0;
-
+// تطبيق الثيم عند التحميل
+(function(){
+  try{
+    const raw=localStorage.getItem('cnile_state');
+    if(!raw) return;
+    const s=JSON.parse(raw);
+    if(s.darkMode===false){
+      document.documentElement.setAttribute('data-theme','light');
+      setTimeout(function(){
+        try{
+          const t=document.getElementById('dk-toggle');
+          const ic=document.getElementById('dk-icon');
+          const lb=document.getElementById('dk-label');
+          if(t)t.classList.add('off');
+          if(ic){ic.className='pm-ic fa-solid fa-sun';ic.style.color='var(--gold)';}
+          if(lb)lb.textContent='الوضع النهاري';
+        }catch(e){}
+      },200);
+    }
+  }catch(e){}
+})();
+// ── Global Error Handler ──
+window.addEventListener('unhandledrejection',function(e){
+  console.warn('Unhandled promise rejection:',e.reason);
+  e.preventDefault();
+});
+// ══ AdMob — CodeNile ══
+const ADMOB_BANNER_ID='ca-app-pub-7608701150166997/1425385970';
+const ADMOB_INTERSTITIAL_ID='ca-app-pub-7608701150166997/3121988322';
+const ADMOB_REWARDED_ID='ca-app-pub-7608701150166997/3804137301';
+let _admobReady=false,_interstitialLoaded=false,_challengesDone=0;
 function initAdMob(){
-  if(!window.Capacitor || !window.CapacitorAdmob) return;
-  const { AdMob, BannerAdSize, BannerAdPosition } = window.CapacitorAdmob;
-
-  // ✅ أسماء events صحيحة لـ admob v8
-  AdMob.addListener('onRewardedVideoAdReward', function(){
-    _hintUnlocked = true;
-    _showHintContent();
+  if(!window.Capacitor||!window.CapacitorAdmob)return;
+  const{AdMob,BannerAdSize,BannerAdPosition}=window.CapacitorAdmob;
+  AdMob.addListener('onRewardedVideoAdReward',function(){
+    try{
+      const hl=document.getElementById('hint-locked');
+      const hu=document.getElementById('hint-unlocked');
+      if(hl)hl.style.display='none';
+      if(hu)hu.style.display='block';
+    }catch(e){}
   });
-  AdMob.addListener('onRewardedVideoAdClosed', function(){
-    if(!_hintUnlocked) toast('لم تكتمل مشاهدة الإعلان');
-    _hintUnlocked = false;
-  });
-  AdMob.addListener('onInterstitialAdClosed', function(){
-    _interstitialLoaded = false;
-    setTimeout(_loadInterstitial, 1000);
-  });
-
-  AdMob.initialize({ initializeForTesting: false }).then(function(){
-    _admobReady = true;
-    // Banner دائم أسفل الشاشة
-    AdMob.showBanner({
-      adId: ADMOB_BANNER_ID,
-      adSize: BannerAdSize.ADAPTIVE_BANNER,
-      position: BannerAdPosition.BOTTOM_CENTER,
-      margin: 0,
-      isTesting: false
-    });
-    // تحميل Interstitial مسبقاً
+  AdMob.addListener('onInterstitialAdClosed',()=>{_interstitialLoaded=false;setTimeout(_loadInterstitial,1000);});
+  AdMob.initialize({initializeForTesting:false}).then(()=>{
+    _admobReady=true;
+    AdMob.showBanner({adId:ADMOB_BANNER_ID,adSize:BannerAdSize.ADAPTIVE_BANNER,position:BannerAdPosition.BOTTOM_CENTER,margin:0,isTesting:false});
     _loadInterstitial();
   });
 }
-
 function _loadInterstitial(){
-  if(!_admobReady || !window.CapacitorAdmob) return;
-  window.CapacitorAdmob.AdMob.prepareInterstitial({
-    adId: ADMOB_INTERSTITIAL_ID,
-    isTesting: false
-  }).then(()=>{ _interstitialLoaded = true; })
-    .catch(()=>{ _interstitialLoaded = false; });
+  if(!_admobReady||!window.CapacitorAdmob)return;
+  window.CapacitorAdmob.AdMob.prepareInterstitial({adId:ADMOB_INTERSTITIAL_ID,isTesting:false})
+    .then(()=>{_interstitialLoaded=true;}).catch(()=>{_interstitialLoaded=false;});
 }
-
-// يُستدعى من submitCode عند حل تحدي جديد
 function onChallengeCompleted(){
   _challengesDone++;
-  if(_challengesDone % 3 === 0 && _admobReady && _interstitialLoaded){
+  if(_challengesDone%3===0&&_admobReady&&_interstitialLoaded)
     window.CapacitorAdmob.AdMob.showInterstitial().catch(()=>{});
-  }
 }
-
-// زر "شاهد إعلاناً للحصول على التلميح"
 async function watchAdForHint(){
-  // إعادة تعيين قفل التلميح عند فتح تحدي جديد
-  if(!_admobReady || !window.CapacitorAdmob){
-    _showHintContent(); // fallback بدون إعلان
-    return;
+  function showHint(){
+    try{
+      const hl=document.getElementById('hint-locked');
+      const hu=document.getElementById('hint-unlocked');
+      if(hl)hl.style.display='none';
+      if(hu)hu.style.display='block';
+    }catch(e){}
   }
-  const btn = document.getElementById('btn-watch-ad');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحميل...';
+  if(!_admobReady||!window.CapacitorAdmob){showHint();return;}
+  const btn=document.getElementById('btn-watch-ad');
+  if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري التحميل...';}
   try{
-    await window.CapacitorAdmob.AdMob.prepareRewardVideoAd({
-      adId: ADMOB_REWARDED_ID,
-      isTesting: false
-    });
+    await window.CapacitorAdmob.AdMob.prepareRewardVideoAd({adId:ADMOB_REWARDED_ID,isTesting:false});
     await window.CapacitorAdmob.AdMob.showRewardVideoAd();
-  }catch(e){
-    console.error('Rewarded error:', e);
-    _showHintContent(); // fallback
-  }
-  btn.disabled = false;
-  btn.innerHTML = '<i class="fa-solid fa-play"></i> شاهد واحصل على التلميح';
+  }catch(e){showHint();}
+  if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-play"></i> شاهد واحصل على التلميح';}
 }
-
-function _showHintContent(){
-  document.getElementById('hint-locked').style.display   = 'none';
-  document.getElementById('hint-unlocked').style.display = 'block';
-}
-
-// إعادة قفل التلميح عند فتح تحدي جديد
-const _origOpenChallenge = openChallenge;
-openChallenge = function(id){
-  document.getElementById('hint-locked').style.display   = 'block';
-  document.getElementById('hint-unlocked').style.display = 'none';
-  _origOpenChallenge(id);
+const _origOpen=openChallenge;
+openChallenge=function(id){
+  try{
+    const hl=document.getElementById('hint-locked');
+    const hu=document.getElementById('hint-unlocked');
+    if(hl)hl.style.display='block';
+    if(hu)hu.style.display='none';
+  }catch(e){}
+  try{_origOpen(id);}catch(e){console.error('openChallenge error:',e);}
 };
-
-// ✅ انتظار deviceready
-document.addEventListener('deviceready', function(){ initAdMob(); }, { once: true });
-if(window.Capacitor) setTimeout(function(){ if(!_admobReady) initAdMob(); }, 800);</script></body></html>
+document.addEventListener('deviceready',()=>initAdMob(),{once:true});
+if(window.Capacitor)setTimeout(()=>{if(!_admobReady)initAdMob();},800);
+</script></body></html>
