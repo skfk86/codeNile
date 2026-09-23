@@ -168,14 +168,15 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .hsp{width:36px;flex-shrink:0}
 
 /* ── BOTTOM NAV ── */
-#bnav{
+#bnav,
+[id^="bnav-"]{
   height:var(--nav);
   background:var(--bg2);
   border-top:1.5px solid var(--border);
   display:none;align-items:center;flex-shrink:0;
   padding:0 6px 2px;gap:2px;
 }
-#bnav.on{display:flex}
+#bnav.on,[id^="bnav-"].on{display:flex}
 .ni{
   flex:1;display:flex;flex-direction:column;align-items:center;
   gap:3px;cursor:pointer;padding:7px 2px 4px;position:relative;
@@ -206,14 +207,15 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .card{background:var(--bg2);border-radius:16px;padding:14px;
   border:1px solid var(--border)}
 .lv-badge{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;
+  box-shadow:0 2px 8px rgba(245,193,0,.3);
   font-weight:800;font-size:12px;padding:3px 10px;border-radius:8px}
 .diff{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
   border-radius:7px;font-size:12px;font-weight:700}
 .diff-e{background:rgba(82,183,136,.15);color:var(--green)}
 .diff-m{background:rgba(255,165,0,.15);color:#FFA500}
 .diff-h{background:rgba(255,77,77,.15);color:var(--red)}
-.xpbar-wrap{height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
-.xpbar-fill{height:100%;background:linear-gradient(90deg,var(--green2),var(--green));
+.xpbar-wrap{height:8px;background:rgba(255,255,255,.2);border-radius:6px;overflow:hidden}
+.xpbar-fill{height:100%;background:linear-gradient(90deg,#52B788,#95D5B2);
   border-radius:4px;transition:width .6s ease}
 
 /* ── HOME ── */
@@ -231,13 +233,20 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
   background:var(--item-bg);border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
   font-size:15px;cursor:pointer;position:relative;color:var(--text2)}
-.bell-dot{position:absolute;top:7px;left:9px;width:7px;height:7px;
-  background:var(--gold);border-radius:50%;border:1.5px solid var(--bg)}
+.bell-dot{position:absolute;top:6px;left:8px;width:8px;height:8px;
+  background:var(--red);border-radius:50%;border:2px solid var(--bg2)}
 
-.xp-card{margin:4px 14px 14px;background:linear-gradient(135deg,#132015,#1A2E1C);
-  border-radius:16px;padding:14px;border:1px solid rgba(82,183,136,.15)}
-.xp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.xp-txt{font-size:12px;color:var(--text2);font-weight:600}
+.xp-card{margin:4px 14px 14px;
+  background:linear-gradient(135deg,var(--green2),#1A3A22);
+  border-radius:16px;padding:15px;
+  border:1px solid rgba(82,183,136,.3);
+  box-shadow:0 4px 16px rgba(82,183,136,.15)}
+.xp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.xp-txt{font-size:12px;color:rgba(255,255,255,.75);font-weight:700}
+[data-theme="light"] .xp-card{
+  background:linear-gradient(135deg,#2D6A4F,#40916C);
+}
+[data-theme="light"] .xp-txt{color:rgba(255,255,255,.85)}
 
 .stats-row{display:flex;gap:10px;margin:0 14px 14px}
 .stat-c{flex:1;background:var(--card-bg);border-radius:14px;
@@ -248,16 +257,21 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 
 /* Daily banner */
 .daily-banner{margin:0 14px 16px;
-  background:linear-gradient(135deg,#1B3D20 0%,#2A5A2E 100%);
-  border-radius:18px;padding:16px;border:1px solid rgba(82,183,136,.25);
-  cursor:pointer;position:relative;overflow:hidden}
+  background:linear-gradient(135deg,#1B4A22 0%,#2D6A32 60%,#1E5228 100%);
+  border-radius:18px;padding:18px;border:1.5px solid rgba(82,183,136,.35);
+  cursor:pointer;position:relative;overflow:hidden;
+  box-shadow:0 6px 24px rgba(0,0,0,.18)}
+[data-theme="light"] .daily-banner{
+  background:linear-gradient(135deg,#1B4A22 0%,#2D6A32 100%);
+  box-shadow:0 6px 24px rgba(27,74,34,.25);
+}
 .daily-banner::before{content:'';position:absolute;top:-20px;right:-20px;
   width:100px;height:100px;border-radius:50%;
   background:rgba(245,193,0,.07);pointer-events:none}
 .db-tag{font-size:11px;color:var(--gold);font-weight:800;margin-bottom:8px;
   display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.5px}
-.db-ttl{font-size:18px;font-weight:800;margin-bottom:6px}
-.db-desc{font-size:13px;color:var(--text2);margin:8px 0 14px;line-height:1.6}
+.db-ttl{font-size:18px;font-weight:800;margin-bottom:6px;color:#fff}
+.db-desc{font-size:13px;color:rgba(255,255,255,.7);margin:8px 0 14px;line-height:1.6}
 .db-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;
   border:none;border-radius:12px;padding:11px;font-size:14px;font-weight:800;
   cursor:pointer;width:100%;font-family:'Cairo',sans-serif;
@@ -516,13 +530,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .t3-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;max-width:120px}
 .t3-ava{border-radius:50%;display:flex;align-items:center;justify-content:center;
   font-weight:800;color:#fff;border:3px solid transparent;flex-shrink:0}
-.t3-nm{font-size:11px;font-weight:700;text-align:center;line-height:1.4;
-  word-break:break-word;color:var(--text);max-width:90px}
+.t3-nm{font-size:11px;font-weight:800;text-align:center;line-height:1.4;
+  word-break:break-word;color:var(--text);max-width:90px;margin-top:2px}
 .t3-xp{font-size:12px;color:var(--gold);font-weight:800;margin-top:1px}
 .t3-rank{font-size:18px;line-height:1}
 .t3-pod{width:100%;border-radius:10px 10px 0 0;
   display:flex;align-items:center;justify-content:center;
-  font-size:18px;font-weight:900;color:rgba(255,255,255,.5);
+  font-size:18px;font-weight:900;
   border:2px solid;border-bottom:none;margin-top:6px}
 
 /* list rows */
@@ -536,7 +550,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
   color:var(--text3);flex-shrink:0}
 .lb-rk.top{color:var(--gold)}
 .lb-ava2{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;color:#fff}
+  justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;color:#fff;min-width:38px}
 .lb-info{flex:1;min-width:0}
 .lb-nm{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lb-sub{font-size:11px;color:var(--text2);margin-top:2px}
@@ -874,6 +888,121 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 }
 [data-theme="light"] .streak-card{box-shadow:0 2px 12px rgba(0,0,0,.08)}
 [data-theme="light"] #toast{background:rgba(10,30,10,.92)}
+
+
+/* ════════════════════════════════════
+   QUICK IMPROVEMENTS v2
+════════════════════════════════════ */
+
+/* ── Splash Screen ── */
+.spl-tag{border:1px solid var(--border)}
+.spl-logo-box{box-shadow:0 8px 32px rgba(245,193,0,.2)}
+
+/* ── Auth Screen ── */
+.auth-inp{border-width:1.5px}
+.auth-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,193,0,.1)}
+.auth-btn{box-shadow:0 4px 16px rgba(245,193,0,.25);letter-spacing:.3px}
+.auth-btn:active{transform:scale(.98)}
+.auth-google{border-width:1.5px!important}
+
+/* ── Header ── */
+.hdr{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.hdr-title{letter-spacing:.2px}
+
+/* ── Home Screen ── */
+.sec-ttl{font-size:15px;font-weight:800;color:var(--text);letter-spacing:.2px}
+.sec-lnk{font-size:12px;font-weight:700;color:var(--gold)}
+.home-greeting{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.3px}
+.home-sub{font-size:13px;color:var(--text2);font-weight:600}
+
+/* ── Progress Bar (home) ── */
+.xpbar-wrap{position:relative}
+.xp-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.7)}
+
+/* ── Stat cards ── */
+.stat-v{font-size:26px;font-weight:900;letter-spacing:-.5px}
+.stat-ic{font-size:18px;margin-bottom:4px}
+
+/* ── Daily banner ── */
+.db-cat{font-size:11px;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;opacity:.7;margin-bottom:4px;color:#fff}
+.db-ttl{font-size:20px;font-weight:900;line-height:1.25}
+.db-start-btn{font-size:15px;font-weight:800;letter-spacing:.3px}
+
+/* ── Challenge items ── */
+.chi-num{font-size:10px;font-weight:800;color:var(--text3);
+  width:28px;text-align:center;letter-spacing:.5px}
+.chi-ttl{font-size:14.5px;font-weight:800;letter-spacing:-.1px}
+.chi-sub{font-size:11.5px;margin-top:2px}
+
+/* ── Code editor ── */
+.editor-hdr{border-radius:12px 12px 0 0}
+.editor-body{border-radius:0 0 12px 12px;overflow:hidden}
+.btn-run{font-size:14.5px;letter-spacing:.2px}
+.gbtn{font-size:14.5px;letter-spacing:.2px;box-shadow:0 4px 14px rgba(245,193,0,.2)}
+.gbtn:active{transform:scale(.98);box-shadow:none}
+
+/* ── Tabs (detail screen) ── */
+.det-tab{font-size:13.5px;font-weight:700;letter-spacing:.2px}
+.det-tab.act::after{height:3px;border-radius:2px}
+
+/* ── Concept box ── */
+.concept-ttl{font-size:13px;font-weight:800;letter-spacing:.3px;margin-bottom:8px}
+.concept-body{font-size:13.5px;line-height:1.9}
+
+/* ── Result screen ── */
+.res-emoji{font-size:60px;filter:drop-shadow(0 4px 16px rgba(0,0,0,.2))}
+.res-ttl{font-size:26px;font-weight:900;letter-spacing:-.3px}
+.res-sub{font-size:14px;line-height:1.6;color:var(--text2)}
+
+/* ── Profile ── */
+.prof-name{font-size:22px;font-weight:900;letter-spacing:-.2px}
+.prof-email{font-size:12px;color:var(--text2)}
+.prof-tag{font-size:12.5px;font-weight:700}
+
+/* ── Leaderboard ── */
+.lb-name{font-size:14px;font-weight:800}
+.lb-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.lb-xp{font-size:13px;font-weight:800;color:var(--gold)}
+.t3-nm{font-size:12px;font-weight:800}
+.t3-xp{font-size:12px;font-weight:800;color:var(--gold);margin-top:2px}
+
+/* ── Badges ── */
+.badge-ico{font-size:32px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.15))}
+.badge-nm{font-size:11px;font-weight:800;margin-top:4px}
+.badge-desc{font-size:10px;color:var(--text2);line-height:1.5;margin-top:2px}
+
+/* ── Toast ── */
+#toast{font-weight:700;letter-spacing:.2px}
+
+/* ── Onboarding ── */
+.ob-title{font-size:22px;font-weight:900;letter-spacing:-.3px;line-height:1.3}
+.ob-sub{font-size:14px;line-height:1.7;color:var(--text2)}
+
+/* ── Daily history ── */
+.hi-ttl{letter-spacing:-.1px}
+.hi-date div:first-child{color:var(--text)!important}
+
+/* ── Paths ── */
+.path-ttl{font-size:15px;letter-spacing:-.1px}
+.path-cnt{font-size:12px;margin-top:3px}
+
+/* ── Light mode specific ── */
+[data-theme="light"] .spl-tag{background:rgba(255,255,255,.6)}
+[data-theme="light"] .det-tab{color:var(--text2)}
+[data-theme="light"] .det-tab.act{color:var(--gold)}
+[data-theme="light"] .srch-inp{color:var(--text)}
+[data-theme="light"] .srch-inp::placeholder{color:var(--text3)}
+[data-theme="light"] .out-box{color:var(--text)}
+[data-theme="light"] .concept-body{color:var(--text)}
+[data-theme="light"] .concept-ttl{color:var(--text)}
+[data-theme="light"] .hint-txt{color:var(--text)}
+[data-theme="light"] .ex-row{color:var(--text)}
+[data-theme="light"] .chi-num{color:var(--text3)}
+[data-theme="light"] .lb-sub{color:var(--text2)}
+[data-theme="light"] .auth-inp{background:#fff;color:#0B1A0C}
+[data-theme="light"] .auth-inp::placeholder{color:#7A9A78}
+[data-theme="light"] .toggle.off{background:rgba(0,0,0,.1)}
 
 </style>
 <!-- Firebase -->
@@ -2303,6 +2432,8 @@ function buildBNav(screen){
   const el = document.getElementById(id);
   if(!el) return;
   el.id = id;
+  el.style.display='flex';
+  el.style.alignItems='center';
   el.innerHTML = navSlots.map(n=>{
     const act = n.s===screen||( n.s==='more'&&['profile','badges','leaderboard'].includes(screen));
     return `<div class="ni${act?' act':''}" onclick="${n.s==='more'?"openSB()":"go('"+n.s+"')"}">
@@ -2354,7 +2485,8 @@ function buildBNavGeneric(activeScreen, targetId){
   ];
   const el=document.getElementById(targetId||'bnav-home');
   if(!el) return;
-  el.className='on';
+  el.style.display='flex';
+  el.style.alignItems='center';
   el.innerHTML=navItems.map(n=>{
     const act=n.s===activeScreen;
     return `<div class="ni${act?' act':''}" onclick="go('${n.s}')">
@@ -3068,12 +3200,12 @@ function renderDaily(){
     const d=new Date(); d.setDate(d.getDate()-i);
     const label=i===1?'أمس':dayNames[d.getDay()];
     histItems.push(`<div class="hist-item">
-      <div class="hi-date">${label}<br><span style="font-size:9px;color:var(--text3)">${key}</span></div>
+      <div class="hi-date"><div style="font-size:12px;font-weight:800;color:var(--text)">${label}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${key}</div></div>
       <div class="hi-inf">
         <div class="hi-ttl">${ch.title}</div>
         <div class="hi-diff"><span class="diff ${diffClass(ch.diff)}" style="font-size:10px">${ch.diff}</span></div>
       </div>
-      <div class="hi-status" style="font-size:18px">${done?'✅':'⬜'}</div>
+      <div class="hi-status ${done?'done':'miss'}">${done?`<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#52B788" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--text3)" stroke-width="2"/></svg>`}</div>
     </div>`);
   }
   document.getElementById('daily-hist').innerHTML=
@@ -3285,8 +3417,9 @@ function renderLBFromData(rows){
   // Avatar helpers
   const AVA_COLORS=['#F5C100','#52B788','#9C89FF','#FF8C42','#4DA6FF','#FF6B9D','#44BBA4'];
   function avaLetter(d){ return ((d.name||d.nm||'؟')[0]||'؟').toUpperCase(); }
-  function avaColor(i,isMe){ return isMe?'#c8960a':AVA_COLORS[i%AVA_COLORS.length]; }
-  function avaBg(i,isMe){ return isMe?'rgba(245,193,0,.25)':'rgba(255,255,255,.07)'; }
+  function avaColor(i,isMe){ return '#fff'; }
+  const AVA_BG=['#1B4D3E','#2D6A4F','#1A3A5C','#4A235A','#5C2D1A','#1A4A4A','#3D2B1A'];
+  function avaBg(i,isMe){ return isMe?'#B8860B':AVA_BG[i%AVA_BG.length]; }
 
   const top3=data.slice(0,3);
   const rest=data.slice(3);
@@ -3320,8 +3453,8 @@ function renderLBFromData(rows){
       </div>
       <div class="t3-xp">${d.xpShow} XP</div>
       <div class="t3-pod" style="height:${podHeights[rank]}px;border-color:${podBorders[rank]};
-        background:linear-gradient(to top,${podColors[rank]}22,transparent)">
-        ${rank+1}
+        background:linear-gradient(to top,${podColors[rank]}44,${podColors[rank]}11)">
+        <span style="font-size:20px;font-weight:900;color:${podColors[rank]}">${rank+1}</span>
       </div>
     </div>`;
   }).join('');
@@ -3339,7 +3472,7 @@ function renderLBFromData(rows){
     const isTop=(rank<=10);
     return `<div class="lb-row${d.isMe?' me':''}">
       <div class="lb-rk${isTop?' top':''}">${rank}</div>
-      <div class="lb-ava2" style="background:${avaBg(i+3,d.isMe)};color:${avaColor(i+3,d.isMe)}">
+      <div class="lb-ava2" style="background:${avaBg(i+3,d.isMe)};color:#fff">
         ${avaLetter(d)}
       </div>
       <div class="lb-info">
