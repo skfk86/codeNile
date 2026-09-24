@@ -40,7 +40,7 @@
 [data-theme="light"] .CodeMirror-linenumber{color:#666!important}
 [data-theme="light"] .auth-inp{background:#FFFFFF!important;border:1px solid var(--border)!important}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-top:env(safe-area-inset-top);
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
   font-family:'Cairo',sans-serif;overflow:hidden}
 #app{width:100%;height:100%;position:relative;overflow:hidden}
 .scr{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
@@ -170,11 +170,11 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 /* ── BOTTOM NAV ── */
 #bnav,
 [id^="bnav-"]{
-  height:var(--nav);
+  height:calc(var(--nav) + env(safe-area-inset-bottom));
   background:var(--bg2);
   border-top:1.5px solid var(--border);
   display:none;align-items:center;flex-shrink:0;
-  padding:0 6px 2px;gap:2px;
+  padding:0 6px calc(env(safe-area-inset-bottom) + 2px);gap:2px;
 }
 #bnav.on,[id^="bnav-"].on{display:flex}
 .ni{
@@ -242,11 +242,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
   border:1px solid rgba(82,183,136,.3);
   box-shadow:0 4px 16px rgba(82,183,136,.15)}
 .xp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.xp-txt{font-size:12px;color:rgba(255,255,255,.75);font-weight:700}
+.xp-txt{font-size:12px;color:#fff;font-weight:700;opacity:.85}
 [data-theme="light"] .xp-card{
-  background:linear-gradient(135deg,#2D6A4F,#40916C);
+  background:linear-gradient(135deg,#1B5E35,#2D7A47);
+  box-shadow:0 6px 20px rgba(27,94,53,.3);
 }
-[data-theme="light"] .xp-txt{color:rgba(255,255,255,.85)}
+[data-theme="light"] .xp-txt{color:rgba(255,255,255,.9)!important}
+[data-theme="light"] .lv-badge{box-shadow:0 3px 10px rgba(0,0,0,.2)}
 
 .stats-row{display:flex;gap:10px;margin:0 14px 14px}
 .stat-c{flex:1;background:var(--card-bg);border-radius:14px;
@@ -270,8 +272,8 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
   background:rgba(245,193,0,.07);pointer-events:none}
 .db-tag{font-size:11px;color:var(--gold);font-weight:800;margin-bottom:8px;
   display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.5px}
-.db-ttl{font-size:18px;font-weight:800;margin-bottom:6px;color:#fff}
-.db-desc{font-size:13px;color:rgba(255,255,255,.7);margin:8px 0 14px;line-height:1.6}
+.db-ttl{font-size:18px;font-weight:800;margin-bottom:6px;color:#fff!important}
+.db-desc{font-size:13px;color:rgba(255,255,255,.75)!important;margin:8px 0 14px;line-height:1.6}
 .db-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;
   border:none;border-radius:12px;padding:11px;font-size:14px;font-weight:800;
   cursor:pointer;width:100%;font-family:'Cairo',sans-serif;
@@ -683,6 +685,8 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
   background:var(--bg2);
   border-bottom:1.5px solid var(--border);
   box-shadow:0 2px 12px rgba(0,0,0,.12);
+  padding-top:env(safe-area-inset-top);
+  height:calc(var(--hdr) + env(safe-area-inset-top));
 }
 .hbtn{
   background:var(--item-bg);
@@ -920,13 +924,16 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 .xp-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.7)}
 
 /* ── Stat cards ── */
-.stat-v{font-size:26px;font-weight:900;letter-spacing:-.5px}
+.stat-v{font-size:26px;font-weight:900;letter-spacing:-.5px;color:var(--gold)}
+.stat-ic{font-size:20px;margin-bottom:6px}
+[data-theme="light"] .stat-c{background:#fff;border-color:rgba(82,183,136,.2)}
+[data-theme="light"] .stat-l{color:var(--text2)}
 .stat-ic{font-size:18px;margin-bottom:4px}
 
 /* ── Daily banner ── */
 .db-cat{font-size:11px;font-weight:700;letter-spacing:.5px;
   text-transform:uppercase;opacity:.7;margin-bottom:4px;color:#fff}
-.db-ttl{font-size:20px;font-weight:900;line-height:1.25}
+.db-ttl{font-size:20px;font-weight:900;line-height:1.25;color:#fff!important}
 .db-start-btn{font-size:15px;font-weight:800;letter-spacing:.3px}
 
 /* ── Challenge items ── */
@@ -1004,6 +1011,11 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);padding-
 [data-theme="light"] .auth-inp::placeholder{color:#7A9A78}
 [data-theme="light"] .toggle.off{background:rgba(0,0,0,.1)}
 
+[data-theme="light"] #toast{
+  background:rgba(10,30,10,.88)!important;
+  color:#fff!important;
+  border-color:rgba(82,183,136,.3)!important;
+}
 </style>
 <!-- Firebase -->
 <script type="module">
@@ -1582,6 +1594,102 @@ window._fbReady=true;
 </div>
 
 <!-- ════ PROFILE ════ -->
+
+
+<div id="s-about" class="scr">
+  <div class="hdr">
+    <div class="hbtn" onclick="closeSB();go('home')"><i class="fa-solid fa-chevron-right"></i></div>
+    <div class="hdr-title">عن التطبيق</div>
+    <div class="hsp"></div>
+  </div>
+  <div class="scr-body" style="padding:20px 14px;display:flex;flex-direction:column;gap:16px">
+
+    <!-- شعار وعنوان -->
+    <div style="text-align:center;padding:24px 0 8px">
+      <div style="width:80px;height:80px;border-radius:22px;margin:0 auto 16px;
+        background:linear-gradient(135deg,#1B4A22,#2D6A32);
+        display:flex;align-items:center;justify-content:center;
+        box-shadow:0 8px 24px rgba(27,74,34,.35);font-size:36px">🐊</div>
+      <div style="font-size:26px;font-weight:900;color:var(--text);letter-spacing:-.5px">CodeNile</div>
+      <div style="font-size:13px;color:var(--text2);margin-top:4px;font-weight:600">الإصدار 1.0.0</div>
+    </div>
+
+    <!-- وصف -->
+    <div style="background:var(--card-bg);border-radius:16px;padding:16px;border:1.5px solid var(--border)">
+      <div style="font-size:13px;line-height:1.85;color:var(--text2)">
+        CodeNile هو منصة تعليمية مجانية لتعلّم JavaScript بالعربي. 
+        مبني خصيصاً للمبرمجين العرب الراغبين في اتقان البرمجة بلغتهم الأم.
+      </div>
+    </div>
+
+    <!-- إحصائيات التطبيق -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;text-align:center">
+        <div style="font-size:28px;font-weight:900;color:var(--gold)">54</div>
+        <div style="font-size:11px;color:var(--text2);font-weight:700;margin-top:2px">تحدياً برمجياً</div>
+      </div>
+      <div style="background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;padding:14px;text-align:center">
+        <div style="font-size:28px;font-weight:900;color:var(--green)">6</div>
+        <div style="font-size:11px;color:var(--text2);font-weight:700;margin-top:2px">مسارات تعليمية</div>
+      </div>
+    </div>
+
+    <!-- المميزات -->
+    <div style="background:var(--card-bg);border-radius:16px;border:1.5px solid var(--border);overflow:hidden">
+      ${[
+        ['fa-code','محرر كود احترافي مدمج','var(--gold)'],
+        ['fa-fire','تحديات يومية مع نظام سلسلة','var(--orange)'],
+        ['fa-trophy','لوحة متصدرين تنافسية','var(--gold)'],
+        ['fa-moon','وضع ليلي ونهاري','var(--purple)'],
+        ['fa-cloud','مزامنة تقدمك عبر الأجهزة','var(--blue)'],
+      ].map(([ic,lb,cl],i,arr)=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 14px;
+          ${i<arr.length-1?'border-bottom:1px solid var(--border)':''}">
+          <div style="width:34px;height:34px;border-radius:10px;
+            background:${cl}18;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="fa-solid ${ic}" style="color:${cl};font-size:15px"></i>
+          </div>
+          <span style="font-size:13px;font-weight:700;color:var(--text)">${lb}</span>
+        </div>`).join('')}
+    </div>
+
+    <!-- المطور -->
+    <div style="background:var(--card-bg);border-radius:16px;padding:16px;border:1.5px solid var(--border)">
+      <div style="font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.5px;margin-bottom:12px">المطوّر</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--green));
+          display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff">ع</div>
+        <div>
+          <div style="font-size:14px;font-weight:800;color:var(--text)">علي القاسم</div>
+          <div style="font-size:12px;color:var(--text2)">مطوّر مستقل 🇸🇩</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- روابط -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="gbtn" style="background:var(--item-bg);color:var(--text);border:1.5px solid var(--border);box-shadow:none"
+        onclick="window.open('https://play.google.com/store/apps/details?id=com.codenile.app')">
+        <i class="fa-brands fa-google-play"></i> تقييم التطبيق على Play Store
+      </button>
+    </div>
+
+    <div style="text-align:center;padding:8px 0 16px;font-size:11px;color:var(--text3)">
+      صُنع بـ ❤️ في السودان · CodeNile © 2026
+    </div>
+
+  </div>
+</div>
+<div id="s-bookmarks" class="scr">
+  <div class="hdr">
+    <div class="hbtn" onclick="go('profile')"><i class="fa-solid fa-chevron-right"></i></div>
+    <div class="hdr-title"><i class="fa-solid fa-bookmark" style="color:var(--blue)"></i> التحديات المحفوظة</div>
+    <div class="hsp"></div>
+  </div>
+  <div class="scr-body" id="bookmarks-list" style="padding:14px;display:flex;flex-direction:column;gap:10px">
+  </div>
+</div>
+
 <div id="s-profile" class="scr">
   <div class="hdr">
     <div class="hbtn" onclick="go('home')"><i class="fa-solid fa-chevron-right"></i></div>
@@ -1624,7 +1732,7 @@ window._fbReady=true;
         <i class="pm-ic fa-solid fa-trophy" style="color:var(--gold)"></i>
         <span class="pm-lb">لوحة المتصدرين</span><i class="pm-ar fa-solid fa-chevron-left"></i>
       </div>
-      <div class="pm-item" onclick="go('challenges')">
+      <div class="pm-item" onclick="openBookmarks()">
         <i class="pm-ic fa-solid fa-bookmark" style="color:var(--blue)"></i>
         <span class="pm-lb">التحديات المحفوظة</span><i class="pm-ar fa-solid fa-chevron-left"></i>
       </div>
@@ -1717,7 +1825,7 @@ window._fbReady=true;
     <div class="sb-item" onclick="toast('الإعدادات قريباً!')">
       <i class="sb-ic fa-solid fa-gear"></i><div class="sb-lb">الإعدادات</div>
     </div>
-    <div class="sb-item" onclick="toast('CodeNile v1.0 | 🇸🇩')">
+    <div class="sb-item" onclick="closeSB();go('about')">
       <i class="sb-ic fa-solid fa-circle-info"></i><div class="sb-lb">عن التطبيق</div>
     </div>
   </div>
@@ -2679,8 +2787,14 @@ function openChallenge(id){
   document.getElementById('out-box').innerHTML='<div style="color:var(--text3)">اضغط ▶ تشغيل لاختبار الكود...</div>';
 
   // Bookmark icon
-  document.getElementById('bm-btn').textContent = S.bookmarks.includes(c.id)?'🔖':'🔖';
-  document.getElementById('bm-btn').style.color = S.bookmarks.includes(c.id)?'var(--gold)':'';
+  const _bmBtn = document.getElementById('bm-btn');
+  if(_bmBtn){
+    const _isBM = S.bookmarks.includes(c.id);
+    _bmBtn.innerHTML = _isBM
+      ? '<i class="fa-solid fa-bookmark"></i>'
+      : '<i class="fa-regular fa-bookmark"></i>';
+    _bmBtn.style.color = _isBM ? 'var(--gold)' : '';
+  }
 
   // Switch to desc tab
   switchTabById('desc');
@@ -2718,8 +2832,14 @@ function toggleBM(){
   else S.bookmarks.push(id);
   saveState();
   const btn=document.getElementById('bm-btn');
-  btn.style.color=S.bookmarks.includes(id)?'var(--gold)':'';
-  toast(S.bookmarks.includes(id)?'✅ تمت الإضافة للمحفوظات':'تمت الإزالة من المحفوظات');
+  const _saved = S.bookmarks.includes(id);
+  if(btn){
+    btn.innerHTML = _saved
+      ? '<i class="fa-solid fa-bookmark"></i>'
+      : '<i class="fa-regular fa-bookmark"></i>';
+    btn.style.color = _saved ? 'var(--gold)' : '';
+  }
+  toast(_saved ? '🔖 تمت الإضافة للمحفوظات' : 'تمت الإزالة من المحفوظات');
 }
 
 // ── CodeMirror Editor ──────────────────
@@ -3138,15 +3258,26 @@ function renderDaily(){
   const days=['أح','إث','ثل','أر','خم','جم','سب'];
   const todayIdx=new Date().getDay();
   document.getElementById('streak-card').innerHTML=`
-    <div class="sk-ico">🔥</div>
-    <div class="sk-text">
-      <div class="sk-num">${S.streak||1} يوم</div>
-      <div class="sk-lbl">السلسلة الحالية</div>
-      <div class="sk-days">
-        ${days.map((d,i)=>`<div class="sk-day${
-          i<todayIdx&&(S.streak||0)>=todayIdx-i?' done':
-          i===todayIdx?' today':''}">${d}</div>`).join('')}
+    <div class="sk-top">
+      <div class="sk-best">
+        <div class="sk-best-n">${Math.max(S.streak||1, S.bestStreak||1)}</div>
+        <div class="sk-best-l">الأطول</div>
       </div>
+      <div class="sk-info">
+        <div class="sk-num">${S.streak||1} يوم 🔥</div>
+        <div class="sk-lbl">السلسلة الحالية</div>
+      </div>
+      <div style="width:0"></div>
+    </div>
+    <div class="sk-days">
+      ${days.map((d,i)=>{
+        const isDone = i<todayIdx&&(S.streak||0)>=todayIdx-i;
+        const isToday = i===todayIdx;
+        return `<div class="sk-day${isDone?' done':isToday?' today':''}">
+          <span>${d}</span>
+          <div class="sk-dot"></div>
+        </div>`;
+      }).join('')}
     </div>`;
 
   // Countdown
@@ -3910,6 +4041,49 @@ document.addEventListener('_googleSignIn', ()=>{
     }
   }catch(e){}
 })();
+
+// ══ Bookmarks Screen ══
+function openBookmarks(){
+  renderBookmarks();
+  go('bookmarks');
+}
+
+function renderBookmarks(){
+  const el = document.getElementById('bookmarks-list');
+  if(!el) return;
+
+  if(!S.bookmarks || S.bookmarks.length === 0){
+    el.innerHTML = `
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:56px;margin-bottom:16px">🔖</div>
+        <div style="font-size:17px;font-weight:800;color:var(--text);margin-bottom:8px">لا توجد تحديات محفوظة</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7">اضغط على أيقونة 🔖 داخل أي تحدٍّ لحفظه هنا</div>
+        <button class="gbtn" style="margin-top:24px" onclick="go('challenges')">
+          <i class="fa-solid fa-code"></i> تصفح التحديات
+        </button>
+      </div>`;
+    return;
+  }
+
+  const bookmarked = CHALLENGES.filter(c => S.bookmarks.includes(c.id));
+  el.innerHTML = bookmarked.map(c => {
+    const done = S.solved.includes(c.id);
+    const catBg = diffColorForCat(c.cat);
+    const icoStyle = catBg ? `style="background:${catBg}"` : '';
+    return `<div class="chi" onclick="openChallenge(${c.id});go('detail')">
+      <div class="chi-num">${String(c.id).padStart(3,'0')}</div>
+      <div class="chi-ico ${diffIcon(c.diff)}" ${icoStyle}><i class="fa-solid ${faIcon(c)}"></i></div>
+      <div class="chi-inf">
+        <div class="chi-ttl">${c.title}</div>
+        <div class="chi-sub">${c.diff} · ${c.cat}</div>
+      </div>
+      ${done
+        ? '<div class="chi-done"><i class="fa-solid fa-check"></i></div>'
+        : `<div class="chi-xp">+${c.xp}<small style='font-size:9px'>XP</small></div>`}
+    </div>`;
+  }).join('');
+}
+
 // ── Global Error Handler ──
 window.addEventListener('unhandledrejection',function(e){
   console.warn('Unhandled promise rejection:',e.reason);
