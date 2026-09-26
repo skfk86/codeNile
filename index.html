@@ -4,9 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>CodeNile</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>
+// FA icon fallback — runs after page load
+window.addEventListener('load',function(){
+  // Test if FA loaded by checking a known icon's rendered width
+  var test=document.createElement('i');
+  test.className='fa-solid fa-check';
+  test.style.cssText='position:absolute;visibility:hidden;font-size:20px';
+  document.body.appendChild(test);
+  var w=test.getBoundingClientRect().width;
+  document.body.removeChild(test);
+  if(w<5){
+    // FA not loaded — replace key nav icons with emoji
+    var map={
+      'fa-house':'🏠','fa-code':'💻','fa-calendar-day':'📅','fa-map':'🗺️',
+      'fa-user':'👤','fa-bars':'☰','fa-chevron-right':'›','fa-chevron-left':'‹',
+      'fa-check':'✓','fa-bolt':'⚡','fa-trophy':'🏆','fa-fire':'🔥',
+      'fa-star':'⭐','fa-bookmark':'🔖','fa-bell':'🔔','fa-rocket':'🚀',
+      'fa-moon':'🌙','fa-sun':'☀️','fa-right-from-bracket':'🚪',
+      'fa-trash-can':'🗑️','fa-pencil':'✏️','fa-spinner':'⏳',
+      'fa-circle-check':'✅','fa-lock':'🔒','fa-ranking-star':'🥇',
+      'fa-pen-to-square':'✏️','fa-paper-plane':'📨','fa-play':'▶'
+    };
+    document.querySelectorAll('i[class*="fa-"]').forEach(function(el){
+      for(var k in map){
+        if(el.classList.contains(k)){
+          var span=document.createElement('span');
+          span.textContent=map[k];
+          span.style.fontStyle='normal';
+          el.parentNode.replaceChild(span,el);
+          break;
+        }
+      }
+    });
+    document.body.classList.add('no-fa');
+  }
+});
+</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+<style>
+/* Emoji fallback when FA doesn't load */
+.fa-solid,.fa-brands,.fa-regular{font-family:'Font Awesome 6 Free','Font Awesome 6 Brands',serif}
+</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -109,14 +150,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
   margin-top:6px;font-family:inherit;
   box-shadow:0 4px 18px rgba(245,193,0,.3);transition:.2s}
 .auth-btn:active{transform:scale(.98)}
-.auth-div{display:flex;align-items:center;gap:10px;margin:16px 0}
-.auth-div-line{flex:1;height:1px;background:var(--border)}
-.auth-div-txt{font-size:12px;color:var(--text3);font-weight:600}
-.auth-google{width:100%;padding:13px;border-radius:14px;border:1px solid var(--border);
-  background:var(--item-bg);color:var(--text);font-size:15px;font-weight:700;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
-  font-family:inherit;transition:.2s}
-.auth-google:active{background:rgba(255,255,255,.1)}
 .auth-err{background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.3);
   border-radius:10px;padding:10px 14px;font-size:13px;color:#ff6b6b;
   margin-bottom:14px;display:none}
@@ -952,7 +985,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 .auth-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,193,0,.1)}
 .auth-btn{box-shadow:0 4px 16px rgba(245,193,0,.25);letter-spacing:.3px}
 .auth-btn:active{transform:scale(.98)}
-.auth-google{border-width:1.5px!important}
 
 /* ── Header ── */
 .hdr{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -1067,10 +1099,10 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAnalytics}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,signInWithRedirect,getRedirectResult,
-  GoogleAuthProvider,signOut,updateProfile,sendPasswordResetEmail,
+  createUserWithEmailAndPassword,
+  signOut,updateProfile,sendPasswordResetEmail,
   deleteUser,reauthenticateWithCredential,
-  EmailAuthProvider,reauthenticateWithPopup}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  EmailAuthProvider}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,getDoc,collection,deleteDoc,
   query,orderBy,limit,getDocs,serverTimestamp}
   from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1089,24 +1121,13 @@ const app=initializeApp(firebaseConfig);
 try{getAnalytics(app);}catch(e){}
 const auth=getAuth(app);
 const db=getFirestore(app);
-const gProvider=new GoogleAuthProvider();
-
 // ── Auth ──
 window._fbSignIn=(e,p)=>signInWithEmailAndPassword(auth,e,p);
 window._fbRegister=(e,p,n)=>createUserWithEmailAndPassword(auth,e,p)
   .then(async c=>{await updateProfile(c.user,{displayName:n});return c;});
-window._fbGoogle=()=>signInWithRedirect(auth,gProvider);  // redirect works in WebView
 window._fbSignOut=()=>signOut(auth);
 window._fbOnAuth=cb=>onAuthStateChanged(auth,cb);
 window._fbResetPassword=email=>sendPasswordResetEmail(auth,email);
-
-// ── Handle Google redirect result on app startup ──
-getRedirectResult(auth).then(result=>{
-  if(result?.user){
-    localStorage.setItem('_authProvider','google');
-    // onAuthStateChanged will fire automatically — no extra action needed
-  }
-}).catch(e=>console.warn('redirect result:',e.code));
 
 // ── Delete account completely ──
 window._fbDeleteAccount=async(password)=>{
@@ -1114,13 +1135,8 @@ window._fbDeleteAccount=async(password)=>{
   if(!user) throw new Error('لا يوجد مستخدم مسجل');
 
   // Re-authenticate first (required by Firebase before delete)
-  if(password){
-    const cred=EmailAuthProvider.credential(user.email, password);
-    await reauthenticateWithCredential(user, cred);
-  } else {
-    // Google user — re-authenticate with popup
-    await reauthenticateWithPopup(user, gProvider);
-  }
+  const cred=EmailAuthProvider.credential(user.email, password);
+  await reauthenticateWithCredential(user, cred);
 
   // 1. Delete Firestore data
   try{ await deleteDoc(doc(db,'users',user.uid)); }catch(e){}
@@ -1186,7 +1202,7 @@ window._fbReady=true;
     <div class="spl-logo-txt">&lt;/&gt;</div>
   </div>
   <div class="spl-name">Code<em>Nile</em></div>
-  <div class="spl-tag"><i class="fa-brands fa-js"></i> JavaScript بالعربية</div>
+  <div class="spl-tag"><span style="font-weight:900;color:var(--gold)">JS</span> JavaScript بالعربية</div>
   <div class="spl-bar"><div class="spl-fill"></div></div>
   <div class="spl-dots">
     <div class="spl-dot a1"></div>
@@ -1275,20 +1291,6 @@ window._fbReady=true;
         <i class="fa-solid fa-user-plus"></i> إنشاء الحساب
       </button>
     </div>
-    <div class="auth-div">
-      <div class="auth-div-line"></div>
-      <div class="auth-div-txt">أو</div>
-      <div class="auth-div-line"></div>
-    </div>
-    <button class="auth-google" onclick="doGoogle()">
-      <svg width="20" height="20" viewBox="0 0 24 24">
-        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-      </svg>
-      المتابعة بحساب Google
-    </button>
     <div style="height:30px"></div>
   </div>
 </div>
@@ -1297,26 +1299,23 @@ window._fbReady=true;
   <div class="ob-skip" onclick="goHome()">تخطي <i class="fa-solid fa-chevron-left"></i></div>
   <div class="ob-body">
     <div class="ob-ilu">
-      <i class="ob-ilu-icon fa-solid fa-laptop-code"></i>
-      <div class="ob-ilu-badge"><i class="fa-brands fa-js"></i></div>
+      <div class="ob-ilu-icon" style="font-size:64px;line-height:1;display:flex;align-items:center;justify-content:center">💻</div>
+      <div class="ob-ilu-badge" style="font-size:18px;display:flex;align-items:center;justify-content:center">JS</div>
     </div>
     <div class="ob-ttl">تعلّم من التحديات<br>وطور مهاراتك في<br><em>JavaScript</em></div>
     <div class="ob-feats">
       <div class="ob-feat">
-        <div class="ob-fi" style="background:rgba(245,193,0,.12);color:var(--gold)">
-          <i class="fa-solid fa-trophy"></i></div>
+        <div class="ob-fi" style="background:rgba(245,193,0,.12);color:var(--gold);font-size:20px">🏆</div>
         <div class="ob-ft"><strong>حل التحديات واكسب النقاط</strong>
           <span>مستويات وشارات وإنجازات</span></div>
       </div>
       <div class="ob-feat">
-        <div class="ob-fi" style="background:rgba(255,140,0,.12);color:var(--orange)">
-          <i class="fa-solid fa-fire"></i></div>
+        <div class="ob-fi" style="background:rgba(255,140,0,.12);color:var(--orange);font-size:20px">🔥</div>
         <div class="ob-ft"><strong>تحدَّ نفسك يومياً</strong>
           <span>تحدي جديد كل يوم مع مكافأة</span></div>
       </div>
       <div class="ob-feat">
-        <div class="ob-fi" style="background:rgba(82,183,136,.12);color:var(--green)">
-          <i class="fa-solid fa-ranking-star"></i></div>
+        <div class="ob-fi" style="background:rgba(82,183,136,.12);color:var(--green);font-size:20px">🏅</div>
         <div class="ob-ft"><strong>تنافس مع المبرمجين</strong>
           <span>تصدَّر لوحة المتصدرين</span></div>
       </div>
@@ -1324,7 +1323,7 @@ window._fbReady=true;
   </div>
   <div class="ob-foot">
     <button class="gbtn" onclick="goHome()">
-      <i class="fa-solid fa-rocket"></i> لنبدأ رحلتنا
+      🚀 لنبدأ رحلتنا
     </button>
   </div>
 </div>
@@ -1335,7 +1334,7 @@ window._fbReady=true;
     <div class="h-user">
       <div class="ava" id="h-ava">م</div>
       <div>
-        <div class="h-hi"><i class="fa-solid fa-hand-wave" style="color:var(--gold)"></i> مرحباً</div>
+        <div class="h-hi">👋 مرحباً</div>
         <div class="h-nm" id="h-nm">محمد</div>
       </div>
     </div>
@@ -1494,7 +1493,7 @@ window._fbReady=true;
     <div class="editor-wrap">
       <div class="editor-top">
         <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-        <div class="editor-lbl"><i class="fa-brands fa-js" style="color:var(--gold)"></i> solution.js</div>
+        <div class="editor-lbl"><span style="font-weight:900;color:var(--gold)">JS</span> solution.js</div>
       </div>
       <div class="editor-body" id="editor-body">
         <textarea id="code-ed" spellcheck="false"></textarea>
@@ -1845,7 +1844,7 @@ window._fbReady=true;
       <div class="sb-logo-ring"><i class="fa-solid fa-code"></i></div>
       <div>
         <div class="sb-logo-nm">Code<em>Nile</em></div>
-        <div class="sb-logo-sub"><i class="fa-brands fa-js"></i> JavaScript بالعربية</div>
+        <div class="sb-logo-sub"><span style="font-weight:900;color:var(--gold)">JS</span> JavaScript بالعربية</div>
       </div>
     </div>
     <div class="sb-user-card">
@@ -1913,11 +1912,7 @@ window._fbReady=true;
         placeholder="كلمة المرور الحالية" dir="ltr" style="margin-bottom:4px">
       <div id="del-err" style="font-size:12px;color:#ff6b7a;min-height:18px;margin-bottom:4px"></div>
     </div>
-    <div id="del-google-wrap" style="display:none">
-      <div class="del-inp-lbl" style="text-align:center;padding:10px 0">
-        سيتم فتح نافذة تأكيد Google
-      </div>
-    </div>
+
     <button class="del-confirm-btn" id="del-confirm-btn" onclick="executeDeleteAccount()">
       🗑️ نعم، احذف حسابي نهائياً
     </button>
@@ -2522,6 +2517,7 @@ function updateStreak(){
     S.streak=1; // reset
   }
   S.lastDay=today;
+  S.bestStreak=Math.max(S.streak, S.bestStreak||1);
 }
 
 function getTimeToMidnight(){
@@ -2552,7 +2548,7 @@ function loadState(){
     const raw = localStorage.getItem(SK);
     if(raw) return JSON.parse(raw);
   }catch(e){}
-  return {xp:0,solved:[],bookmarks:[],streak:1,perfect:0,firstVisit:true,
+  return {xp:0,solved:[],bookmarks:[],streak:1,bestStreak:1,perfect:0,firstVisit:true,
     dailyDone:[],lastDay:null,badges:[],darkMode:false,username:'محمد'};
 }
 function saveState(){
@@ -3748,8 +3744,9 @@ function toggleDark(){
 
 function resetProgress(){
   if(confirm('هل أنت متأكد من إعادة ضبط كل التقدم؟ لا يمكن التراجع عن هذا!')){
-    S={xp:0,solved:[],bookmarks:[],streak:1,perfect:0,firstVisit:false,
-      dailyDone:[],lastDay:null,badges:[],darkMode:false,username:S.username};
+    S={xp:0,solved:[],bookmarks:[],streak:1,bestStreak:1,perfect:0,firstVisit:false,
+      dailyDone:[],lastDay:null,badges:[],darkMode:S.darkMode,username:S.username,
+      uid:S.uid,email:S.email};
     saveState();
     renderProfile();
     toast('🔄 تم إعادة ضبط التقدم');
@@ -3897,33 +3894,11 @@ async function doRegister(){
   }
 }
 
-async function doGoogle(){
-  const btn=document.querySelector('.auth-google');
-  authBtnLoading(btn,true);
-  authErr('');
-  // Show redirect message
-  btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> جاري التحويل إلى Google...`;
-  try{
-    // signInWithRedirect — page will reload after auth
-    // onAuthStateChanged handles the result automatically
-    await window._fbGoogle();
-    // If we reach here (unlikely in redirect), re-enable button
-  }catch(e){
-    btn.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24">
-      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-    </svg> المتابعة بحساب Google`;
-    authBtnLoading(btn,false);
-    if(e.code!=='auth/popup-closed-by-user') authErr(authErrMsg(e.code));
-  }
-}
 
 async function doSignOut(){
   try{ await window._fbSignOut(); }catch(e){}
-  S={xp:0,solved:[],bookmarks:[],streak:1,perfect:0,firstVisit:true,
-    dailyDone:[],lastDay:null,badges:[],darkMode:false,username:'مستخدم'};
+  S={xp:0,solved:[],bookmarks:[],streak:1,bestStreak:1,perfect:0,firstVisit:true,
+    dailyDone:[],lastDay:null,badges:[],darkMode:S.darkMode,username:'مستخدم'};
   saveState();
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.getElementById('s-auth').classList.add('on');
@@ -4014,18 +3989,8 @@ window.addEventListener('online', ()=>toast('✅ عاد الاتصال بالإ�
 // ══════════════════════════════════════
 // DELETE ACCOUNT
 // ══════════════════════════════════════
-let _isGoogleUser = false;
-
 function openDelModal(){
-  // Detect if Google user (no password)
-  const user = window._fbAuth ? null : null; // detected via email provider
-  const email = S.email || '';
-  // Check if Google sign-in (no password provider)
-  _isGoogleUser = !email.includes('@') ? false :
-    (localStorage.getItem('_authProvider') === 'google');
-
-  document.getElementById('del-pass-wrap').style.display = _isGoogleUser ? 'none' : '';
-  document.getElementById('del-google-wrap').style.display = _isGoogleUser ? '' : 'none';
+  document.getElementById('del-pass-wrap').style.display = '';
   document.getElementById('del-pass').value = '';
   document.getElementById('del-err').textContent = '';
   document.getElementById('del-confirm-btn').disabled = false;
@@ -4042,7 +4007,7 @@ async function executeDeleteAccount(){
   const errEl = document.getElementById('del-err');
   const pass = document.getElementById('del-pass').value;
 
-  if(!_isGoogleUser && !pass){
+  if(!pass){
     errEl.textContent = 'أدخل كلمة المرور للتأكيد';
     return;
   }
@@ -4054,7 +4019,7 @@ async function executeDeleteAccount(){
 
   try{
     if(window._fbDeleteAccount){
-      await window._fbDeleteAccount(_isGoogleUser ? null : pass);
+      await window._fbDeleteAccount(pass);
     }
     // Clear all local data
     try{ localStorage.clear(); }catch(e){}
@@ -4065,8 +4030,8 @@ async function executeDeleteAccount(){
       document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
       document.getElementById('s-auth').classList.add('on');
       authTab('register');
-      S = {xp:0,solved:[],bookmarks:[],streak:1,perfect:0,firstVisit:true,
-           dailyDone:[],lastDay:null,badges:[],darkMode:false,username:'مستخدم'};
+      S = {xp:0,solved:[],bookmarks:[],streak:1,bestStreak:1,perfect:0,firstVisit:true,
+           dailyDone:[],lastDay:null,badges:[],darkMode:S.darkMode,username:'مستخدم'};
     }, 1000);
   }catch(e){
     btn.disabled = false;
@@ -4082,17 +4047,10 @@ async function executeDeleteAccount(){
   }
 }
 
-// Store auth provider on login
-const _origOnAuthSuccess = onAuthSuccess;
-// Track Google sign-in
-document.addEventListener('_googleSignIn', ()=>{
-  localStorage.setItem('_authProvider','google');
-});
-
 // تطبيق الثيم عند التحميل
 (function(){
   try{
-    const raw=localStorage.getItem('cnile_state');
+    const raw=localStorage.getItem('codenile_v1');
     if(!raw) return;
     const s=JSON.parse(raw);
     if(s.darkMode===false){
