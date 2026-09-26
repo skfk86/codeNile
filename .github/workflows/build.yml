@@ -78,12 +78,12 @@ jobs:
 
       - name: Upgrade AGP to 8.5.0
         run: |
-          sed -i 's/com\.android\.tools\.build:gradle:[0-9.]*/com.android.tools.build:gradle:8.5.0/g' android/build.gradle
+          sed -i 's/com\.android\.tools\.build:gradle:[0-9.]*/com.android.tools.build:gradle:8.9.1/g' android/build.gradle
           grep "tools.build:gradle" android/build.gradle
 
       - name: Upgrade Gradle to 8.7
         run: |
-          sed -i 's|gradle-[0-9.]*-all.zip|gradle-8.7-all.zip|g' android/gradle/wrapper/gradle-wrapper.properties
+          sed -i 's|gradle-[0-9.]*-all.zip|gradle-8.11.1-all.zip|g' android/gradle/wrapper/gradle-wrapper.properties
           grep "distributionUrl" android/gradle/wrapper/gradle-wrapper.properties
 
       - name: Add AdMob to AndroidManifest
