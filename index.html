@@ -63,7 +63,7 @@ window.addEventListener('load',function(){
   --red:#FF4D4D;--orange:#FF8C00;--purple:#9C89FF;--blue:#4DA6FF;
   --text:#FFFFFF;--text2:#8FAA8D;--text3:#4A6848;
   --border:rgba(255,255,255,0.07);
-  --nav:62px;--hdr:54px;
+  --nav:62px;--hdr:54px;--banner:0px;
   --shadow:0 4px 24px rgba(0,0,0,.4);
   --cm-bg:#1e2124;--cm-text:#fff;
 }
@@ -74,9 +74,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 #app{width:100%;height:100%;position:relative;overflow:hidden}
 .scr{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
 .scr.on{display:flex}
-.sc{flex:1;overflow-y:auto;padding:14px 14px calc(var(--nav)+14px)}
+.sc{flex:1;overflow-y:auto;padding:14px 14px calc(var(--nav)+var(--banner)+14px)}
 .sc::-webkit-scrollbar{display:none}
-.sc0{flex:1;overflow-y:auto;padding-bottom:calc(var(--nav)+14px)}
+.sc0{flex:1;overflow-y:auto;padding-bottom:calc(var(--nav)+var(--banner)+14px)}
 .sc0::-webkit-scrollbar{display:none}
 
 /* ── SPLASH ── */
@@ -355,7 +355,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
   transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;
   font-family:'Cairo',sans-serif}
 .tabi.act{color:var(--gold);border-bottom-color:var(--gold)}
-.tbc{display:none;padding:14px;padding-bottom:calc(var(--nav)+14px);
+.tbc{display:none;padding:14px;padding-bottom:calc(var(--nav)+var(--banner)+14px);
   overflow-y:auto;flex:1}
 .tbc::-webkit-scrollbar{display:none}
 .tbc.on{display:block}
@@ -677,7 +677,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 .sb-div{height:1px;background:var(--border);margin:6px 14px}
 
 /* ── TOAST ── */
-#toast{position:fixed;bottom:calc(var(--nav)+14px);left:50%;
+#toast{position:fixed;bottom:calc(var(--nav)+var(--banner)+14px);left:50%;
   transform:translateX(-50%) translateY(16px);
   background:rgba(25,45,25,.95);color:var(--text);
   padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;
@@ -4179,6 +4179,8 @@ function initAdMob(){
       _admobReady = true;
       _showBanner(AdMob);
       _loadInterstitial();
+      // Push content above banner
+      document.documentElement.style.setProperty('--banner','60px');
     })
     .catch(e => console.warn('AdMob init error:', e));
 }
