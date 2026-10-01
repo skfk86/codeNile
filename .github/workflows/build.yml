@@ -25,7 +25,7 @@ jobs:
           cat > package.json << 'PKGJSON'
           {
             "name": "codenile",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "description": "تعلم JavaScript من الصفر حتى الاحتراف",
             "scripts": {
               "build": "mkdir -p www && cp index.html www/",
@@ -72,8 +72,8 @@ jobs:
       - name: Fix app/build.gradle versionCode
         run: |
           GRADLE="android/app/build.gradle"
-          sed -i 's/versionCode [0-9]*/versionCode 5/g' "$GRADLE"
-          sed -i 's/versionCode = [0-9]*/versionCode = 5/g' "$GRADLE"
+          sed -i 's/versionCode [0-9]*/versionCode 6/g' "$GRADLE"
+          sed -i 's/versionCode = [0-9]*/versionCode = 6/g' "$GRADLE"
           grep -i "versionCode" "$GRADLE"
 
       - name: Upgrade AGP to 8.5.0
