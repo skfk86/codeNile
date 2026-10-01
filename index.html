@@ -67,19 +67,7 @@ window.addEventListener('load',function(){
   --shadow:0 4px 24px rgba(0,0,0,.4);
   --cm-bg:#1e2124;--cm-text:#fff;
 }
-:root[data-theme="light"]{
-  --bg:#F4F7F4;--bg2:#FFFFFF;--bg3:#E8EEE8;--bg4:#D8E4D8;
-  --text:#0B1A0C;--text2:#3D5C3A;--text3:#7A9A78;
-  --border:rgba(0,0,0,0.08);
-  --shadow:0 4px 24px rgba(0,0,0,.10);
-  --green3:#C8E6C9;
-  --cm-bg:#f5f5f5;--cm-text:#0B1A0C;
-}
-
-[data-theme="light"] .CodeMirror{background:var(--cm-bg)!important;color:var(--cm-text)!important}
-[data-theme="light"] .CodeMirror-gutters{background:#e8e8e8!important;border-color:#ccc!important}
-[data-theme="light"] .CodeMirror-linenumber{color:#666!important}
-[data-theme="light"] .auth-inp{background:#FFFFFF!important;border:1px solid var(--border)!important}
+:root
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
   font-family:'Cairo',sans-serif;overflow:hidden}
@@ -187,6 +175,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 .btn-ol{background:var(--item-bg);color:var(--text);border:1px solid var(--border);
   border-radius:14px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;
   font-family:'Cairo',sans-serif;width:100%}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+#_cm>div{animation:slideUp .25s cubic-bezier(.32,.72,0,1)}
+#_cmi:focus{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba(82,183,136,.15)}
 
 /* ── HEADER ── */
 .hdr{height:var(--hdr);display:flex;align-items:center;padding:0 14px;
@@ -247,6 +238,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 .diff-e{background:rgba(82,183,136,.15);color:var(--green)}
 .diff-m{background:rgba(255,165,0,.15);color:#FFA500}
 .diff-h{background:rgba(255,77,77,.15);color:var(--red)}
+.diff-sp{background:linear-gradient(135deg,rgba(245,193,0,.2),rgba(156,137,255,.2));color:var(--gold);border:1px solid rgba(245,193,0,.3)}
 .xpbar-wrap{height:8px;background:rgba(255,255,255,.2);border-radius:6px;overflow:hidden}
 .xpbar-fill{height:100%;background:linear-gradient(90deg,#52B788,#95D5B2);
   border-radius:4px;transition:width .6s ease}
@@ -276,12 +268,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
   box-shadow:0 4px 16px rgba(82,183,136,.15)}
 .xp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .xp-txt{font-size:12px;color:#fff;font-weight:700;opacity:.85}
-[data-theme="light"] .xp-card{
-  background:linear-gradient(135deg,#1B5E35,#2D7A47);
-  box-shadow:0 6px 20px rgba(27,94,53,.3);
-}
-[data-theme="light"] .xp-txt{color:rgba(255,255,255,.9)!important}
-[data-theme="light"] .lv-badge{box-shadow:0 3px 10px rgba(0,0,0,.2)}
 
 .stats-row{display:flex;gap:10px;margin:0 14px 14px}
 .stat-c{flex:1;background:var(--card-bg);border-radius:14px;
@@ -296,10 +282,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
   border-radius:18px;padding:18px;border:1.5px solid rgba(82,183,136,.35);
   cursor:pointer;position:relative;overflow:hidden;
   box-shadow:0 6px 24px rgba(0,0,0,.18)}
-[data-theme="light"] .daily-banner{
-  background:linear-gradient(135deg,#1B4A22 0%,#2D6A32 100%);
-  box-shadow:0 6px 24px rgba(27,74,34,.25);
-}
 .daily-banner::before{content:'';position:absolute;top:-20px;right:-20px;
   width:100px;height:100px;border-radius:50%;
   background:rgba(245,193,0,.07);pointer-events:none}
@@ -661,13 +643,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 .pm-ic{font-size:17px;width:26px;text-align:center;color:var(--text2)}
 .pm-lb{flex:1;font-size:14px;font-weight:700}
 .pm-ar{color:var(--text3);font-size:12px}
-.toggle{width:46px;height:25px;background:var(--green);border-radius:13px;
-  position:relative;cursor:pointer;transition:background .3s;flex-shrink:0}
-.toggle::after{content:'';position:absolute;right:2px;top:2px;width:21px;height:21px;
-  background:#fff;border-radius:50%;transition:right .25s;
-  box-shadow:0 2px 4px rgba(0,0,0,.3)}
-.toggle.off{background:rgba(255,255,255,.1)}
-.toggle.off::after{right:23px}
 
 /* ── SIDEBAR ── */
 #sb-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;
@@ -752,11 +727,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
   --card-bg:var(--bg2);
   --item-bg:var(--bg3);
 }
-:root[data-theme="light"]{
-  --card-bg:#FFFFFF;
-  --item-bg:#F0F4F0;
-}
-
+:root
 /* ── HEADER محسّن ── */
 .hdr{
   background:var(--bg2);
@@ -949,27 +920,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 }
 
 /* ── وضع نهاري: تعديلات إضافية ── */
-[data-theme="light"] .hdr{
-  background:#FFFFFF;
-  box-shadow:0 2px 12px rgba(0,0,0,.06);
-}
-[data-theme="light"] .chi:active{background:#F5F5F5}
-[data-theme="light"] .daily-banner{
-  background:linear-gradient(135deg,#1B4A20 0%,#2A6A30 100%);
-}
-[data-theme="light"] #sb{
-  background:linear-gradient(180deg,#FFFFFF 0%,#F4F7F4 100%);
-}
-[data-theme="light"] .xp-card{
-  background:linear-gradient(135deg,#E8F5E9,#C8E6C9);
-  border-color:rgba(82,183,136,.3);
-}
-[data-theme="light"] .streak-card{
-  background:linear-gradient(135deg,#1B5E35 0%,#2D7A47 60%,#1B5E35 100%);
-  border-color:rgba(82,183,136,.4);
-  box-shadow:0 6px 24px rgba(27,94,53,.3);
-}
-[data-theme="light"] #toast{background:rgba(10,30,10,.92)}
 
 
 /* ════════════════════════════════════
@@ -1003,8 +953,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 /* ── Stat cards ── */
 .stat-v{font-size:26px;font-weight:900;letter-spacing:-.5px;color:var(--gold)}
 .stat-ic{font-size:20px;margin-bottom:6px}
-[data-theme="light"] .stat-c{background:#fff;border-color:rgba(82,183,136,.2)}
-[data-theme="light"] .stat-l{color:var(--text2)}
 .stat-ic{font-size:18px;margin-bottom:4px}
 
 /* ── Daily banner ── */
@@ -1072,27 +1020,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 .path-cnt{font-size:12px;margin-top:3px}
 
 /* ── Light mode specific ── */
-[data-theme="light"] .spl-tag{background:rgba(255,255,255,.6)}
-[data-theme="light"] .det-tab{color:var(--text2)}
-[data-theme="light"] .det-tab.act{color:var(--gold)}
-[data-theme="light"] .srch-inp{color:var(--text)}
-[data-theme="light"] .srch-inp::placeholder{color:var(--text3)}
-[data-theme="light"] .out-box{color:var(--text)}
-[data-theme="light"] .concept-body{color:var(--text)}
-[data-theme="light"] .concept-ttl{color:var(--text)}
-[data-theme="light"] .hint-txt{color:var(--text)}
-[data-theme="light"] .ex-row{color:var(--text)}
-[data-theme="light"] .chi-num{color:var(--text3)}
-[data-theme="light"] .lb-sub{color:var(--text2)}
-[data-theme="light"] .auth-inp{background:#fff;color:#0B1A0C}
-[data-theme="light"] .auth-inp::placeholder{color:#7A9A78}
-[data-theme="light"] .toggle.off{background:rgba(0,0,0,.1)}
 
-[data-theme="light"] #toast{
-  background:rgba(10,30,10,.88)!important;
-  color:#fff!important;
-  border-color:rgba(82,183,136,.3)!important;
-}
 </style>
 <!-- Firebase -->
 <script type="module">
@@ -1334,7 +1262,7 @@ window._fbReady=true;
     <div class="h-user">
       <div class="ava" id="h-ava">م</div>
       <div>
-        <div class="h-hi">👋 مرحباً</div>
+        <div class="h-hi" id="h-hi">👋 مرحباً</div>
         <div class="h-nm" id="h-nm">محمد</div>
       </div>
     </div>
@@ -1798,11 +1726,6 @@ window._fbReady=true;
       <div class="pm-item" onclick="go('daily')">
         <i class="pm-ic fa-solid fa-calendar-day" style="color:var(--green)"></i>
         <span class="pm-lb">تحدي اليوم</span><i class="pm-ar fa-solid fa-chevron-left"></i>
-      </div>
-      <div class="pm-item">
-        <i id="dk-icon" class="pm-ic fa-solid fa-moon" style="color:var(--purple)"></i>
-        <span class="pm-lb" id="dk-label">الوضع الداكن</span>
-        <div class="toggle" id="dk-toggle" onclick="toggleDark()"></div>
       </div>
       <div class="pm-item" onclick="resetProgress()">
         <i class="pm-ic fa-solid fa-rotate-left" style="color:var(--red)"></i>
@@ -2429,7 +2352,56 @@ const CHALLENGES = [
    code:"class Calculator {\n  constructor(initial = 0) {\n    this.result = initial;\n  }\n  add(n) { this.result += n; return this; }\n  subtract(n) { /* اكتب */ }\n  multiply(n) { /* اكتب */ }\n  divide(n) { /* اكتب */ }\n  getResult() { return this.result; }\n}",fn:"Calculator",
    customCheck:(r,a)=>{try{return new r(10).add(5).multiply(2).subtract(3).getResult()===27&&new r(100).divide(4).add(5).getResult()===30;}catch(e){return false;}},
    customCheckDesc:"Calculator(10).add(5).multiply(2).subtract(3) = 27",
-   tests:[{a:[],e:null}]}
+   tests:[{a:[],e:null}]},
+
+{id:55,title:"ماذا بعد؟ طريقك للاحتراف",diff:"خاص",xp:100,cat:"🎓 إتمام",
+  type:"final",
+  icon:"fa-trophy",
+  concept:`أكملت رحلة <strong>CodeNile</strong> كاملةً 🎉 — الآن الفرق بين المبتدئ والمحترف هو شيء واحد فقط: <strong>بناء مشاريع حقيقية</strong>. الكود الذي تكتبه لنفسك يعلّمك أكثر من مئة تحدٍّ.`,
+  desc:`
+<div style="display:flex;flex-direction:column;gap:14px">
+
+  <div style="background:linear-gradient(135deg,rgba(245,193,0,.12),rgba(245,193,0,.05));border:1.5px solid rgba(245,193,0,.3);border-radius:16px;padding:16px">
+    <div style="font-size:15px;font-weight:900;color:var(--gold);margin-bottom:12px">🚀 مشاريع تبنيها الآن</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--text2)">
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">01</span><div><strong style="color:var(--text)">محفظة أعمال شخصية</strong><br>موقع يعرض مشاريعك بـ HTML/CSS/JS — أول ما يراه المشغِّل</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">02</span><div><strong style="color:var(--text)">تطبيق قائمة مهام</strong><br>localStorage + CRUD كامل — يُثبت فهمك للـ DOM والبيانات</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">03</span><div><strong style="color:var(--text)">تطبيق طقس بـ API</strong><br>fetch + async/await + عرض بيانات حقيقية — قفزة كبيرة</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">04</span><div><strong style="color:var(--text)">مشروع بـ React أو Vue</strong><br>اختر إطار عمل واحد وابنِ فيه نسخة بسيطة من تطبيق يومي</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">05</span><div><strong style="color:var(--text)">Clone لموقع مشهور</strong><br>انسخ واجهة Twitter أو Notion — الأفضل لتعلم CSS المتقدم</div></div>
+    </div>
+  </div>
+
+  <div style="background:rgba(82,183,136,.08);border:1.5px solid rgba(82,183,136,.25);border-radius:16px;padding:16px">
+    <div style="font-size:15px;font-weight:900;color:var(--green);margin-bottom:12px">💡 نصائح المحترفين</div>
+    <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--text2)">
+      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">اقرأ كود الآخرين</strong> — GitHub مليء بمشاريع مفتوحة. افهم كيف يفكر المحترفون</div></div>
+      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">علّم ما تتعلمه</strong> — اكتب مقالاً أو اشرح مفهوماً لصديق، هذا يُرسّخ المعرفة</div></div>
+      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">Node.js هي خطوتك التالية</strong> — نفس JavaScript لكن على الـ server، بابٌ لعالم كامل</div></div>
+      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">لا تتوقف عند الدروس</strong> — كل ساعة تقضيها تبني أهم من عشر ساعات تشاهد</div></div>
+      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">المجتمع قوتك</strong> — انضم لـ Discord أو مجموعات المبرمجين العرب، اسأل ولا تتردد</div></div>
+    </div>
+  </div>
+
+  <div style="background:rgba(156,137,255,.08);border:1.5px solid rgba(156,137,255,.25);border-radius:16px;padding:16px">
+    <div style="font-size:15px;font-weight:900;color:var(--purple);margin-bottom:12px">🗺️ خارطة طريق ما بعد CodeNile</div>
+    <div style="font-size:12px;color:var(--text2);display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></div><span><strong style="color:var(--text)">الآن:</strong> ابنِ 3 مشاريع حقيقية وارفعها على GitHub</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0"></div><span><strong style="color:var(--text)">بعد شهر:</strong> تعلّم React + الـ APIs (RESTful)</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0"></div><span><strong style="color:var(--text)">بعد 3 أشهر:</strong> Node.js + قاعدة بيانات (MongoDB أو Supabase)</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0"></div><span><strong style="color:var(--text)">بعد 6 أشهر:</strong> مشروع كامل Full Stack وانشره للعالم</span></div>
+    </div>
+  </div>
+
+</div>`,
+  hint:"الاحتراف ليس وجهة، هو عادة يومية. أنت الآن تمتلك الأساس — ابنِ عليه كل يوم شيئاً واحداً 🏗️",
+  exs:[{i:"مشاريع + مجتمع + صبر",o:"احتراف 🎯"}],
+  code:"// 🎉 أكملت جميع تحديات CodeNile!\n// أنت الآن جاهز لبناء أشياء حقيقية.\n\n// خطوتك القادمة:\nconst nextStep = {\n  today:   'ابدأ مشروعك الأول الآن',\n  thisWeek:'ارفعه على GitHub',\n  thisMonth:'تعلّم React',\n  goal:    'Full Stack Developer 🚀'\n};\n\nconsole.log('رحلتك بدأت للتو...');\nconsole.log(nextStep.today);",
+  fn:null,
+  tests:[{a:[],e:null}],
+  customCheck:()=>true,
+  customCheckDesc:"أكملت جميع التحديات 🎉"
+}
 
 ];
 
@@ -2568,6 +2540,33 @@ function saveState(){
 function getLv(xp){ return Math.floor(xp/500)+1; }
 function xpInLv(xp){ return xp%500; }
 function xpPct(xp){ return ((xp%500)/500)*100; }
+
+function getLvName(lv){
+  const names=['مبتدئ','متعلم','مبرمج','متقدم','خبير','محترف','أسطورة','نينجا JS','عبقري','أسطورة النيل'];
+  return names[Math.min(lv-1, names.length-1)];
+}
+
+function getGreeting(){
+  const h=new Date().getHours();
+  if(h>=5&&h<12) return 'صباح الخير';
+  if(h>=12&&h<17) return 'مساء الخير';
+  if(h>=17&&h<21) return 'مساء النور';
+  return 'تصبح على خير';
+}
+
+function animateCount(el, target, dur=600){
+  if(!el) return;
+  const start=parseInt(el.textContent)||0;
+  if(start===target) return;
+  const step=Math.ceil(Math.abs(target-start)/(dur/16));
+  let cur=start;
+  const tick=()=>{
+    cur = target>cur ? Math.min(cur+step, target) : Math.max(cur-step, target);
+    el.textContent=cur;
+    if(cur!==target) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
 function xpToNext(xp){ return 500-(xp%500); }
 
 // ══════════════════════════════════════
@@ -2681,17 +2680,18 @@ function closeSB(){
 // ══════════════════════════════════════
 function renderHome(){
   const lv=getLv(S.xp);
-  document.getElementById('h-ava').textContent=S.username[0]||'م';
+  const lvName=getLvName(lv);
+  document.getElementById('h-ava').textContent=(S.username[0]||'م').toUpperCase();
   document.getElementById('h-nm').textContent=S.username;
-  document.getElementById('h-lv').innerHTML='<i class="fa-solid fa-star"></i> Lv. '+lv;
+  document.getElementById('h-hi').textContent=getGreeting()+' 👋';
+  document.getElementById('h-lv').innerHTML='⭐ '+lvName+' · Lv.'+lv;
   document.getElementById('h-xp').textContent=xpInLv(S.xp)+' / 500 XP';
   document.getElementById('h-xpbar').style.width=xpPct(S.xp)+'%';
 
   const earned = calcBadges();
-  document.getElementById('h-badges').textContent=earned.length;
-  document.getElementById('s-streak').textContent=S.streak;
-  document.getElementById('s-solved').textContent=S.solved.length;
-  // Update XP badge  
+  animateCount(document.getElementById('h-badges'), earned.length);
+  animateCount(document.getElementById('s-streak'), S.streak);
+  animateCount(document.getElementById('s-solved'), S.solved.length);
   document.getElementById('pf-xp-badge').textContent=S.xp+' XP';
 
   // Daily banner
@@ -2704,12 +2704,13 @@ function renderHome(){
     <span class="diff ${diffClass(dc.diff)}">${dc.diff}</span>
     <div class="db-desc">${dc.desc.replace(/<[^>]*>/g,'').slice(0,80)}...</div>
     ${isDone
-      ? '<div style="background:rgba(82,183,136,.2);color:var(--green);border-radius:10px;padding:11px;text-align:center;font-weight:700">✅ تم الحل اليوم!</div>'
+      ? '<div style="background:rgba(82,183,136,.2);color:var(--green);border-radius:10px;padding:11px;text-align:center;font-weight:700">✅ أنجزت تحدي اليوم! +'+dc.xp+' XP</div>'
       : '<button class="db-btn" onclick="startDailyChallenge('+dc.id+',\''+todayKey+'\',20);event.stopPropagation()">▶ ابدأ التحدي (+'+dc.xp+' XP)</button>'}
   `;
 
-  // Challenges preview (first 5)
-  const preview = CHALLENGES.slice(0,6);
+  // Challenges preview — show unsolved first, max 6
+  const unsolved = CHALLENGES.filter(c=>!S.solved.includes(c.id)&&c.type!=='final');
+  const preview = unsolved.length>0 ? unsolved.slice(0,6) : CHALLENGES.slice(0,6);
   document.getElementById('h-ch-list').innerHTML = preview.map(c=>challengeItemHTML(c)).join('');
 
   // Progress
@@ -2718,9 +2719,9 @@ function renderHome(){
   const pct = total>0 ? Math.round((done/total)*100) : 0;
   document.getElementById('h-prog-pct').textContent=pct+'%';
   document.getElementById('h-prog-bar').style.width=pct+'%';
-  document.getElementById('h-prog-lbl').textContent=done+' من '+total+' تحدي';
+  document.getElementById('h-prog-lbl').textContent=done+' من '+total+' تحدي مكتمل';
 
-  // Render badges row on home
+  // Badges row on home
   const badgesRow=document.getElementById('h-badges-row');
   if(badgesRow){
     if(earned.length===0){
@@ -2810,7 +2811,7 @@ function openChallenge(id){
 
   document.getElementById('det-hdr').textContent = c.title;
   document.getElementById('det-ttl').textContent = c.title;
-  document.getElementById('det-diff').className='diff '+diffClass(c.diff);
+  document.getElementById('det-diff').className='diff '+(c.type==='final'?'diff-sp':diffClass(c.diff));
   document.getElementById('det-diff').textContent=c.diff;
   document.getElementById('det-xp').textContent='+'+c.xp+' XP';
   document.getElementById('det-cat').textContent=c.cat;
@@ -2832,17 +2833,39 @@ function openChallenge(id){
   document.getElementById('det-exs').innerHTML=exHTML;
   document.getElementById('det-exs2').innerHTML=exHTML;
 
-  // Code editor - init with CodeMirror
-  const code = S.solved.includes(c.id)
-    ? c.code + '\n// ✅ تم حل هذا التحدي بنجاح!'
-    : c.code;
-  if(typeof CodeMirror !== 'undefined'){
-    setTimeout(()=>{ initEditor(code); },60);
+  // Final challenge — auto mark solved, show special UI
+  if(c.type==='final'){
+    if(!S.solved.includes(c.id)){
+      S.solved.push(c.id);
+      S.xp += c.xp;
+      updateStreak();
+      checkBadges();
+      saveState();
+      renderHome();
+    }
+    const code = '// 🎉 أكملت جميع تحديات CodeNile!\n// أنت الآن جاهز لبناء أشياء حقيقية.\n\n// خطوتك القادمة:\nconst nextStep = {\n  today:   \'ابدأ مشروعك الأول الآن\',\n  thisWeek:\'ارفعه على GitHub\',\n  thisMonth:\'تعلّم React\',\n  goal:    \'Full Stack Developer 🚀\'\n};\n\nconsole.log(\'رحلتك بدأت للتو...\');\nconsole.log(nextStep.today);';
+    if(typeof CodeMirror !== 'undefined'){
+      setTimeout(()=>{ initEditor(code); },60);
+    } else {
+      const ed=document.getElementById('code-ed');
+      ed.value=code;
+    }
+    document.getElementById('out-box').innerHTML='<div style="color:var(--green);font-weight:700;font-size:14px;text-align:center;padding:16px">✅ أكملت جميع التحديات! الرحلة بدأت للتو 🚀</div>';
+    switchTabById('desc');
   } else {
-    const ed=document.getElementById('code-ed');
-    ed.value=code;
+    // Normal challenge
+    const code = S.solved.includes(c.id)
+      ? c.code + '\n// ✅ تم حل هذا التحدي بنجاح!'
+      : c.code;
+    if(typeof CodeMirror !== 'undefined'){
+      setTimeout(()=>{ initEditor(code); },60);
+    } else {
+      const ed=document.getElementById('code-ed');
+      ed.value=code;
+    }
+    document.getElementById('out-box').innerHTML='<div style="color:var(--text3)">اضغط ▶ تشغيل لاختبار الكود...</div>';
+    switchTabById('desc');
   }
-  document.getElementById('out-box').innerHTML='<div style="color:var(--text3)">اضغط ▶ تشغيل لاختبار الكود...</div>';
 
   // Bookmark icon
   const _bmBtn = document.getElementById('bm-btn');
@@ -3705,52 +3728,73 @@ function renderProfile(){
   if(emailEl) emailEl.textContent=S.email||'';
 }
 
+function showModal({title,body,confirmTxt='تأكيد',confirmCls='gbtn',cancelTxt='إلغاء',onConfirm,input}){
+  const existing=document.getElementById('_cm');
+  if(existing) existing.remove();
+  const m=document.createElement('div');
+  m.id='_cm';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:0 0 env(safe-area-inset-bottom)';
+  m.innerHTML=`
+    <div style="background:var(--bg2);border-radius:22px 22px 0 0;padding:24px 20px 28px;width:100%;max-width:480px;border-top:1.5px solid var(--border)">
+      <div style="width:36px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px"></div>
+      <div style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:8px;text-align:center">${title}</div>
+      ${body?`<div style="font-size:13px;color:var(--text2);text-align:center;line-height:1.7;margin-bottom:${input?'16px':'24px'}">${body}</div>`:''}
+      ${input?`<input id="_cmi" type="text" value="${input}" style="width:100%;background:var(--bg3);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-size:15px;color:var(--text);font-family:inherit;margin-bottom:16px;outline:none;text-align:right">`:''}
+      <button class="${confirmCls}" id="_cmc" style="width:100%;margin-bottom:10px">${confirmTxt}</button>
+      <button class="btn-ol" id="_cmx" style="width:100%;background:transparent">${cancelTxt}</button>
+    </div>`;
+  document.body.appendChild(m);
+  const close=()=>m.remove();
+  m.addEventListener('click',e=>{if(e.target===m)close();});
+  document.getElementById('_cmx').onclick=close;
+  document.getElementById('_cmc').onclick=()=>{
+    const val=input?document.getElementById('_cmi').value:null;
+    close();
+    onConfirm(val);
+  };
+  if(input) setTimeout(()=>{const i=document.getElementById('_cmi');if(i){i.focus();i.select();}},100);
+}
+
 function confirmSignOut(){
-  if(confirm('هل تريد تسجيل الخروج من CodeNile؟')){
-    doSignOut();
-  }
+  showModal({
+    title:'تسجيل الخروج',
+    body:'هل تريد الخروج من حسابك في CodeNile؟',
+    confirmTxt:'تسجيل الخروج 🚪',
+    confirmCls:'gbtn',
+    onConfirm:()=>doSignOut()
+  });
 }
 
 function editProfile(){
-  const name=prompt('أدخل اسمك الجديد:', S.username);
-  if(name&&name.trim()){
-    S.username=name.trim();
-    saveState();
-    renderProfile();
-    toast('✅ تم تحديث الاسم');
-  }
-}
-
-function toggleDark(){
-  const t=document.getElementById('dk-toggle');
-  const isLight = document.documentElement.getAttribute('data-theme')==='light';
-  if(isLight){
-    document.documentElement.removeAttribute('data-theme');
-    t.classList.remove('off');
-    S.darkMode=true;
-    const ic=document.getElementById('dk-icon');
-    if(ic){ic.className='pm-ic fa-solid fa-moon';ic.style.color='var(--purple)';}
-    toast('🌙 الوضع الداكن');
-  } else {
-    document.documentElement.setAttribute('data-theme','light');
-    t.classList.add('off');
-    S.darkMode=false;
-    const ic=document.getElementById('dk-icon');
-    if(ic){ic.className='pm-ic fa-solid fa-sun';ic.style.color='var(--gold)';}
-    toast('🌞 الوضع النهاري');
-  }
-  saveState();
+  showModal({
+    title:'تعديل الاسم',
+    input:S.username,
+    confirmTxt:'حفظ ✅',
+    onConfirm:(val)=>{
+      if(!val||!val.trim()) return;
+      S.username=val.trim();
+      saveState();
+      renderProfile();
+      toast('✅ تم تحديث الاسم');
+    }
+  });
 }
 
 function resetProgress(){
-  if(confirm('هل أنت متأكد من إعادة ضبط كل التقدم؟ لا يمكن التراجع عن هذا!')){
-    S={xp:0,solved:[],bookmarks:[],streak:1,bestStreak:1,perfect:0,firstVisit:false,
-      dailyDone:[],lastDay:null,badges:[],darkMode:S.darkMode,username:S.username,
-      uid:S.uid,email:S.email};
-    saveState();
-    renderProfile();
-    toast('🔄 تم إعادة ضبط التقدم');
-  }
+  showModal({
+    title:'⚠️ إعادة ضبط التقدم',
+    body:'سيتم حذف كل تقدمك — XP، تحديات محلولة، شارات، سلسلة الأيام. لا يمكن التراجع.',
+    confirmTxt:'إعادة الضبط 🗑️',
+    confirmCls:'gbtn',
+    onConfirm:()=>{
+      S={xp:0,solved:[],bookmarks:[],streak:1,bestStreak:1,perfect:0,firstVisit:false,
+        dailyDone:[],lastDay:null,badges:[],darkMode:S.darkMode,username:S.username,
+        uid:S.uid,email:S.email};
+      saveState();
+      renderProfile();
+      toast('🔄 تم إعادة ضبط التقدم');
+    }
+  });
 }
 
 // ══════════════════════════════════════
@@ -4047,28 +4091,6 @@ async function executeDeleteAccount(){
   }
 }
 
-// تطبيق الثيم عند التحميل
-(function(){
-  try{
-    const raw=localStorage.getItem('codenile_v1');
-    if(!raw) return;
-    const s=JSON.parse(raw);
-    if(s.darkMode===false){
-      document.documentElement.setAttribute('data-theme','light');
-      setTimeout(function(){
-        try{
-          const t=document.getElementById('dk-toggle');
-          const ic=document.getElementById('dk-icon');
-          const lb=document.getElementById('dk-label');
-          if(t)t.classList.add('off');
-          if(ic){ic.className='pm-ic fa-solid fa-sun';ic.style.color='var(--gold)';}
-          if(lb)lb.textContent='الوضع النهاري';
-        }catch(e){}
-      },200);
-    }
-  }catch(e){}
-})();
-
 // ══ Bookmarks Screen ══
 function openBookmarks(){
   renderBookmarks();
@@ -4117,66 +4139,129 @@ window.addEventListener('unhandledrejection',function(e){
   e.preventDefault();
 });
 // ══ AdMob — CodeNile ══
-const ADMOB_BANNER_ID='ca-app-pub-7608701150166997/1425385970';
-const ADMOB_INTERSTITIAL_ID='ca-app-pub-7608701150166997/3121988322';
-const ADMOB_REWARDED_ID='ca-app-pub-7608701150166997/3804137301';
-let _admobReady=false,_interstitialLoaded=false,_challengesDone=0;
+const ADMOB_BANNER_ID      = 'ca-app-pub-7608701150166997/1425385970';
+const ADMOB_INTERSTITIAL_ID = 'ca-app-pub-7608701150166997/3121988322';
+const ADMOB_REWARDED_ID    = 'ca-app-pub-7608701150166997/3804137301';
+
+// Enum values (strings) — no import needed in non-module context
+const BannerAdSize     = { ADAPTIVE_BANNER:'ADAPTIVE_BANNER', BANNER:'BANNER' };
+const BannerAdPosition = { BOTTOM_CENTER:'BOTTOM_CENTER', TOP_CENTER:'TOP_CENTER' };
+
+let _admobReady=false, _interstitialLoaded=false, _challengesDone=0;
+
+function _getAdMob(){
+  // Capacitor Community AdMob v6+ registers here
+  return window.Capacitor?.Plugins?.AdMob || null;
+}
+
 function initAdMob(){
-  if(!window.Capacitor||!window.CapacitorAdmob)return;
-  const{AdMob,BannerAdSize,BannerAdPosition}=window.CapacitorAdmob;
-  AdMob.addListener('onRewardedVideoAdReward',function(){
-    try{
-      const hl=document.getElementById('hint-locked');
-      const hu=document.getElementById('hint-unlocked');
-      if(hl)hl.style.display='none';
-      if(hu)hu.style.display='block';
-    }catch(e){}
+  if(!window.Capacitor) return;
+  const AdMob = _getAdMob();
+  if(!AdMob){ console.warn('AdMob plugin not found'); return; }
+
+  // Rewarded ad reward event
+  AdMob.addListener('onRewardVideoAdReward', _onRewardEarned);
+  AdMob.addListener('onRewardedVideoAdReward', _onRewardEarned); // fallback older name
+
+  // Interstitial closed — reload
+  AdMob.addListener('interstitialAdClosed', ()=>{
+    _interstitialLoaded = false;
+    setTimeout(_loadInterstitial, 2000);
   });
-  AdMob.addListener('onInterstitialAdClosed',()=>{_interstitialLoaded=false;setTimeout(_loadInterstitial,1000);});
-  AdMob.initialize({initializeForTesting:false}).then(()=>{
-    _admobReady=true;
-    AdMob.showBanner({adId:ADMOB_BANNER_ID,adSize:BannerAdSize.ADAPTIVE_BANNER,position:BannerAdPosition.BOTTOM_CENTER,margin:0,isTesting:false});
-    _loadInterstitial();
+  AdMob.addListener('onInterstitialAdClosed', ()=>{
+    _interstitialLoaded = false;
+    setTimeout(_loadInterstitial, 2000);
   });
+
+  // Initialize
+  AdMob.initialize({ requestTrackingAuthorization: false, initializeForTesting: false })
+    .then(()=>{
+      _admobReady = true;
+      _showBanner(AdMob);
+      _loadInterstitial();
+    })
+    .catch(e => console.warn('AdMob init error:', e));
 }
+
+function _onRewardEarned(){
+  const hl = document.getElementById('hint-locked');
+  const hu = document.getElementById('hint-unlocked');
+  if(hl) hl.style.display = 'none';
+  if(hu) hu.style.display = 'block';
+}
+
+function _showBanner(AdMob){
+  AdMob.showBanner({
+    adId:     ADMOB_BANNER_ID,
+    adSize:   BannerAdSize.ADAPTIVE_BANNER,
+    position: BannerAdPosition.BOTTOM_CENTER,
+    margin:   0,
+    isTesting: false
+  }).catch(e => console.warn('Banner error:', e));
+}
+
 function _loadInterstitial(){
-  if(!_admobReady||!window.CapacitorAdmob)return;
-  window.CapacitorAdmob.AdMob.prepareInterstitial({adId:ADMOB_INTERSTITIAL_ID,isTesting:false})
-    .then(()=>{_interstitialLoaded=true;}).catch(()=>{_interstitialLoaded=false;});
+  const AdMob = _getAdMob();
+  if(!_admobReady || !AdMob) return;
+  AdMob.prepareInterstitial({ adId: ADMOB_INTERSTITIAL_ID, isTesting: false })
+    .then(()=>{ _interstitialLoaded = true; })
+    .catch(()=>{ _interstitialLoaded = false; });
 }
+
 function onChallengeCompleted(){
   _challengesDone++;
-  if(_challengesDone%3===0&&_admobReady&&_interstitialLoaded)
-    window.CapacitorAdmob.AdMob.showInterstitial().catch(()=>{});
+  if(_challengesDone % 3 !== 0) return;
+  const AdMob = _getAdMob();
+  if(!_admobReady || !_interstitialLoaded || !AdMob) return;
+  AdMob.showInterstitial().catch(()=>{});
 }
+
 async function watchAdForHint(){
   function showHint(){
-    try{
-      const hl=document.getElementById('hint-locked');
-      const hu=document.getElementById('hint-unlocked');
-      if(hl)hl.style.display='none';
-      if(hu)hu.style.display='block';
-    }catch(e){}
+    const hl = document.getElementById('hint-locked');
+    const hu = document.getElementById('hint-unlocked');
+    if(hl) hl.style.display = 'none';
+    if(hu) hu.style.display = 'block';
   }
-  if(!_admobReady||!window.CapacitorAdmob){showHint();return;}
-  const btn=document.getElementById('btn-watch-ad');
-  if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري التحميل...';}
+
+  const AdMob = _getAdMob();
+  if(!_admobReady || !AdMob){ showHint(); return; }
+
+  const btn = document.getElementById('btn-watch-ad');
+  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري التحميل...'; }
+
   try{
-    await window.CapacitorAdmob.AdMob.prepareRewardVideoAd({adId:ADMOB_REWARDED_ID,isTesting:false});
-    await window.CapacitorAdmob.AdMob.showRewardVideoAd();
-  }catch(e){showHint();}
-  if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-play"></i> شاهد واحصل على التلميح';}
+    // v6+ method names: prepareRewardAd / showRewardAd
+    // v5 and below: prepareRewardVideoAd / showRewardVideoAd
+    if(typeof AdMob.prepareRewardAd === 'function'){
+      await AdMob.prepareRewardAd({ adId: ADMOB_REWARDED_ID, isTesting: false });
+      await AdMob.showRewardAd();
+    } else {
+      await AdMob.prepareRewardVideoAd({ adId: ADMOB_REWARDED_ID, isTesting: false });
+      await AdMob.showRewardVideoAd();
+    }
+  } catch(e){
+    console.warn('Rewarded ad error:', e);
+    showHint(); // show hint on error so user isn't stuck
+  }
+
+  if(btn){ btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-play"></i> شاهد واحصل على التلميح'; }
 }
-const _origOpen=openChallenge;
-openChallenge=function(id){
-  try{
-    const hl=document.getElementById('hint-locked');
-    const hu=document.getElementById('hint-unlocked');
-    if(hl)hl.style.display='block';
-    if(hu)hu.style.display='none';
-  }catch(e){}
-  try{_origOpen(id);}catch(e){console.error('openChallenge error:',e);}
+
+// Reset hint state on each challenge open
+const _origOpen = openChallenge;
+openChallenge = function(id){
+  const hl = document.getElementById('hint-locked');
+  const hu = document.getElementById('hint-unlocked');
+  if(hl) hl.style.display = 'block';
+  if(hu) hu.style.display = 'none';
+  try{ _origOpen(id); } catch(e){ console.error('openChallenge:', e); }
 };
-document.addEventListener('deviceready',()=>initAdMob(),{once:true});
-if(window.Capacitor)setTimeout(()=>{if(!_admobReady)initAdMob();},800);
+
+// Init — try both deviceready (Cordova) and Capacitor ready
+document.addEventListener('deviceready', ()=> initAdMob(), { once: true });
+if(window.Capacitor){
+  // Capacitor fires no deviceready, init after DOM settles
+  setTimeout(()=>{ if(!_admobReady) initAdMob(); }, 1000);
+}
 </script></body></html>
