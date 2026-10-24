@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "تعلم JavaScript من الصفر حتى الاحتراف",
   "scripts": {
-    "build": "mkdir -p www && cp index.html www/",
+    "build": "mkdir -p www && cp index.html challenges.js www/",
     "sync":  "npm run build && npx cap sync android",
     "open":  "npx cap open android"
   },

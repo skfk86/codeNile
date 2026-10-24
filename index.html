@@ -74,9 +74,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 #app{width:100%;height:100%;position:relative;overflow:hidden}
 .scr{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
 .scr.on{display:flex}
-.sc{flex:1;overflow-y:auto;padding:14px 14px calc(var(--nav)+var(--banner)+14px)}
+.sc{flex:1;overflow-y:auto;padding:14px 14px calc(var(--nav) + var(--banner) + 14px)}
 .sc::-webkit-scrollbar{display:none}
-.sc0{flex:1;overflow-y:auto;padding-bottom:calc(var(--nav)+var(--banner)+14px)}
+.sc0{flex:1;overflow-y:auto;padding-bottom:calc(var(--nav) + var(--banner) + 14px)}
 .sc0::-webkit-scrollbar{display:none}
 
 /* ── SPLASH ── */
@@ -355,7 +355,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
   transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;
   font-family:'Cairo',sans-serif}
 .tabi.act{color:var(--gold);border-bottom-color:var(--gold)}
-.tbc{display:none;padding:14px;padding-bottom:calc(var(--nav)+var(--banner)+14px);
+.tbc{display:none;padding:14px;padding-bottom:calc(var(--nav) + var(--banner) + 14px);
   overflow-y:auto;flex:1}
 .tbc::-webkit-scrollbar{display:none}
 .tbc.on{display:block}
@@ -425,6 +425,22 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 .cm-s-material-darker .cm-property{color:#e5c07b!important}
 .cm-s-material-darker .cm-atom{color:#d19a66!important}
 #code-ed{display:none}
+#pg-ed{display:none;width:100%;min-height:220px;background:#212121;color:#eee;font-family:monospace;border:0;padding:10px}
+.pg-ed-wrap{border-radius:14px;overflow:hidden;border:1px solid var(--border);direction:ltr;text-align:left}
+.pg-ed-wrap .CodeMirror{min-height:240px;font-size:14px}
+.quick-c{flex:1;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:10px 6px;text-align:center;font-size:11px;font-weight:800;color:var(--text2);cursor:pointer;display:flex;flex-direction:column;gap:4px;align-items:center}
+.quick-c:active{transform:scale(.97)}
+.ls-card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.ls-head{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer}
+.ls-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#0B1A0C;flex-shrink:0;font-size:13px}
+.ls-chev{color:var(--text2);transition:transform .2s}
+.ls-card.open .ls-chev{transform:rotate(-90deg)}
+.ls-body{display:none;padding:0 14px 14px}
+.ls-card.open .ls-body{display:block}
+.ls-txt{font-size:14px;line-height:1.9;color:var(--text)}
+.ls-txt p{margin:0 0 8px}
+.ls-txt code{background:rgba(245,193,0,.12);color:var(--gold);padding:1px 6px;border-radius:5px;direction:ltr;unicode-bidi:embed}
+.ls-code{background:#1b1b1b;color:#e6e6e6;border-radius:10px;padding:12px;font-size:12.5px;line-height:1.6;direction:ltr;text-align:left;overflow-x:auto;margin:8px 0 0;white-space:pre}
 /* Error line highlight */
 .cm-error-line{background:rgba(255,77,77,.12)!important;border-left:3px solid var(--red)}
 .out-box{background:var(--item-bg);border-radius:12px;padding:12px 13px;
@@ -677,7 +693,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 .sb-div{height:1px;background:var(--border);margin:6px 14px}
 
 /* ── TOAST ── */
-#toast{position:fixed;bottom:calc(var(--nav)+var(--banner)+14px);left:50%;
+#toast{position:fixed;bottom:calc(var(--nav) + var(--banner) + 14px);left:50%;
   transform:translateX(-50%) translateY(16px);
   background:rgba(25,45,25,.95);color:var(--text);
   padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;
@@ -1087,6 +1103,11 @@ window._fbSaveProgress=async(uid,data)=>{
       solved:    data.solved,
       solvedIds: data.solvedIds||[],
       level:     data.level,
+      weekKey:   data.weekKey||null,
+      weekXp:    data.weekXp||0,
+      monthKey:  data.monthKey||null,
+      monthXp:   data.monthXp||0,
+      league:    data.league||0,
       updatedAt: serverTimestamp()
     },{merge:true});
   }catch(e){console.warn('save err',e);}
@@ -1108,6 +1129,22 @@ window._fbLoadLB=async()=>{
     const snap=await getDocs(q);
     return snap.docs.map(d=>({uid:d.id,...d.data()}));
   }catch(e){console.warn('lb err',e);return [];}
+};
+
+// ── Firestore: leaderboard by period field (weekXp / monthXp) ──
+window._fbLoadLBBy=async(field)=>{
+  try{
+    const q=query(collection(db,'users'),orderBy(field,'desc'),limit(100));
+    const snap=await getDocs(q);
+    return snap.docs.map(d=>({uid:d.id,...d.data()}));
+  }catch(e){console.warn('lb err',e);return [];}
+};
+// ── Firestore: extra challenges added without app update ──
+window._fbLoadExtraChallenges=async()=>{
+  try{
+    const snap=await getDocs(collection(db,'challenges_extra'));
+    return snap.docs.map(d=>d.data());
+  }catch(e){return [];}
 };
 
 window._fbReady=true;
@@ -1307,6 +1344,12 @@ window._fbReady=true;
       <div class="sec-lnk" onclick="go('daily')">عرض <i class="fa-solid fa-chevron-left"></i></div>
     </div>
     <div class="daily-banner" id="h-daily" onclick="go('daily')"></div>
+
+    <div style="display:flex;gap:10px;margin:4px 14px 6px">
+      <div class="quick-c" onclick="go('paths')"><div style="font-size:22px">📖</div><div>الدروس والمسارات</div></div>
+      <div class="quick-c" onclick="go('playground')"><div style="font-size:22px">🧪</div><div>الملعب الحر</div></div>
+      <div class="quick-c" onclick="go('leaderboard')"><div style="font-size:22px">🏆</div><div>الدوري الأسبوعي</div></div>
+    </div>
 
     <div class="sec-hdr">
       <div class="sec-ttl"><i class="fa-solid fa-code" style="color:var(--green)"></i> التحديات</div>
@@ -1552,6 +1595,7 @@ window._fbReady=true;
     <div class="hdr-title"><i class="fa-solid fa-ranking-star" style="color:var(--gold)"></i> لوحة المتصدرين</div>
     <div class="hsp"></div>
   </div>
+  <div id="lb-league"></div>
   <div class="lb-period">
     <div class="lb-ptab" onclick="setLbPeriod('weekly',this)">أسبوعي</div>
     <div class="lb-ptab act" onclick="setLbPeriod('monthly',this)">شهري</div>
@@ -1563,6 +1607,35 @@ window._fbReady=true;
     <div style="height:20px"></div>
   </div>
   <div id="bnav-lb"></div>
+</div>
+
+<!-- ════ PLAYGROUND ════ -->
+<div id="s-playground" class="scr">
+  <div class="hdr">
+    <div class="hbtn" onclick="go('home')"><i class="fa-solid fa-chevron-right"></i></div>
+    <div class="hdr-title">🧪 الملعب الحر</div>
+    <div class="hbtn" onclick="pgReset()" title="مثال"><i class="fa-solid fa-rotate-left"></i></div>
+  </div>
+  <div class="sc">
+    <div class="pg-ed-wrap"><textarea id="pg-ed" spellcheck="false" dir="ltr"></textarea></div>
+    <div style="display:flex;gap:8px;margin:10px 0">
+      <button class="gbtn" style="flex:2" onclick="pgRun()"><i class="fa-solid fa-play"></i> تشغيل</button>
+      <button class="btn-ol" style="flex:1" onclick="pgClear()"><i class="fa-solid fa-trash-can"></i> مسح</button>
+    </div>
+    <div class="out-box" id="pg-out"><div style="color:var(--text3)">اضغط ▶ تشغيل — الكود يُحفظ تلقائياً</div></div>
+  </div>
+  <div id="bnav-playground"></div>
+</div>
+
+<!-- ════ LESSONS ════ -->
+<div id="s-lessons" class="scr">
+  <div class="hdr">
+    <div class="hbtn" onclick="go('paths')"><i class="fa-solid fa-chevron-right"></i></div>
+    <div class="hdr-title" id="ls-title">الدروس</div>
+    <div class="hsp"></div>
+  </div>
+  <div class="sc" id="ls-list"></div>
+  <div id="bnav-lessons"></div>
 </div>
 
 <!-- ════ PROFILE ════ -->
@@ -1793,6 +1866,10 @@ window._fbReady=true;
     <div class="sb-item" onclick="go('paths');closeSB()">
       <i class="sb-ic fa-solid fa-map"></i><div class="sb-lb">مسارات التعلم</div>
     </div>
+    <div class="sb-item" onclick="go('playground');closeSB()">
+      <i class="sb-ic fa-solid fa-flask"></i><div class="sb-lb">الملعب الحر</div>
+      <div class="sb-badge">جديد</div>
+    </div>
     <div class="sb-div"></div>
     <div class="sb-item" onclick="go('badges');closeSB()">
       <i class="sb-ic fa-solid fa-medal"></i><div class="sb-lb">الشارات</div>
@@ -1845,598 +1922,8 @@ window._fbReady=true;
 
 <div id="toast"></div>
 </div>
-<script>// ══════════════════════════════════════
-// DATA — 50 تحدي JavaScript (مسار احترافي)
-// ══════════════════════════════════════
-const CHALLENGES = [
-// ── المسار 1: أساسي ──────────────────
-{id:1,title:"المتغيرات وأنواع البيانات",diff:"سهل",xp:10,cat:"أساسي",
-   concept:"المتغيرات هي حاويات للبيانات. <code>let</code> للمتغيرات القابلة للتغيير، <code>const</code> للثوابت. لدى JavaScript 6 أنواع أساسية: <strong>number, string, boolean, null, undefined, object</strong>. <code>typeof</code> يكشف نوع أي قيمة.",
-   desc:"اكتب دالة <strong>getType</strong> تستقبل قيمة وتعيد نوعها كنص باستخدام <code>typeof</code>.",
-   hint:"typeof 42 يعيد 'number'، typeof 'مرحبا' يعيد 'string'، typeof true يعيد 'boolean'",icon:"fa-tag",
-   exs:[{i:"getType(42)",o:"'number'"},{i:"getType('مرحبا')",o:"'string'"},{i:"getType(true)",o:"'boolean'"}],
-   code:"function getType(value) {\n  // اكتب هنا\n  \n}",fn:"getType",
-   tests:[{a:[42],e:"number"},{a:["hello"],e:"string"},{a:[true],e:"boolean"},{a:[undefined],e:"undefined"}]},
-
-{id:2,title:"شروط if / else",diff:"سهل",xp:10,cat:"أساسي",
-   concept:"<code>if/else</code> هي أساس اتخاذ القرارات. الشرط يُقيَّم إلى <code>true</code> أو <code>false</code>. يمكن تسلسل الشروط بـ<code>else if</code> للتعامل مع حالات متعددة.",
-   desc:"اكتب دالة <strong>classify</strong> تستقبل رقماً وتعيد: <code>'موجب'</code> إن كان أكبر من صفر، <code>'سالب'</code> إن كان أصغر من صفر، <code>'صفر'</code> إن كان يساوي صفراً.",
-   hint:"if (n > 0) return 'موجب'; else if (n < 0) return 'سالب'; else return 'صفر';",icon:"fa-code-branch",
-   exs:[{i:"classify(5)",o:"'موجب'"},{i:"classify(-3)",o:"'سالب'"},{i:"classify(0)",o:"'صفر'"}],
-   code:"function classify(n) {\n  // اكتب هنا\n  \n}",fn:"classify",
-   tests:[{a:[5],e:"موجب"},{a:[-3],e:"سالب"},{a:[0],e:"صفر"},{a:[100],e:"موجب"},{a:[-1],e:"سالب"}]},
-
-{id:3,title:"حلقة for",diff:"سهل",xp:10,cat:"أساسي",
-   concept:"حلقة <code>for</code> تنفّذ كوداً عدداً محدداً من المرات. تتكون من: <strong>تهيئة</strong> <code>let i=0</code>، <strong>شرط</strong> <code>i &lt; n</code>، <strong>زيادة</strong> <code>i++</code>. أساس بناء المصفوفات والتكرار.",
-   desc:"اكتب دالة <strong>countUp</strong> تستقبل رقماً <code>n</code> وتعيد مصفوفة من الأرقام من 1 حتى n.",
-   hint:"أنشئ مصفوفة فارغة، استخدم حلقة for من 1 إلى n، وادفع كل رقم بـ arr.push(i)",icon:"fa-repeat",
-   exs:[{i:"countUp(5)",o:"[1,2,3,4,5]"},{i:"countUp(3)",o:"[1,2,3]"}],
-   code:"function countUp(n) {\n  // اكتب هنا\n  \n}",fn:"countUp",
-   tests:[{a:[5],e:[1,2,3,4,5]},{a:[3],e:[1,2,3]},{a:[1],e:[1]},{a:[0],e:[]}]},
-
-{id:4,title:"مرحباً بالعالم",diff:"سهل",xp:10,cat:"أساسي",
-   concept:"الدوال في JavaScript هي كتل كود معاد الاستخدام. تُعرَّف بكلمة <code>function</code> ثم الاسم والمعاملات. <strong>Template literals</strong> <code>`${variable}`</code> تُضمّن متغيرات داخل نصوص مباشرةً.",
-   desc:"اكتب دالة <strong>greet</strong> تستقبل اسماً وتعيد رسالة ترحيب تحتوي على الاسم.",
-   hint:"استخدم return مع اسم الدالة. مثال: return 'Hello ' + name أو return `مرحباً ${name}` (template literal بالـbacktick)",icon:"fa-hand",
-   exs:[{i:"greet('أحمد')",o:"'Hello أحمد' أو أي رسالة تحتوي الاسم"},{i:"greet('Ali')",o:"'Hi Ali!'"}],
-   code:"function greet(name) {\n  // اكتب هنا\n  \n}",fn:"greet",
-   customCheck:(r,a)=>typeof r==='string'&&r.length>0&&r.includes(a[0]),
-   customCheckDesc:"نص يحتوي على الاسم",
-   tests:[{a:["أحمد"],e:"أحمد"},{a:["Ali"],e:"Ali"},{a:["سارة"],e:"سارة"}]},
-
-{id:5,title:"جمع رقمين",diff:"سهل",xp:10,cat:"أساسي",
-   concept:"المعاملات (parameters) هي متغيرات الدالة، والوسيطات (arguments) هي القيم عند الاستدعاء. <code>return</code> ترجع القيمة للمستدعي. أبسط دالة رياضية: تستقبل قيمتين وتُعيد نتيجة.",
-   desc:"اكتب دالة <strong>sum</strong> تستقبل رقمين a و b وتعيد مجموعهما.",
-   hint:"return a + b",icon:"fa-plus",
-   exs:[{i:"sum(2, 3)",o:"5"},{i:"sum(-1, 1)",o:"0"}],
-   code:"function sum(a, b) {\n  // اكتب هنا\n  \n}",fn:"sum",
-   tests:[{a:[2,3],e:5},{a:[-1,1],e:0},{a:[10,5],e:15},{a:[0.5,0.5],e:1}]},
-
-{id:6,title:"عكس النص",diff:"سهل",xp:10,cat:"أساسي",
-   concept:"النصوص في JS مصفوفات من الحروف. <code>split('')</code> تحوّلها لمصفوفة، <code>reverse()</code> تقلبها، <code>join('')</code> تجمعها. النمط <strong>split → transform → join</strong> شائع جداً في معالجة النصوص.",
-   desc:"اكتب دالة <strong>reverseStr</strong> تستقبل نصاً وتعيده معكوساً حرفاً بحرف.",
-   hint:"ثلاث خطوات: (1) split('') تحوّل النص لمصفوفة حروف، (2) reverse() تعكسها، (3) join('') تجمعها مجدداً. مثال: 'hi'.split('')→['h','i']",icon:"fa-rotate",
-   exs:[{i:"reverseStr('hello')",o:"'olleh'"},{i:"reverseStr('12345')",o:"'54321'"}],
-   code:"function reverseStr(str) {\n  // اكتب هنا\n  \n}",fn:"reverseStr",
-   tests:[{a:["hello"],e:"olleh"},{a:["abcde"],e:"edcba"},{a:["JavaScript"],e:"tpircSavaJ"},{a:["12345"],e:"54321"}]},
-
-{id:7,title:"هل الرقم زوجي؟",diff:"سهل",xp:10,cat:"أساسي",
-   concept:"<strong>باقي القسمة</strong> <code>%</code> يعيد الباقي بعد القسمة. <code>4 % 2 === 0</code> يعني زوجي، <code>3 % 2 === 1</code> يعني فردي. يُستخدم كثيراً في التحقق من الزوجية والفردية والتكرار الدوري.",
-   desc:"اكتب دالة <strong>isEven</strong> تستقبل رقماً وتعيد true إذا كان زوجياً أو false إذا كان فردياً.",
-   hint:"استخدم باقي القسمة: n % 2 === 0",icon:"fa-divide",
-   exs:[{i:"isEven(4)",o:"true"},{i:"isEven(7)",o:"false"}],
-   code:"function isEven(n) {\n  // اكتب هنا\n  \n}",fn:"isEven",
-   tests:[{a:[4],e:true},{a:[7],e:false},{a:[0],e:true},{a:[-3],e:false},{a:[100],e:true}]},
-
-{id:8,title:"مجموع مصفوفة",diff:"سهل",xp:10,cat:"أساسي",
-   concept:"<code>reduce()</code> هي أقوى دوال المصفوفات — تحوّل مصفوفة كاملة لقيمة واحدة. تستقبل <strong>accumulator</strong> (القيمة المتراكمة) والعنصر الحالي. القيمة الابتدائية <code>0</code> هي نقطة البداية للجمع.",
-   desc:"اكتب دالة <strong>sumArray</strong> تستقبل مصفوفة من الأرقام وتعيد مجموع عناصرها.",
-   hint:"arr.reduce((acc, n) => acc + n, 0)",icon:"fa-sigma",
-   exs:[{i:"sumArray([1,2,3,4,5])",o:"15"},{i:"sumArray([-1,1,-1,1])",o:"0"}],
-   code:"function sumArray(arr) {\n  // اكتب هنا\n  \n}",fn:"sumArray",
-   tests:[{a:[[1,2,3,4,5]],e:15},{a:[[-1,1,-1,1]],e:0},{a:[[10,20,30]],e:60},{a:[[0]],e:0}]},
-
-{id:9,title:"أكبر رقم في مصفوفة",diff:"متوسط",xp:20,cat:"أساسي",
-   concept:"<code>Math.max()</code> تقبل أرقاماً منفصلة لكن لا تقبل مصفوفة مباشرة. نستخدم <strong>Spread operator</strong> <code>...</code> لتفكيك المصفوفة: <code>Math.max(...arr)</code>. بديلاً، <code>reduce</code> يُقارن عنصراً بعنصر.",
-   desc:"اكتب دالة <strong>maxNum</strong> تستقبل مصفوفة من الأرقام وتعيد أكبر رقم فيها.",
-   hint:"Math.max(...arr)  أو  arr.reduce((a,b) => a > b ? a : b)",icon:"fa-arrow-up",
-   exs:[{i:"maxNum([3,1,9,2,5])",o:"9"},{i:"maxNum([-5,-1,-3])",o:"-1"}],
-   code:"function maxNum(arr) {\n  // اكتب هنا\n  \n}",fn:"maxNum",
-   tests:[{a:[[3,1,9,2,5]],e:9},{a:[[-5,-1,-3]],e:-1},{a:[[100]],e:100},{a:[[0,0,0]],e:0}]},
-
-{id:10,title:"التحقق من الباليندروم",diff:"متوسط",xp:20,cat:"أساسي",
-   concept:"<strong>Palindrome</strong> هو نص يُقرأ بنفس الطريقة من الاتجاهين مثل 'racecar'. المنطق: عكس النص ومقارنته بالأصل. مسألة كلاسيكية في المقابلات التقنية تختبر فهم النصوص والمصفوفات.",
-   desc:"اكتب دالة <strong>isPalindrome</strong> تتحقق إذا كان النص يُقرأ بنفس الطريقة من الاتجاهين.",
-   hint:"قارن النص مع معكوسه: str === str.split('').reverse().join('')",icon:"fa-arrows-left-right",
-   exs:[{i:"isPalindrome('racecar')",o:"true"},{i:"isPalindrome('hello')",o:"false"}],
-   code:"function isPalindrome(str) {\n  // اكتب هنا\n  \n}",fn:"isPalindrome",
-   tests:[{a:["racecar"],e:true},{a:["hello"],e:false},{a:["level"],e:true},{a:["a"],e:true},{a:["abba"],e:true}]},
-
-// ── المسار 2: هياكل البيانات ─────────
-{id:11,title:"تجزئة المصفوفة",diff:"متوسط",xp:20,cat:"هياكل البيانات",
-   concept:"<strong>Chunking</strong>: تقسيم مصفوفة كبيرة لمجموعات صغيرة بحجم ثابت. مفيد في pagination وmini-batches. <code>slice(start, end)</code> تقتطع جزءاً من مصفوفة بدون تعديل الأصلية — وهو مبدأ الـ<strong>immutability</strong>.",
-   desc:"اكتب دالة <strong>chunk</strong> تقسم مصفوفة إلى مجموعات بحجم معين.",
-   hint:"استخدم حلقة تزيد بمقدار size وslice في كل خطوة",icon:"fa-table-cells",
-   exs:[{i:"chunk([1,2,3,4,5], 2)",o:"[[1,2],[3,4],[5]]"},{i:"chunk([1,2,3], 3)",o:"[[1,2,3]]"}],
-   code:"function chunk(arr, size) {\n  // اكتب هنا\n  \n}",fn:"chunk",
-   tests:[{a:[[1,2,3,4,5],2],e:[[1,2],[3,4],[5]]},{a:[[1,2,3],3],e:[[1,2,3]]},{a:[[1,2,3,4],2],e:[[1,2],[3,4]]}]},
-
-{id:12,title:"إزالة القيم الزائفة",diff:"متوسط",xp:20,cat:"هياكل البيانات",
-   concept:"القيم <strong>Falsy</strong> في JavaScript هي: <code>false</code>، <code>0</code>، <code>''</code>، <code>null</code>، <code>undefined</code>، <code>NaN</code>. <code>filter(Boolean)</code> تحوّل كل عنصر لـboolean وتُبقي فقط القيم الـ<strong>Truthy</strong>.",
-   desc:"اكتب دالة <strong>removeFalsy</strong> تزيل من المصفوفة: false, null, 0, '', undefined, NaN.",
-   hint:"arr.filter(Boolean)",icon:"fa-filter",
-   exs:[{i:"removeFalsy([0,1,false,2,'',3])",o:"[1,2,3]"},{i:"removeFalsy([null,undefined,NaN,1])",o:"[1]"}],
-   code:"function removeFalsy(arr) {\n  // اكتب هنا\n  \n}",fn:"removeFalsy",
-   tests:[{a:[[0,1,false,2,"",3]],e:[1,2,3]},{a:[[null,undefined,1]],e:[1]},{a:[[true,"hi",42]],e:[true,"hi",42]}]},
-
-{id:13,title:"الرقم المفقود",diff:"متوسط",xp:20,cat:"هياكل البيانات",
-   concept:"المجموع الرياضي لـ 1 إلى n = <code>n*(n+1)/2</code>. بطرح مجموع المصفوفة الفعلي، نجد الرقم المفقود بكفاءة <strong>O(n)</strong>. من أذكى الخوارزميات الرياضية — حل مشكلة بدون فرز أو بحث.",
-   desc:"اكتب دالة <strong>findMissing</strong> تجد الرقم المفقود في مصفوفة من 1 إلى n.",
-   hint:"مجموع 1..n = n*(n+1)/2 ، اطرح مجموع المصفوفة",icon:"fa-circle-question",
-   exs:[{i:"findMissing([1,2,4,5,6])",o:"3"},{i:"findMissing([1,3])",o:"2"}],
-   code:"function findMissing(arr) {\n  // اكتب هنا\n  \n}",fn:"findMissing",
-   tests:[{a:[[1,2,4,5,6]],e:3},{a:[[1,3]],e:2},{a:[[2,3,4,5]],e:1},{a:[[1,2,3,5]],e:4}]},
-
-{id:14,title:"ترتيب الأرقام",diff:"متوسط",xp:20,cat:"هياكل البيانات",
-   concept:"<code>sort()</code> بدون دالة مقارنة تُرتّب كنصوص وتُعطي نتائج خاطئة للأرقام. <strong>دالة المقارنة</strong> <code>(a,b) => a-b</code> تُرتّب تصاعدياً. <code>[...arr]</code> ينسخ المصفوفة للحفاظ على الأصلية.",
-   desc:"اكتب دالة <strong>sortArr</strong> تستقبل مصفوفة أرقام وتعيدها مرتبة تصاعدياً بدون تعديل الأصلية.",
-   hint:"[...arr].sort((a,b) => a - b)",icon:"fa-arrow-down-wide-short",
-   exs:[{i:"sortArr([3,1,4,1,5,9])",o:"[1,1,3,4,5,9]"},{i:"sortArr([-2,5,0])",o:"[-2,0,5]"}],
-   code:"function sortArr(arr) {\n  // لا تعدّل المصفوفة الأصلية\n  \n}",fn:"sortArr",
-   tests:[{a:[[3,1,4,1,5,9]],e:[1,1,3,4,5,9]},{a:[[-2,5,0]],e:[-2,0,5]},{a:[[5]],e:[5]}]},
-
-{id:15,title:"تقاطع مصفوفتين",diff:"متوسط",xp:20,cat:"هياكل البيانات",
-   concept:"<code>filter()</code> تُبقي العناصر التي تحقق شرطاً. <code>includes()</code> تتحقق من وجود قيمة. دمجهما: عناصر arr1 الموجودة في arr2 = التقاطع. للكفاءة مع مصفوفات كبيرة، استخدم <code>Set</code>.",
-   desc:"اكتب دالة <strong>intersect</strong> تعيد مصفوفة تحتوي على العناصر المشتركة بين المصفوفتين.",
-   hint:"arr1.filter(x => arr2.includes(x))",icon:"fa-circle-nodes",
-   exs:[{i:"intersect([1,2,3],[2,3,4])",o:"[2,3]"},{i:"intersect(['a','b'],['b','c'])",o:"['b']"}],
-   code:"function intersect(arr1, arr2) {\n  // اكتب هنا\n  \n}",fn:"intersect",
-   tests:[{a:[[1,2,3],[2,3,4]],e:[2,3]},{a:[["a","b"],["b","c"]],e:["b"]},{a:[[1],[2]],e:[]}]},
-
-{id:16,title:"دمج مصفوفتين بدون تكرار",diff:"صعب",xp:30,cat:"هياكل البيانات",
-   concept:"<strong>Set</strong> هيكل بيانات يحتوي <strong>قيماً فريدة فقط</strong> — يحذف التكرار تلقائياً. <code>new Set([...a,...b])</code> يدمج المصفوفتين ويُزيل المكرر. <code>[...set]</code> يحوّله مجدداً لمصفوفة.",
-   desc:"اكتب دالة <strong>mergeArrays</strong> تدمج مصفوفتين وتزيل التكرار.",
-   hint:"[...new Set([...arr1, ...arr2])]",icon:"fa-code-merge",
-   exs:[{i:"mergeArrays([1,2,3],[2,3,4])",o:"[1,2,3,4]"},{i:"mergeArrays(['a','b'],['b','c'])",o:"['a','b','c']"}],
-   code:"function mergeArrays(arr1, arr2) {\n  // اكتب هنا\n  \n}",fn:"mergeArrays",
-   tests:[{a:[[1,2,3],[2,3,4]],e:[1,2,3,4]},{a:[["a","b"],["b","c"]],e:["a","b","c"]},{a:[[1],[2]],e:[1,2]}]},
-
-{id:17,title:"تسطيح مصفوفة متداخلة",diff:"صعب",xp:30,cat:"هياكل البيانات",
-   concept:"<code>flat(depth)</code> تُسطّح مصفوفة متداخلة. <code>flat(Infinity)</code> تُسطّح بأي عمق. البديل الـrecursive: <code>Array.isArray(item) ? flattenArr(item) : item</code> — تحقق من كل عنصر وسطّحه عند الحاجة.",
-   desc:"اكتب دالة <strong>flattenArr</strong> تسطّح مصفوفة متداخلة بأي عمق.",
-   hint:"arr.flat(Infinity)  أو  recursion مع concat",icon:"fa-layer-group",
-   exs:[{i:"flattenArr([1,[2,[3]]])",o:"[1,2,3]"},{i:"flattenArr([[1,2],[3,[4,5]]])",o:"[1,2,3,4,5]"}],
-   code:"function flattenArr(arr) {\n  // اكتب هنا\n  \n}",fn:"flattenArr",
-   tests:[{a:[[1,[2,[3,[4]]]]],e:[1,2,3,4]},{a:[[[1,2],[3,4]]],e:[1,2,3,4]},{a:[[1,2,3]],e:[1,2,3]}]},
-
-{id:18,title:"التحقق من صحة الأقواس",diff:"صعب",xp:30,cat:"هياكل البيانات",
-   concept:"<strong>Stack</strong> مبدأ LIFO. خوارزمية الأقواس: افتح قوساً → ادفعه للـStack. أغلق قوساً → تحقق إذا كان آخر مفتوح متطابقاً. Stack فارغ في النهاية = صحيح. تُستخدم في compilers ومحرري الكود.",
-   desc:"اكتب دالة <strong>isValidBrackets</strong> تتحقق إذا كانت الأقواس () [] {} مرتبة ومتطابقة.",
-   hint:"استخدم Stack: اضغط الأقواس الفاتحة واسحب عند الإغلاق",icon:"fa-code",
-   exs:[{i:"isValidBrackets('([])')",o:"true"},{i:"isValidBrackets('([)]')",o:"false"}],
-   code:"function isValidBrackets(str) {\n  // استخدم Stack\n  \n}",fn:"isValidBrackets",
-   tests:[{a:["([])"],e:true},{a:["([)]"],e:false},{a:["{}"],e:true},{a:["((()"],e:false},{a:[""],e:true}]},
-
-// ── المسار 3: الدوال المتقدمة ────────
-{id:19,title:"متتالية فيبوناتشي",diff:"متوسط",xp:20,cat:"الدوال المتقدمة",
-   concept:"<strong>Fibonacci</strong>: كل رقم = مجموع السابقَين (0,1,1,2,3,5,8...). الطريقة Iterative أكفأ من Recursive لأنها تتجنب stack overflow. هذه المتتالية مثال كلاسيكي لتعلم Dynamic Programming.",
-   desc:"اكتب دالة <strong>fibonacci</strong> تعيد الرقم في موضع n من متتالية فيبوناتشي (تبدأ من 0).",
-   hint:"0,1,1,2,3,5,8,13... كل رقم = مجموع السابقَين. استخدم حلقة.",icon:"fa-infinity",
-   exs:[{i:"fibonacci(0)",o:"0"},{i:"fibonacci(6)",o:"8"},{i:"fibonacci(10)",o:"55"}],
-   code:"function fibonacci(n) {\n  // اكتب هنا\n  \n}",fn:"fibonacci",
-   tests:[{a:[0],e:0},{a:[1],e:1},{a:[6],e:8},{a:[10],e:55},{a:[7],e:13}]},
-
-{id:20,title:"تحويل لعنوان Title Case",diff:"متوسط",xp:20,cat:"الدوال المتقدمة",
-   concept:"<code>split(' ')</code> تُقسّم النص لكلمات. <code>map()</code> تُطبّق دالة على كل عنصر. <code>toUpperCase()</code> على الحرف الأول فقط، <code>slice(1)</code> لباقي الكلمة. <code>join(' ')</code> يجمعها. نمط map → transform.",
-   desc:"اكتب دالة <strong>titleCase</strong> تحوّل الحرف الأول من كل كلمة إلى حرف كبير.",
-   hint:"str.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')",icon:"fa-font",
-   exs:[{i:"titleCase('hello world')",o:"'Hello World'"},{i:"titleCase('js is fun')",o:"'Js Is Fun'"}],
-   code:"function titleCase(str) {\n  // اكتب هنا\n  \n}",fn:"titleCase",
-   tests:[{a:["hello world"],e:"Hello World"},{a:["js is fun"],e:"Js Is Fun"},{a:["test"],e:"Test"},{a:["a b c"],e:"A B C"}]},
-
-{id:21,title:"عدّ الكلمات في نص",diff:"متوسط",xp:20,cat:"الدوال المتقدمة",
-   concept:"<code>split()</code> تقسّم النص عند محدد. المسافات المتعددة تُنتج عناصر فارغة — <code>filter(Boolean)</code> أو <code>/\\s+/</code> يحلّانها. نمط شائع في معالجة النصوص الحقيقية.",
-   desc:"اكتب دالة <strong>wordCount</strong> تستقبل نصاً وتعيد عدد الكلمات فيه متجاهلاً المسافات الزائدة.",
-   hint:"str.trim().split(/\\s+/).filter(Boolean).length",icon:"fa-align-left",
-   exs:[{i:"wordCount('مرحبا بالعالم')",o:"2"},{i:"wordCount('  hello   world  ')",o:"2"}],
-   code:"function wordCount(str) {\n  // اكتب هنا\n  \n}",fn:"wordCount",
-   tests:[{a:["مرحبا بالعالم"],e:2},{a:["  hello   world  "],e:2},{a:["one"],e:1},{a:[""],e:0},{a:["a b c d e"],e:5}]},
-
-{id:22,title:"التحقق من العدد الأولي",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
-   concept:"العدد الأولي لا يقبل القسمة إلا على 1 ونفسه. التحسين الذكي: نتحقق حتى <strong>الجذر التربيعي</strong> <code>√n</code> فقط، لأن أي عامل أكبر من √n يقابله عامل أصغر. يُقلّل التعقيد من O(n) إلى O(√n).",
-   desc:"اكتب دالة <strong>isPrime</strong> تتحقق إذا كان الرقم عدداً أولياً.",
-   hint:"تحقق من 2 حتى √n: for(let i=2; i*i <= n; i++) if(n%i===0) return false",icon:"fa-magnifying-glass",
-   exs:[{i:"isPrime(7)",o:"true"},{i:"isPrime(4)",o:"false"},{i:"isPrime(2)",o:"true"}],
-   code:"function isPrime(n) {\n  // اكتب هنا\n  \n}",fn:"isPrime",
-   tests:[{a:[7],e:true},{a:[4],e:false},{a:[2],e:true},{a:[1],e:false},{a:[13],e:true},{a:[9],e:false}]},
-
-{id:23,title:"تجميع العناصر حسب خاصية",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
-   concept:"<code>reduce()</code> يبني كائناً من مصفوفة. في كل خطوة: طبّق الدالة على العنصر كمفتاح، أضفه للمجموعة المناسبة. نمط <strong>groupBy</strong> موجود في Lodash وسيصبح native في JavaScript قريباً.",
-   desc:"اكتب دالة <strong>groupBy</strong> تجمّع عناصر المصفوفة حسب نتيجة دالة معينة.",
-   hint:"arr.reduce((acc, item) => { const key = fn(item); acc[key] = acc[key] || []; acc[key].push(item); return acc; }, {})",icon:"fa-object-group",
-   exs:[{i:"groupBy([1,2,3,4,5], n => n%2===0?'even':'odd')",o:"{odd:[1,3,5], even:[2,4]}"},{i:"groupBy(['one','two','three'], w => w.length)",o:"{3:['one','two'], 5:['three']}"}],
-   code:"function groupBy(arr, fn) {\n  // اكتب هنا\n  \n}",fn:"groupBy",
-   tests:[
-     {a:[[1,2,3,4,5],function(n){return n%2===0?'even':'odd'}],e:{odd:[1,3,5],even:[2,4]}},
-     {a:[['a','bb','ccc','dd'],function(s){return s.length}],e:{1:['a'],2:['bb','dd'],3:['ccc']}}
-   ]},
-
-{id:24,title:"ضغط النص RLE",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
-   concept:"<strong>RLE</strong> (Run-Length Encoding) خوارزمية ضغط بسيطة: بدل تكرار نفس الحرف، احفظ الحرف وعدد مرات تكراره. مثال: 'aaabbc' → 'a3b2c1'. تُستخدم في ضغط الصور وبروتوكولات الاتصالات.",
-   desc:"اكتب دالة <strong>rleEncode</strong> تضغط النص بطريقة Run-Length Encoding.",
-   hint:"اعدّ تكرار كل حرف متتالي، مثلاً: 'aaabbc' → 'a3b2c1'",icon:"fa-compress",
-   exs:[{i:"rleEncode('aaabbc')",o:"'a3b2c1'"},{i:"rleEncode('aaa')",o:"'a3'"},{i:"rleEncode('abc')",o:"'a1b1c1'"}],
-   code:"function rleEncode(str) {\n  // اكتب هنا\n  \n}",fn:"rleEncode",
-   tests:[{a:["aaabbc"],e:"a3b2c1"},{a:["aaa"],e:"a3"},{a:["abc"],e:"a1b1c1"},{a:["aabb"],e:"a2b2"}]},
-
-{id:25,title:"دوران المصفوفة",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
-   concept:"<strong>دوران المصفوفة</strong> يُحلّ بـ<code>slice</code>: آخر k عناصر <code>slice(-k)</code> تصبح في البداية، والباقي <code>slice(0,-k)</code> يأتي بعدها. أكثر كفاءة وأوضح من التدوير element-by-element.",
-   desc:"اكتب دالة <strong>rotateArray</strong> تدور المصفوفة k خطوات لليمين.",
-   hint:"استخدم slice: [...arr.slice(-k), ...arr.slice(0,-k)]",icon:"fa-rotate",
-   exs:[{i:"rotateArray([1,2,3,4,5], 2)",o:"[4,5,1,2,3]"},{i:"rotateArray([1,2,3], 1)",o:"[3,1,2]"}],
-   code:"function rotateArray(arr, k) {\n  // اكتب هنا\n  \n}",fn:"rotateArray",
-   tests:[{a:[[1,2,3,4,5],2],e:[4,5,1,2,3]},{a:[[1,2,3],1],e:[3,1,2]},{a:[[1,2,3,4],4],e:[1,2,3,4]}]},
-
-{id:26,title:"أعمق مستوى تداخل",diff:"صعب",xp:30,cat:"الدوال المتقدمة",
-   concept:"عمق التداخل يُحسب recursively: إذا العنصر ليس مصفوفة عمقه 0. إذا كان مصفوفة: 1 + أقصى عمق لعناصره. <code>Math.max(...arr.map(e => Array.isArray(e) ? 1+maxDepth(e) : 0))</code>.",
-   desc:"اكتب دالة <strong>maxDepth</strong> تعيد أعمق مستوى تداخل في مصفوفة متداخلة.",
-   hint:"استخدم recursion: إذا كان العنصر مصفوفة، احسب عمقه واجمع 1",icon:"fa-layer-group",
-   exs:[{i:"maxDepth([1,2,3])",o:"1"},{i:"maxDepth([1,[2,[3]]])",o:"3"},{i:"maxDepth([[1],[2,[3,[4]]]])",o:"4"}],
-   code:"function maxDepth(arr) {\n  // اكتب هنا\n  \n}",fn:"maxDepth",
-   tests:[{a:[[1,2,3]],e:1},{a:[[1,[2,[3]]]],e:3},{a:[[[1],[2,[3,[4]]]]],e:4},{a:[[1]],e:1}]},
-
-{id:27,title:"Debounce Function",diff:"صعب",xp:40,cat:"الدوال المتقدمة",
-   concept:"<strong>Debounce</strong> يضمن تنفيذ الدالة مرة واحدة فقط بعد توقف المستخدم. مثال: البحث أثناء الكتابة. يعتمد على <strong>Closure</strong> لحفظ الـtimer بين الاستدعاءات. المنطق: <code>clearTimeout</code> ثم <code>setTimeout</code>.",
-   desc:"اكتب دالة <strong>debounce</strong> تستقبل دالة fn ووقت delay وتعيد دالة جديدة تؤخر تنفيذ fn حتى يمر delay ms بدون استدعاء جديد.",
-   hint:"clearTimeout ثم setTimeout. احفظ timer في closure.\nreturn function(...args){ clearTimeout(timer); timer=setTimeout(()=>fn.apply(this,args),delay); }",
-   icon:"fa-clock",
-   exs:[{i:"const d = debounce(fn, 300)",o:"fn تنفذ بعد 300ms من آخر استدعاء"},{i:"d() d() d()",o:"fn تُستدعى مرة واحدة"}],
-   code:"function debounce(fn, delay) {\n  let timer;\n  return function(...args) {\n    // اكتب هنا\n    \n  };\n}",fn:"debounce",
-   customCheck:(r,a)=>{try{const d=r(()=>{},50);return typeof d==='function';}catch(e){return false;}},
-   customCheckDesc:"تعيد دالة جديدة",
-   tests:[{a:[()=>{},100],e:null}]},
-
-{id:28,title:"Deep Clone — نسخ عميق",diff:"صعب",xp:40,cat:"الدوال المتقدمة",
-   concept:"<strong>Shallow copy</strong> ينسخ مراجع الكائنات الداخلية. <strong>Deep copy</strong> ينسخ كل شيء بشكل مستقل. الطريقة الصحيحة: تحقق نوع كل عنصر recursively — مصفوفة → map، كائن → forEach، قيمة بسيطة → أعدها.",
-   desc:"اكتب دالة <strong>deepClone</strong> تعمل نسخة عميقة من أي كائن أو مصفوفة. تعديل النسخة لا يؤثر على الأصل.",
-   hint:"تحقق النوع: Array→map+recurse، Object→forEach+recurse، غير ذلك→أعد القيمة.",
-   icon:"fa-copy",
-   exs:[{i:"const b=deepClone(a); b.x=99",o:"a.x لا يتغير"},{i:"deepClone([1,[2,3]])",o:"[1,[2,3]] مستقلة"}],
-   code:"function deepClone(obj) {\n  if(obj === null || typeof obj !== 'object') return obj;\n  // اكتب هنا\n  \n}",fn:"deepClone",
-   tests:[{a:[{a:1,b:{c:2}}],e:{a:1,b:{c:2}}},{a:[[1,[2,3]]],e:[1,[2,3]]},{a:[{x:[1,2],y:{z:3}}],e:{x:[1,2],y:{z:3}}}]},
-
-{id:29,title:"Memoize — تخزين النتائج",diff:"صعب",xp:40,cat:"الدوال المتقدمة",
-   concept:"<strong>Memoization</strong>: تخزين نتائج الدوال المكلفة لتجنب إعادة الحساب. يعتمد على <strong>Closure</strong> لحفظ الـcache. مفتاح الكاش = <code>JSON.stringify(args)</code>. يُحسّن الأداء بشكل جذري في الدوال الثقيلة.",
-   desc:"اكتب دالة <strong>memoize</strong> تغلّف دالة وتخزّن نتائجها. نفس الحجج = نفس النتيجة من الكاش.",
-   hint:"const cache={}; المفتاح=JSON.stringify(args).\nreturn function(...args){ const k=JSON.stringify(args); if(k in cache) return cache[k]; return cache[k]=fn(...args); }",
-   icon:"fa-database",
-   exs:[{i:"const mFn = memoize(fn)",o:"mFn(5) أول مرة: يحسب"},{i:"mFn(5) مرة ثانية",o:"من الكاش بدون حساب"}],
-   code:"function memoize(fn) {\n  const cache = {};\n  return function(...args) {\n    // اكتب هنا\n    \n  };\n}",fn:"memoize",
-   customCheck:(r,a)=>{try{let c=0;const m=r(n=>{c++;return n*3;});m(5);m(5);m(5);return c===1;}catch(e){return false;}},
-   customCheckDesc:"الدالة الأصلية تُستدعى مرة واحدة لنفس الحجج",
-   tests:[{a:[n=>n*2],e:null}]},
-
-// ── المسار 4: خوارزميات ──────────────
-{id:30,title:"Bubble Sort — فرز الفقاعة",diff:"متوسط",xp:25,cat:"خوارزميات",
-   concept:"<strong>Bubble Sort</strong> أبسط خوارزمية فرز: قارن كل زوج متجاور وبدّل إذا كان الأول أكبر. بعد كل مرور، أكبر عنصر 'يطفو' للنهاية. تعقيد <strong>O(n²)</strong> — بطيئة لكن أساسية لفهم آلية الفرز.",
-   desc:"نفّذ خوارزمية <strong>bubbleSort</strong> لفرز مصفوفة تصاعدياً. قارن كل عنصرين متجاورين وبدّل بينهما إذا كان الأول أكبر.",
-   hint:"حلقتان متداخلتان. الخارجية n مرة، الداخلية تقارن المتجاورين وتبدّل.",
-   icon:"fa-sort",
-   exs:[{i:"bubbleSort([5,3,8,1,2])",o:"[1,2,3,5,8]"},{i:"bubbleSort([64,34,25,12])",o:"[12,25,34,64]"}],
-   code:"function bubbleSort(arr) {\n  const a = [...arr];\n  for(let i = 0; i < a.length; i++) {\n    for(let j = 0; j < a.length - i - 1; j++) {\n      // قارن a[j] و a[j+1] وبدّل إذا لزم\n      \n    }\n  }\n  return a;\n}",fn:"bubbleSort",
-   tests:[{a:[[5,3,8,1,2]],e:[1,2,3,5,8]},{a:[[64,34,25,12]],e:[12,25,34,64]},{a:[[1]],e:[1]},{a:[[3,1]],e:[1,3]}]},
-
-{id:31,title:"Two Sum",diff:"متوسط",xp:25,cat:"خوارزميات",
-   concept:"<strong>Hash Map</strong> يجعل البحث O(1). بدل O(n²) من حلقتين متداخلتين، نخزّن كل رقم وموضعه في Map. لكل رقم جديد نتحقق: هل <code>target - num</code> موجود في Map؟ هذا النهج الكلاسيكي للتحسين.",
-   desc:"اكتب دالة <strong>twoSum</strong> تستقبل مصفوفة وهدفاً target، وتعيد مواضع أول زوج مجموعهما = target.",
-   hint:"استخدم Map لتخزين {value: index}. في كل عنصر تحقق من وجود (target - num) في الـ Map.",
-   icon:"fa-2",
-   exs:[{i:"twoSum([2,7,11,15], 9)",o:"[0,1]"},{i:"twoSum([3,2,4], 6)",o:"[1,2]"}],
-   code:"function twoSum(nums, target) {\n  const map = new Map();\n  for(let i = 0; i < nums.length; i++) {\n    // اكتب هنا\n    \n  }\n  return [];\n}",fn:"twoSum",
-   tests:[{a:[[2,7,11,15],9],e:[0,1]},{a:[[3,2,4],6],e:[1,2]},{a:[[1,3,4,2],6],e:[2,3]}]},
-
-{id:32,title:"Valid Anagram",diff:"متوسط",xp:25,cat:"خوارزميات",
-   concept:"<strong>Anagram</strong>: كلمتان لهما نفس الحروف بترتيبات مختلفة. الحل الأبسط: رتّب الحروف وقارن O(n log n). الأكثر كفاءة: عدّ تكرار كل حرف في Map وقارن — O(n).",
-   desc:"اكتب دالة <strong>isAnagram</strong> تتحقق إذا كانت كلمتان anagram (نفس الحروف بترتيب مختلف).",
-   hint:"رتّب كلاهما وقارن: s.split('').sort().join('') === t.split('').sort().join('')",
-   icon:"fa-spell-check",
-   exs:[{i:"isAnagram('anagram','nagaram')",o:"true"},{i:"isAnagram('rat','car')",o:"false"}],
-   code:"function isAnagram(s, t) {\n  // اكتب هنا\n  \n}",fn:"isAnagram",
-   tests:[{a:["anagram","nagaram"],e:true},{a:["rat","car"],e:false},{a:["listen","silent"],e:true},{a:["ab","ba"],e:true}]},
-
-{id:33,title:"أطول بادئة مشتركة",diff:"متوسط",xp:25,cat:"خوارزميات",
-   concept:"خوارزمية <strong>LCP</strong>: ابدأ بالكلمة الأولى بادئةً مبدئية. لكل كلمة تالية: قلّص البادئة حرفاً حرفاً من اليمين حتى تصبح بادئة للكلمة الحالية. تنتهي عند أول عدم تطابق.",
-   desc:"اكتب دالة <strong>longestCommonPrefix</strong> تجد أطول بادئة مشتركة بين كل الكلمات في المصفوفة.",
-   hint:"ابدأ بالكلمة الأولى، قلّص البادئة حتى تجدها في كل الكلمات.",
-   icon:"fa-text-slash",
-   exs:[{i:"longestCommonPrefix(['flower','flow','flight'])",o:"'fl'"},{i:"longestCommonPrefix(['dog','racecar'])",o:"''"}],
-   code:"function longestCommonPrefix(strs) {\n  if(!strs.length) return '';\n  let prefix = strs[0];\n  // اكتب هنا\n  \n}",fn:"longestCommonPrefix",
-   tests:[{a:[["flower","flow","flight"]],e:"fl"},{a:[["dog","racecar"]],e:""},{a:[["interview","inter","internal"]],e:"inter"},{a:[["abc","abc"]],e:"abc"}]},
-
-{id:34,title:"الأرقام الرومانية",diff:"صعب",xp:35,cat:"خوارزميات",
-   concept:"<strong>الأرقام الرومانية</strong>: القاعدة — إذا قيمة الحرف أصغر من الذي يليه (كـIV)، اطرح. غير ذلك اجمع. مثال: IV = -1+5=4 ، VI = 5+1=6. قارن كل حرف بالتالي وطبّق القاعدة.",
-   desc:"اكتب دالة <strong>romanToInt</strong> تحوّل رقماً رومانياً إلى عدد صحيح. I=1، V=5، X=10، L=50، C=100، D=500، M=1000",
-   hint:"إذا قيمة الحرف الحالي أقل من التالي، اطرح. غير ذلك اجمع.",
-   icon:"fa-i-cursor",
-   exs:[{i:"romanToInt('III')",o:"3"},{i:"romanToInt('IV')",o:"4"},{i:"romanToInt('MCMXCIV')",o:"1994"}],
-   code:"function romanToInt(s) {\n  const map = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};\n  // اكتب هنا\n  \n}",fn:"romanToInt",
-   tests:[{a:["III"],e:3},{a:["IV"],e:4},{a:["IX"],e:9},{a:["LVIII"],e:58},{a:["MCMXCIV"],e:1994}]},
-
-{id:35,title:"Quick Sort — الفرز السريع",diff:"صعب",xp:40,cat:"خوارزميات",
-   concept:"<strong>Quick Sort</strong> يختار <em>pivot</em> ويُقسّم المصفوفة لجزأين: أصغر وأكبر منه. ثم يُطبَّق recursively على الجزأين. متوسط تعقيد <strong>O(n log n)</strong>. من أسرع خوارزميات الفرز العملية.",
-   desc:"نفّذ خوارزمية <strong>quickSort</strong> — أسرع خوارزميات الفرز عملياً O(n log n). اختر pivot وقسّم المصفوفة.",
-   hint:"اختر pivot (آخر عنصر). قسّم: أصغر يساراً، أكبر يميناً. افرز كلاهما recursively.",
-   icon:"fa-bolt",
-   exs:[{i:"quickSort([3,6,8,10,1,2,1])",o:"[1,1,2,3,6,8,10]"},{i:"quickSort([5,1,8,3])",o:"[1,3,5,8]"}],
-   code:"function quickSort(arr) {\n  if(arr.length <= 1) return arr;\n  const pivot = arr[arr.length - 1];\n  const left = [], right = [];\n  for(let i = 0; i < arr.length - 1; i++) {\n    // اكتب هنا\n    \n  }\n  // أعد القسمين المفروزين مع الـ pivot\n}",fn:"quickSort",
-   tests:[{a:[[3,6,8,10,1,2,1]],e:[1,1,2,3,6,8,10]},{a:[[5,1,8,3]],e:[1,3,5,8]},{a:[[1]],e:[1]},{a:[[2,1]],e:[1,2]}]},
-
-{id:36,title:"Sliding Window",diff:"صعب",xp:40,cat:"خوارزميات",
-   concept:"<strong>Sliding Window</strong>: بدل إعادة الحساب من صفر لكل نافذة O(n×k)، نُزيل أول عنصر ونُضيف التالي فقط في كل خطوة. هذا يُقلّل التعقيد لـ<strong>O(n)</strong>. تقنية أساسية لمسائل المصفوفات.",
-   desc:"اكتب دالة <strong>maxSumSubarray</strong> تجد أكبر مجموع لـ k عناصر متتالية في مصفوفة بكفاءة O(n).",
-   hint:"احسب مجموع أول k عناصر. ثم حرّك النافذة: اطرح الأول وأضف التالي في كل خطوة.",
-   icon:"fa-window-maximize",
-   exs:[{i:"maxSumSubarray([1,4,2,10,23,3,1,0,20], 4)",o:"39"},{i:"maxSumSubarray([2,3,4,1,5], 2)",o:"7"}],
-   code:"function maxSumSubarray(arr, k) {\n  if(arr.length < k) return 0;\n  let sum = arr.slice(0, k).reduce((a,b)=>a+b, 0);\n  let max = sum;\n  // اكتب Sliding Window\n  \n}",fn:"maxSumSubarray",
-   tests:[{a:[[1,4,2,10,23,3,1,0,20],4],e:39},{a:[[2,3,4,1,5],2],e:7},{a:[[1,2,3],3],e:6}]},
-
-{id:37,title:"Kadane's Algorithm",diff:"صعب",xp:40,cat:"خوارزميات",
-   concept:"<strong>Kadane's Algorithm</strong>: لكل عنصر قرر — هل أضمّه للمتتالية الحالية؟ أم أبدأ منه من جديد؟ <code>currentMax = Math.max(n, currentMax + n)</code>. كفاءة <strong>O(n)</strong> مقارنة بـO(n³) من الحل الساذج.",
-   desc:"اكتب دالة <strong>maxSubarraySum</strong> تجد أكبر مجموع لمصفوفة فرعية متتالية بكفاءة O(n). (Kadane's Algorithm)",
-   hint:"تتبع currentMax وglobalMax. currentMax = Math.max(n, currentMax+n). لكل عنصر.",
-   icon:"fa-chart-line",
-   exs:[{i:"maxSubarraySum([-2,1,-3,4,-1,2,1,-5,4])",o:"6 // [4,-1,2,1]"},{i:"maxSubarraySum([-1,-2,-3])",o:"-1"}],
-   code:"function maxSubarraySum(arr) {\n  let currentMax = arr[0];\n  let globalMax = arr[0];\n  // اكتب هنا\n  \n}",fn:"maxSubarraySum",
-   tests:[{a:[[-2,1,-3,4,-1,2,1,-5,4]],e:6},{a:[[-1,-2,-3]],e:-1},{a:[[1]],e:1},{a:[[5,4,-1,7,8]],e:23}]},
-
-{id:38,title:"Coin Change — Dynamic Programming",diff:"صعب",xp:45,cat:"خوارزميات",
-   concept:"<strong>Dynamic Programming</strong>: حل مسائل كبيرة عبر تخزين نتائج المسائل الصغيرة. <code>dp[i]</code> = أقل قطع لتغطية مبلغ i. لكل مبلغ وكل قطعة: <code>dp[i] = min(dp[i], dp[i-coin]+1)</code>. نهج Bottom-up.",
-   desc:"اكتب دالة <strong>coinChange</strong> تجد أقل عدد من القطع النقدية لتغطية مبلغ معين. تعيد -1 إذا استحال.",
-   hint:"Dynamic Programming: dp[i] = min coins for amount i. dp[0]=0. لكل قطعة coin: dp[i]=min(dp[i], dp[i-coin]+1)",
-   icon:"fa-coins",
-   exs:[{i:"coinChange([1,5,10,25], 36)",o:"3 // 25+10+1"},{i:"coinChange([2], 3)",o:"-1"}],
-   code:"function coinChange(coins, amount) {\n  const dp = new Array(amount + 1).fill(Infinity);\n  dp[0] = 0;\n  // اكتب DP هنا\n  \n}",fn:"coinChange",
-   tests:[{a:[[1,5,10,25],36],e:3},{a:[[2],3],e:-1},{a:[[1,2,5],11],e:3},{a:[[1],0],e:0}]},
-
-{id:39,title:"Pascal's Triangle",diff:"متوسط",xp:25,cat:"خوارزميات",
-   concept:"<strong>مثلث Pascal</strong>: كل عنصر = مجموع العنصرين فوقه. كل صف يبدأ وينتهي بـ1. يُستخدم في الاحتمالات والتوافيق C(n,k). نمط DP بسيط: ابنِ كل صف من الصف السابق.",
-   desc:"اكتب دالة <strong>pascalTriangle</strong> تعيد مثلث Pascal بعدد n صفوف.",
-   hint:"كل صف يبدأ وينتهي بـ 1. الباقي: row[j] = prev[j-1] + prev[j]",
-   icon:"fa-triangle-exclamation",
-   exs:[{i:"pascalTriangle(4)",o:"[[1],[1,1],[1,2,1],[1,3,3,1]]"},{i:"pascalTriangle(1)",o:"[[1]]"}],
-   code:"function pascalTriangle(n) {\n  const result = [[1]];\n  for(let i = 1; i < n; i++) {\n    // اكتب هنا\n    \n  }\n  return result;\n}",fn:"pascalTriangle",
-   tests:[{a:[1],e:[[1]]},{a:[4],e:[[1],[1,1],[1,2,1],[1,3,3,1]]},{a:[5],e:[[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1]]}]},
-
-// ── المسار 5: Async & Promises ────────
-{id:40,title:"Promise الأساسي",diff:"سهل",xp:15,cat:"async",
-   concept:"<strong>Promise</strong> يمثّل قيمة ستأتي في المستقبل. له 3 حالات: Pending، Resolved، Rejected. <code>new Promise((resolve, reject) => {})</code>. <code>resolve(value)</code> يُحلّ الوعد بعد انتهاء العملية.",
-   desc:"اكتب دالة <strong>delay</strong> تعيد Promise يُحلّ بعد ms مللي ثانية.",
-   hint:"return new Promise(resolve => setTimeout(resolve, ms))",
-   icon:"fa-hourglass",
-   exs:[{i:"await delay(1000)",o:"ينتظر ثانية ثم يكمل"},{i:"delay(500).then(()=>console.log('done'))",o:"طباعة بعد 500ms"}],
-   code:"function delay(ms) {\n  // أعد Promise يُحلّ بعد ms\n  \n}",fn:"delay",
-   customCheck:(r,a)=>{try{const p=r(10);return p&&typeof p.then==='function';}catch(e){return false;}},
-   customCheckDesc:"تعيد Promise",
-   tests:[{a:[10],e:null}]},
-
-{id:41,title:"async/await أساسي",diff:"متوسط",xp:25,cat:"async",
-   concept:"<code>async function</code> تعيد دائماً Promise. <code>await</code> تُوقف تنفيذ الدالة حتى يُحلّ الـPromise — بدون تجميد Thread الرئيسي. الكود يبدو متزامناً وهو في الحقيقة غير متزامن.",
-   desc:"اكتب دالة <strong>fetchUser</strong> async تستقبل id وتعيد بيانات المستخدم المحاكاة بعد تأخير 100ms.",
-   hint:"استخدم async/await مع wait:\nasync function fetchUser(id){ await wait(100); return {id, name:'User '+id}; }",
-   icon:"fa-user-clock",
-   exs:[{i:"await fetchUser(1)",o:"{id:1, name:'User 1'}"},{i:"await fetchUser(5)",o:"{id:5, name:'User 5'}"}],
-   code:"const wait = ms => new Promise(r => setTimeout(r, ms));\n\nasync function fetchUser(id) {\n  await wait(100);\n  // أعد {id, name:'User '+id}\n  \n}",fn:"fetchUser",
-   customCheck:(r,a)=>{try{const p=r(1);return p&&typeof p.then==='function';}catch(e){return false;}},
-   customCheckDesc:"تعيد Promise يُحلّ بكائن المستخدم",
-   tests:[{a:[1],e:null}]},
-
-{id:42,title:"Promise Chain",diff:"متوسط",xp:25,cat:"async",
-   concept:"<strong>Promise Chaining</strong>: كل <code>.then()</code> يستقبل نتيجة السابق ويُعيد قيمة جديدة. يصنع سلسلة تحويلات نظيفة بدل callback hell. كل <code>.then()</code> يُنشئ Promise جديداً تلقائياً.",
-   desc:"اكتب دالة <strong>processData</strong> تعيد Promise يمر على 3 خطوات: double ثم addTen ثم toString.",
-   hint:"Promise.resolve(n).then(v=>v*2).then(v=>v+10).then(v=>String(v))",
-   icon:"fa-link",
-   exs:[{i:"await processData(5)",o:"'20' // 5*2=10, 10+10=20, '20'"},{i:"await processData(10)",o:"'30'"}],
-   code:"function processData(n) {\n  return Promise.resolve(n)\n    .then(v => v * 2)\n    // أكمل الـ chain\n    \n}",fn:"processData",
-   customCheck:(r,a)=>{try{const p=r(5);return p&&typeof p.then==='function';}catch(e){return false;}},
-   customCheckDesc:"Promise يُحلّ بـ '20' للرقم 5",
-   tests:[{a:[5],e:null}]},
-
-{id:43,title:"معالجة الأخطاء في Promises",diff:"متوسط",xp:30,cat:"async",
-   concept:"<strong>Error handling في Async</strong>: بدل رمي الأخطاء للأعلى، نلتقطها ونُعيد كائناً موحداً <code>{data, error}</code>. هذا النمط مستوحى من Go وRust. يجعل الكود أكثر توقعاً وأسهل في الاختبار.",
-   desc:"اكتب دالة <strong>safeFetch</strong> async تنفذ دالة async وتعيد {data, error} — لا ترمي أخطاء أبداً.",
-   hint:"try{ const data = await fn(); return {data, error:null}; }catch(e){ return {data:null, error:e.message}; }",
-   icon:"fa-shield",
-   exs:[{i:"await safeFetch(()=>Promise.resolve(42))",o:"{data:42, error:null}"},{i:"await safeFetch(()=>Promise.reject('فشل'))",o:"{data:null, error:'فشل'}"}],
-   code:"async function safeFetch(fn) {\n  try {\n    \n  } catch(e) {\n    \n  }\n}",fn:"safeFetch",
-   customCheck:(r,a)=>{try{const p=r(()=>Promise.reject('err'));return p&&typeof p.then==='function';}catch(e){return false;}},
-   customCheckDesc:"تعيد {data, error} دائماً بدون throw",
-   tests:[{a:[()=>Promise.resolve(42)],e:null}]},
-
-{id:44,title:"Retry — إعادة المحاولة",diff:"صعب",xp:40,cat:"async",
-   concept:"<strong>Retry pattern</strong>: إعادة المحاولة عند الفشل مفيد مع network requests غير مستقرة. نستخدم <strong>recursion</strong>: إذا فشل وبقيت محاولات، استدعِ نفسك بمحاولة ناقصة. <code>try/catch</code> مع async/await.",
-   desc:"اكتب دالة <strong>retry</strong> تستقبل دالة async وعدد محاولات، وتعيد Promise يعيد المحاولة عند الفشل.",
-   hint:"async function retry(fn, attempts){ try{return await fn();}catch(e){if(attempts<=1)throw e; return retry(fn, attempts-1);} }",
-   icon:"fa-rotate-right",
-   exs:[{i:"retry(unstableFn, 3)",o:"يحاول 3 مرات قبل الرمي"},{i:"retry(()=>Promise.resolve(1), 3)",o:"1 من أول مرة"}],
-   code:"async function retry(fn, attempts) {\n  // حاول، وعند الفشل أعد المحاولة\n  \n}",fn:"retry",
-   customCheck:(r,a)=>{try{const p=r(()=>Promise.resolve('ok'),3);return p&&typeof p.then==='function';}catch(e){return false;}},
-   customCheckDesc:"تعيد Promise يعيد المحاولة",
-   tests:[{a:[()=>Promise.resolve('ok'),3],e:null}]},
-
-{id:45,title:"Promises المتسلسلة",diff:"صعب",xp:40,cat:"async",
-   concept:"<strong>Sequential vs Parallel</strong>: <code>Promise.all()</code> تُشغّل كل شيء معاً. <code>for...of + await</code> يُشغّل واحداً واحداً بالترتيب المضمون. Sequential ضروري عندما كل مهمة تعتمد على نتيجة السابقة.",
-   desc:"اكتب دالة <strong>runSequential</strong> تشغّل مصفوفة من الدوال الـ async بالترتيب وتجمع النتائج.",
-   hint:"استخدم for...of مع await: const results=[]; for(const fn of fns){ results.push(await fn()); } return results;",
-   icon:"fa-list-ol",
-   exs:[{i:"await runSequential([f1, f2, f3])",o:"[r1, r2, r3] بالترتيب"},{i:"الترتيب مضمون",o:"f2 لا تبدأ قبل f1"}],
-   code:"async function runSequential(fns) {\n  const results = [];\n  // شغّل كل دالة وانتظر نتيجتها قبل التالية\n  \n  return results;\n}",fn:"runSequential",
-   customCheck:(r,a)=>{try{const p=r([()=>Promise.resolve(1),()=>Promise.resolve(2)]);return p&&typeof p.then==='function';}catch(e){return false;}},
-   customCheckDesc:"تعيد Promise بمصفوفة النتائج بالترتيب",
-   tests:[{a:[[()=>Promise.resolve(1),()=>Promise.resolve(2)]],e:null}]},
-
-{id:46,title:"Observable بسيط",diff:"صعب",xp:50,cat:"async",
-   concept:"<strong>Observable pattern</strong> (أساس RxJS) يسمح بمراقبة تدفق مستمر من القيم عبر الزمن. المشترك يُسجّل دوالّ تُنادى عند كل قيمة/خطأ/إنهاء. هذا النمط أساس reactive programming الحديث.",
-   desc:"اكتب <strong>createObservable</strong> تعيد كائناً يدعم subscribe(observer) لمراقبة قيم تصل عبر الزمن. Observer له: next(val).",
-   hint:"استخدم مصفوفة subscribers: {subscribe(obs){subscribers.push(obs)}, emit(v){subscribers.forEach(s=>s.next&&s.next(v))}}",
-   icon:"fa-eye",
-   exs:[{i:"const obs=createObservable()",o:"كائن به subscribe وemit"},{i:"obs.subscribe({next:v=>console.log(v)}); obs.emit(42)",o:"يطبع 42"}],
-   code:"function createObservable() {\n  const subscribers = [];\n  return {\n    subscribe(observer) {\n      subscribers.push(observer);\n      return { unsubscribe: () => { /* إلغاء */ } };\n    },\n    emit(value) { /* أرسل لكل المشتركين */ },\n    error(err) { /* أرسل خطأ */ },\n    complete() { /* أنهِ */ }\n  };\n}",fn:"createObservable",
-   customCheck:(r,a)=>{try{const o=r();const vals=[];o.subscribe({next:v=>vals.push(v)});o.emit(1);o.emit(2);o.emit(3);return vals.length===3&&vals[0]===1&&vals[2]===3;}catch(e){return false;}},
-   customCheckDesc:"subscribe ثم emit يستقبل القيم",
-   tests:[{a:[],e:null}]},
-
-// ── المسار 6: OOP & Classes ──────────
-{id:47,title:"كلاس Animal",diff:"متوسط",xp:25,cat:"OOP",
-   concept:"<strong>Class</strong> في JavaScript هي syntactic sugar فوق prototype-based inheritance. <code>constructor</code> يُنفَّذ عند <code>new</code>. <code>this</code> يُشير للكائن الحالي. <code>this.name = name</code> يُضيف خاصية للكائن.",
-   desc:"أنشئ كلاس <strong>Animal</strong> يستقبل name وsound في constructor، وله method speak() تعيد النص: 'الـ [name] يقول [sound]!'",
-   hint:"class Animal { constructor(name,sound){...} speak(){ return `الـ ${this.name} يقول ${this.sound}!`; } }",
-   icon:"fa-paw",
-   exs:[{i:"new Animal('قطة','مياو').speak()",o:"'الـ قطة يقول مياو!'"},{i:"new Animal('كلب','هاو').speak()",o:"'الـ كلب يقول هاو!'"}],
-   code:"class Animal {\n  constructor(name, sound) {\n    // اكتب هنا\n  }\n  speak() {\n    // أعد الرسالة\n  }\n}",fn:"Animal",
-   customCheck:(r,a)=>{try{const a1=new r('قطة','مياو');const a2=new r('كلب','هاو');return a1.speak()==='الـ قطة يقول مياو!'&&a2.speak()==='الـ كلب يقول هاو!';}catch(e){return false;}},
-   customCheckDesc:"new Animal('قطة','مياو').speak() = 'الـ قطة يقول مياو!'",
-   tests:[{a:[],e:null}]},
-
-{id:48,title:"كلاس Rectangle",diff:"متوسط",xp:25,cat:"OOP",
-   concept:"<strong>Methods</strong> هي دوال مرتبطة بالكائن وتصل للخصائص عبر <code>this</code>. عكس الدوال العادية، لها سياق (context) مرتبط بالكائن الذي استُدعيت منه. كل method تُعرَّف مباشرة داخل جسم الكلاس.",
-   desc:"أنشئ كلاس <strong>Rectangle</strong> يستقبل width وheight، مع methods: area() للمساحة، perimeter() للمحيط، isSquare() للتحقق.",
-   hint:"area: width*height | perimeter: 2*(width+height) | isSquare: width===height",
-   icon:"fa-square",
-   exs:[{i:"new Rectangle(4,5).area()",o:"20"},{i:"new Rectangle(3,3).isSquare()",o:"true"}],
-   code:"class Rectangle {\n  constructor(width, height) {\n    this.width = width;\n    this.height = height;\n  }\n  area() { /* اكتب */ }\n  perimeter() { /* اكتب */ }\n  isSquare() { /* اكتب */ }\n}",fn:"Rectangle",
-   customCheck:(r,a)=>{try{const rect=new r(4,5);const sq=new r(3,3);return rect.area()===20&&rect.perimeter()===18&&!rect.isSquare()&&sq.isSquare();}catch(e){return false;}},
-   customCheckDesc:"area=20, perimeter=18, isSquare=false للـ(4,5)",
-   tests:[{a:[],e:null}]},
-
-{id:49,title:"كلاس Stack",diff:"متوسط",xp:25,cat:"OOP",
-   concept:"<strong>Stack</strong> هيكل بيانات LIFO (Last In First Out). التطبيق بمصفوفة: <code>push</code>→<code>array.push()</code>، <code>pop</code>→<code>array.pop()</code>، <code>peek</code>→آخر عنصر بدون حذف. يُستخدم في call stack وundo/redo.",
-   desc:"نفّذ كلاس <strong>Stack</strong> بالعمليات: push(item)، pop()، peek()، isEmpty()، size(). المبدأ: آخر داخل أول خارج (LIFO).",
-   hint:"استخدم مصفوفة داخلية. push: push للمصفوفة. pop: تعيد وتحذف الأخير. peek: الأخير بدون حذف.",
-   icon:"fa-layer-group",
-   exs:[{i:"s.push(1); s.push(2); s.pop()",o:"2"},{i:"s.peek()",o:"1"},{i:"s.isEmpty()",o:"false"}],
-   code:"class Stack {\n  constructor() {\n    this.items = [];\n  }\n  push(item) { /* اكتب */ }\n  pop() { /* اكتب */ }\n  peek() { /* اكتب */ }\n  isEmpty() { /* اكتب */ }\n  size() { return this.items.length; }\n}",fn:"Stack",
-   customCheck:(r,a)=>{try{const s=new r();s.push(1);s.push(2);s.push(3);return s.pop()===3&&s.peek()===2&&s.size()===2&&!s.isEmpty();}catch(e){return false;}},
-   customCheckDesc:"push/pop/peek/isEmpty/size تعمل صحيح",
-   tests:[{a:[],e:null}]},
-
-{id:50,title:"كلاس Queue",diff:"متوسط",xp:25,cat:"OOP",
-   concept:"<strong>Queue</strong> هيكل بيانات FIFO (First In First Out). التطبيق بمصفوفة: <code>enqueue</code>→<code>push()</code>، <code>dequeue</code>→<code>shift()</code> (من البداية). مثل طابور الانتظار. يُستخدم في task scheduling وBFS.",
-   desc:"نفّذ كلاس <strong>Queue</strong> بالعمليات: enqueue(item)، dequeue()، front()، isEmpty()، size(). المبدأ: أول داخل أول خارج (FIFO).",
-   hint:"استخدم مصفوفة. enqueue: push. dequeue: shift (من البداية). front: [0].",
-   icon:"fa-bars",
-   exs:[{i:"q.enqueue(1); q.enqueue(2); q.dequeue()",o:"1"},{i:"q.front()",o:"2"}],
-   code:"class Queue {\n  constructor() {\n    this.items = [];\n  }\n  enqueue(item) { /* اكتب */ }\n  dequeue() { /* اكتب */ }\n  front() { /* اكتب */ }\n  isEmpty() { /* اكتب */ }\n  size() { return this.items.length; }\n}",fn:"Queue",
-   customCheck:(r,a)=>{try{const q=new r();q.enqueue(1);q.enqueue(2);q.enqueue(3);return q.dequeue()===1&&q.front()===2&&q.size()===2;}catch(e){return false;}},
-   customCheckDesc:"enqueue/dequeue/front بمبدأ FIFO",
-   tests:[{a:[],e:null}]},
-
-{id:51,title:"الوراثة — Inheritance",diff:"صعب",xp:35,cat:"OOP",
-   concept:"<strong>Inheritance</strong> تسمح لكلاس بوراثة خصائص وميثودز كلاس آخر. <code>extends</code> يُوسّع الكلاس الأب. <code>super()</code> يستدعي constructor الأب ويجب أن يأتي قبل استخدام <code>this</code> في الكلاس الابن.",
-   desc:"أنشئ كلاس <strong>Vehicle</strong> بخصائص make وspeed، وmethod describe(). ثم كلاس <strong>Car</strong> يرث منه ويضيف doors وmethod fullInfo().",
-   hint:"class Car extends Vehicle { constructor(make,speed,doors){ super(make,speed); this.doors=doors; } fullInfo(){ return this.describe()+' - '+this.doors+' أبواب'; } }",
-   icon:"fa-car",
-   exs:[{i:"new Car('Toyota',120,4).fullInfo()",o:"'Toyota - 120 كمس - 4 أبواب'"},{i:"new Car('BMW',200,2).describe()",o:"'BMW - 200 كمس'"}],
-   code:"class Vehicle {\n  constructor(make, speed) {\n    this.make = make;\n    this.speed = speed;\n  }\n  describe() {\n    return `${this.make} - ${this.speed} كمس`;\n  }\n}\n\nclass Car extends Vehicle {\n  constructor(make, speed, doors) {\n    super(make, speed);\n    // اكتب هنا\n  }\n  fullInfo() {\n    // اكتب هنا\n  }\n}",fn:"Car",
-   customCheck:(r,a)=>{try{const c=new r('Toyota',120,4);return c.fullInfo()==='Toyota - 120 كمس - 4 أبواب'&&c.describe()==='Toyota - 120 كمس'&&c instanceof r;}catch(e){return false;}},
-   customCheckDesc:"Car يرث من Vehicle ويضيف fullInfo()",
-   tests:[{a:[],e:null}]},
-
-{id:52,title:"Private Fields #",diff:"صعب",xp:35,cat:"OOP",
-   concept:"<strong>Private Fields</strong> (ES2022) تبدأ بـ<code>#</code> ولا يمكن الوصول إليها خارج الكلاس — حتى من الكلاس الابن! هذا <strong>true encapsulation</strong>، بعكس الـ<code>_</code> التقليدي الذي كان اتفاقاً غير مُلزِم.",
-   desc:"أنشئ كلاس <strong>BankAccount</strong> بحقل خاص #balance. Methods: deposit(amount)، withdraw(amount)، getBalance(). لا يمكن الوصول لـ #balance مباشرة.",
-   hint:"class BankAccount { #balance=0; deposit(n){this.#balance+=n;} withdraw(n){if(n>this.#balance)throw new Error('رصيد غير كافٍ');this.#balance-=n;} getBalance(){return this.#balance;} }",
-   icon:"fa-bank",
-   exs:[{i:"acc.deposit(500); acc.getBalance()",o:"500"},{i:"acc.withdraw(200); acc.getBalance()",o:"300"}],
-   code:"class BankAccount {\n  #balance = 0;\n  \n  deposit(amount) {\n    // اكتب هنا\n  }\n  withdraw(amount) {\n    // تحقق من الرصيد ثم اطرح\n  }\n  getBalance() {\n    // اكتب هنا\n  }\n}",fn:"BankAccount",
-   customCheck:(r,a)=>{try{const acc=new r();acc.deposit(500);acc.deposit(300);acc.withdraw(200);return acc.getBalance()===600;}catch(e){return false;}},
-   customCheckDesc:"deposit+withdraw+getBalance تعمل صحيح",
-   tests:[{a:[],e:null}]},
-
-{id:53,title:"Iterator & Generator",diff:"صعب",xp:40,cat:"OOP",
-   concept:"<strong>Generator Function</strong> تُعرَّف بـ<code>function*</code>. <code>yield</code> تُوقف التنفيذ وتُعيد قيمة، ثم تكمل عند الاستدعاء التالي. تُنشئ <strong>Iterator</strong> يعمل مع <code>for...of</code> وSpread operator تلقائياً.",
-   desc:"اكتب دالة <strong>range</strong> Generator تولّد أرقاماً من start إلى end بخطوة step.",
-   hint:"function* range(start,end,step=1){ for(let i=start;i<=end;i+=step) yield i; }",
-   icon:"fa-repeat",
-   exs:[{i:"[...range(1,5)]",o:"[1,2,3,4,5]"},{i:"[...range(0,10,2)]",o:"[0,2,4,6,8,10]"}],
-   code:"function* range(start, end, step = 1) {\n  // استخدم yield\n  \n}",fn:"range",
-   customCheck:(r,a)=>{try{return JSON.stringify([...r(1,5)])===JSON.stringify([1,2,3,4,5])&&JSON.stringify([...r(0,10,2)])===JSON.stringify([0,2,4,6,8,10]);}catch(e){return false;}},
-   customCheckDesc:"Generator يولّد النطاق الصحيح",
-   tests:[{a:[1,5],e:null}]},
-
-{id:54,title:"Chainable Calculator",diff:"صعب",xp:35,cat:"OOP",
-   concept:"<strong>Method Chaining</strong> يجعل الكود قابلاً للقراءة كجُمَل: <code>calc.add(5).multiply(2).getResult()</code>. السر: كل method تُعيد <code>this</code> بدل undefined، فتبقى على نفس الكائن وتتابع الاستدعاءات.",
-   desc:"أنشئ كلاس <strong>Calculator</strong> بالعمليات add، subtract، multiply، divide — كلها تعيد this لتمكين method chaining. وgetResult() للنتيجة.",
-   hint:"add(n){ this.result += n; return this; } // أعد this دائماً",
-   icon:"fa-calculator",
-   exs:[{i:"new Calculator(10).add(5).multiply(2).subtract(3).getResult()",o:"27"},{i:"new Calculator(100).divide(4).add(5).getResult()",o:"30"}],
-   code:"class Calculator {\n  constructor(initial = 0) {\n    this.result = initial;\n  }\n  add(n) { this.result += n; return this; }\n  subtract(n) { /* اكتب */ }\n  multiply(n) { /* اكتب */ }\n  divide(n) { /* اكتب */ }\n  getResult() { return this.result; }\n}",fn:"Calculator",
-   customCheck:(r,a)=>{try{return new r(10).add(5).multiply(2).subtract(3).getResult()===27&&new r(100).divide(4).add(5).getResult()===30;}catch(e){return false;}},
-   customCheckDesc:"Calculator(10).add(5).multiply(2).subtract(3) = 27",
-   tests:[{a:[],e:null}]},
-
-{id:55,title:"ماذا بعد؟ طريقك للاحتراف",diff:"خاص",xp:100,cat:"🎓 إتمام",
-  type:"final",
-  icon:"fa-trophy",
-  concept:`أكملت رحلة <strong>CodeNile</strong> كاملةً 🎉 — الآن الفرق بين المبتدئ والمحترف هو شيء واحد فقط: <strong>بناء مشاريع حقيقية</strong>. الكود الذي تكتبه لنفسك يعلّمك أكثر من مئة تحدٍّ.`,
-  desc:`
-<div style="display:flex;flex-direction:column;gap:14px">
-
-  <div style="background:linear-gradient(135deg,rgba(245,193,0,.12),rgba(245,193,0,.05));border:1.5px solid rgba(245,193,0,.3);border-radius:16px;padding:16px">
-    <div style="font-size:15px;font-weight:900;color:var(--gold);margin-bottom:12px">🚀 مشاريع تبنيها الآن</div>
-    <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--text2)">
-      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">01</span><div><strong style="color:var(--text)">محفظة أعمال شخصية</strong><br>موقع يعرض مشاريعك بـ HTML/CSS/JS — أول ما يراه المشغِّل</div></div>
-      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">02</span><div><strong style="color:var(--text)">تطبيق قائمة مهام</strong><br>localStorage + CRUD كامل — يُثبت فهمك للـ DOM والبيانات</div></div>
-      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">03</span><div><strong style="color:var(--text)">تطبيق طقس بـ API</strong><br>fetch + async/await + عرض بيانات حقيقية — قفزة كبيرة</div></div>
-      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">04</span><div><strong style="color:var(--text)">مشروع بـ React أو Vue</strong><br>اختر إطار عمل واحد وابنِ فيه نسخة بسيطة من تطبيق يومي</div></div>
-      <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--gold);font-weight:800;flex-shrink:0">05</span><div><strong style="color:var(--text)">Clone لموقع مشهور</strong><br>انسخ واجهة Twitter أو Notion — الأفضل لتعلم CSS المتقدم</div></div>
-    </div>
-  </div>
-
-  <div style="background:rgba(82,183,136,.08);border:1.5px solid rgba(82,183,136,.25);border-radius:16px;padding:16px">
-    <div style="font-size:15px;font-weight:900;color:var(--green);margin-bottom:12px">💡 نصائح المحترفين</div>
-    <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--text2)">
-      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">اقرأ كود الآخرين</strong> — GitHub مليء بمشاريع مفتوحة. افهم كيف يفكر المحترفون</div></div>
-      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">علّم ما تتعلمه</strong> — اكتب مقالاً أو اشرح مفهوماً لصديق، هذا يُرسّخ المعرفة</div></div>
-      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">Node.js هي خطوتك التالية</strong> — نفس JavaScript لكن على الـ server، بابٌ لعالم كامل</div></div>
-      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">لا تتوقف عند الدروس</strong> — كل ساعة تقضيها تبني أهم من عشر ساعات تشاهد</div></div>
-      <div style="display:flex;gap:9px;align-items:flex-start"><span style="color:var(--green);font-size:16px;flex-shrink:0">✓</span><div><strong style="color:var(--text)">المجتمع قوتك</strong> — انضم لـ Discord أو مجموعات المبرمجين العرب، اسأل ولا تتردد</div></div>
-    </div>
-  </div>
-
-  <div style="background:rgba(156,137,255,.08);border:1.5px solid rgba(156,137,255,.25);border-radius:16px;padding:16px">
-    <div style="font-size:15px;font-weight:900;color:var(--purple);margin-bottom:12px">🗺️ خارطة طريق ما بعد CodeNile</div>
-    <div style="font-size:12px;color:var(--text2);display:flex;flex-direction:column;gap:8px">
-      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></div><span><strong style="color:var(--text)">الآن:</strong> ابنِ 3 مشاريع حقيقية وارفعها على GitHub</span></div>
-      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0"></div><span><strong style="color:var(--text)">بعد شهر:</strong> تعلّم React + الـ APIs (RESTful)</span></div>
-      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0"></div><span><strong style="color:var(--text)">بعد 3 أشهر:</strong> Node.js + قاعدة بيانات (MongoDB أو Supabase)</span></div>
-      <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0"></div><span><strong style="color:var(--text)">بعد 6 أشهر:</strong> مشروع كامل Full Stack وانشره للعالم</span></div>
-    </div>
-  </div>
-
-</div>`,
-  hint:"الاحتراف ليس وجهة، هو عادة يومية. أنت الآن تمتلك الأساس — ابنِ عليه كل يوم شيئاً واحداً 🏗️",
-  exs:[{i:"مشاريع + مجتمع + صبر",o:"احتراف 🎯"}],
-  code:"// 🎉 أكملت جميع تحديات CodeNile!\n// أنت الآن جاهز لبناء أشياء حقيقية.\n\n// خطوتك القادمة:\nconst nextStep = {\n  today:   'ابدأ مشروعك الأول الآن',\n  thisWeek:'ارفعه على GitHub',\n  thisMonth:'تعلّم React',\n  goal:    'Full Stack Developer 🚀'\n};\n\nconsole.log('رحلتك بدأت للتو...');\nconsole.log(nextStep.today);",
-  fn:null,
-  tests:[{a:[],e:null}],
-  customCheck:()=>true,
-  customCheckDesc:"أكملت جميع التحديات 🎉"
-}
-
-];
-
-
-const PATHS = [
-  {id:1,title:"JavaScript أساسي",icon:"JS",color:"#F5C100",bg:"rgba(245,193,0,.15)",cat:"أساسي",locked:false,
-   desc:"المتغيرات، الدوال، الشروط — 7 تحديات للبداية الصحيحة"},
-  {id:2,title:"هياكل البيانات",icon:"{}",color:"#52B788",bg:"rgba(82,183,136,.15)",cat:"هياكل البيانات",locked:false,
-   desc:"المصفوفات، Stack، Queue، Linked List — 8 تحديات"},
-  {id:3,title:"الدوال المتقدمة",icon:"fn",color:"#9C89FF",bg:"rgba(156,137,255,.15)",cat:"الدوال المتقدمة",locked:false,
-   desc:"Closure، Memoize، Debounce، Recursion — 10 تحديات"},
-  {id:4,title:"الخوارزميات",icon:"O(n)",color:"#FF8C42",bg:"rgba(255,140,66,.15)",cat:"خوارزميات",locked:false,
-   desc:"Sorting، Searching، DP، Sliding Window — 10 تحديات"},
-  {id:5,title:"Async & Promises",icon:"⏳",color:"#4DA6FF",bg:"rgba(77,166,255,.12)",cat:"async",locked:false,
-   desc:"Promises، async/await، Event Loop، Observable — 7 تحديات"},
-  {id:6,title:"OOP & Classes",icon:"class",color:"#FF6B9D",bg:"rgba(255,107,157,.15)",cat:"OOP",locked:false,
-   desc:"Classes، Inheritance، Private Fields، Generator — 8 تحديات"}
-];
-
-const BADGES = [
-  {id:1,emoji:"🌱",name:"أول خطوة",req:"حل أول تحدي",solvedThresh:1},
-  {id:2,emoji:"⭐",name:"بداية جيدة",req:"حل 5 تحديات",solvedThresh:5},
-  {id:3,emoji:"🔥",name:"مبتدئ متحمس",req:"حل 10 تحديات",solvedThresh:10},
-  {id:4,emoji:"💡",name:"مفكر",req:"حل 5 تحديات متوسطة",medThresh:5},
-  {id:5,emoji:"🐆",name:"مبرمج الخرطوم",req:"حل جميع التحديات السهلة",allEasyDone:true},
-  {id:6,emoji:"🦁",name:"أسد البرمجة",req:"حل 10 تحديات صعبة",hardThresh:10},
-  {id:7,emoji:"👑",name:"أسطورة CodeNile",req:"حل جميع التحديات",allDone:true},
-  {id:8,emoji:"🏅",name:"بطل النيل",req:"تجميع 500 XP",xpThresh:500},
-  {id:9,emoji:"💎",name:"ملك التحديات",req:"تجميع 1000 XP",xpThresh:1000},
-  {id:13,emoji:"🔥",name:"المتقدم",req:"حل 5 تحديات صعبة",hardThresh:5},
-  {id:14,emoji:"🎓",name:"خريج CodeNile",req:"حل جميع التحديات الـ 50",allDone:true},
-  {id:10,emoji:"🎯",name:"دقيق",req:"حل 3 تحديات بكود صحيح من أول مرة",perfectThresh:3},
-  {id:11,emoji:"🚀",name:"صاروخ",req:"حل تحدي صعب",hardOne:true},
-  {id:12,emoji:"🇸🇩",name:"فخر السودان",req:"حل 50 تحدياً",solvedThresh:50}
-];
+<script src="challenges.js"></script>
+<script>
 
 // ══════════════════════════════════════
 // DAILY SYSTEM — تحدي جديد كل يوم
@@ -2460,8 +1947,8 @@ function hashDate(dateKey){
 }
 
 function getDailyChallenge(dateKey){
-  const idx=hashDate(dateKey)%CHALLENGES.length;
-  return CHALLENGES[idx];
+  const pool=realChallenges().filter(c=>!c._remote);
+  return pool[hashDate(dateKey)%pool.length];
 }
 
 function isDailyDone(dateKey){
@@ -2531,7 +2018,10 @@ function saveState(){
       xp:        S.xp,
       solved:    S.solved.length,
       solvedIds: S.solved,
-      level:     getLv(S.xp)
+      level:     getLv(S.xp),
+      weekKey:   S.week&&S.week.key, weekXp:  S.week&&S.week.xp,
+      monthKey:  S.month&&S.month.key, monthXp: S.month&&S.month.xp,
+      league:    S.league||0
     });
   }
 }
@@ -2628,13 +2118,15 @@ function go(screen){
   else if(screen==='badges') renderBadges();
   else if(screen==='leaderboard') renderLB();
   else if(screen==='profile') renderProfile();
+  else if(screen==='playground') renderPlayground();
+  else if(screen==='lessons') renderLessons();
   // build nav
   ['home','challenges','daily','badges','profile'].forEach(s=>{
     const el2=document.getElementById('bnav-'+s);
     if(el2) el2.innerHTML='';
   });
   const navId='bnav-'+({'home':'home','challenges':'challenges','daily':'daily',
-    'paths':'home','badges':'badges','leaderboard':'profile','profile':'profile'}[screen]||'home');
+    'paths':'home','badges':'badges','leaderboard':'profile','profile':'profile','playground':'playground','lessons':'lessons'}[screen]||'home');
   buildBNavGeneric(screen, navId);
 }
 
@@ -2837,7 +2329,7 @@ function openChallenge(id){
   if(c.type==='final'){
     if(!S.solved.includes(c.id)){
       S.solved.push(c.id);
-      S.xp += c.xp;
+      addXP(c.xp);
       updateStreak();
       checkBadges();
       saveState();
@@ -3021,35 +2513,49 @@ function _ldist(a,b){
 
 // ── Sandboxed runner: user code runs in a Web Worker with a time limit,
 //    so infinite loops (while(true){}) can't freeze the app ──
-var SB_TIMEOUT_MS=3000;
+var SB_TIMEOUT_MS=4000;
 var _sbWorkerUrl=null;
 function _sbWorkerSrc(){
   return [
-  'self.onmessage=function(ev){',
+  'function fmt(a){try{return typeof a==="object"?JSON.stringify(a):String(a);}catch(e){return String(a);}}',
+  'function revive(x){ if(typeof x==="string"&&x.indexOf("__FN__:")===0){try{return (0,eval)("("+x.slice(7)+")");}catch(e){return x;}} if(Array.isArray(x)) return x.map(revive); return x; }',
+  'async function tryCc(cc,v,a){ try{ var r=cc(v,a); if(r&&typeof r.then==="function") r=await r; return !!r; }catch(e){ return false; } }',
+  'self.onmessage=async function(ev){',
   ' var d=ev.data,code=d.code,fnName=d.fnName,logs=[];',
-  ' function fmt(a){try{return typeof a==="object"?JSON.stringify(a):String(a);}catch(e){return String(a);}}',
   ' var fc={log:function(){logs.push([].slice.call(arguments).map(fmt).join(" "));},',
   '  error:function(){logs.push("ERR: "+[].slice.call(arguments).map(fmt).join(" "));},',
   '  warn:function(){logs.push("WARN: "+[].slice.call(arguments).map(fmt).join(" "));},',
   '  info:function(){logs.push([].slice.call(arguments).map(fmt).join(" "));}};',
+  ' self.console=fc;',
   ' var fn;',
   ' try{ fn=(new Function("console",code+"\\n;return (typeof "+fnName+" !== \\"undefined\\") ? "+fnName+" : undefined;"))(fc); }',
-  ' catch(ge){ self.postMessage({compileError:{message:ge.message,stack:String(ge.stack||""),lineNumber:ge.lineNumber||null,isSyntax:ge instanceof SyntaxError}}); return; }',
+  ' catch(ge){ if(d.playground&&!(ge instanceof SyntaxError)){ logs.push("ERR: "+ge.message); self.postMessage({logs:logs}); return; } self.postMessage({compileError:{message:ge.message,stack:String(ge.stack||""),lineNumber:ge.lineNumber||null,isSyntax:ge instanceof SyntaxError}}); return; }',
+  ' if(d.playground){ await new Promise(function(r){setTimeout(r,d.waitMs||0);}); self.postMessage({logs:logs}); return; }',
   ' if(typeof fn!=="function"){ self.postMessage({notFound:true}); return; }',
   ' var cc=null; if(d.ccSrc){ try{ cc=(0,eval)("("+d.ccSrc+")"); }catch(e){} }',
-  ' var tests=d.tests.map(function(t){return {a:t.a.map(function(x){ if(typeof x==="string"&&x.indexOf("__FN__:")===0){try{return (0,eval)("("+x.slice(7)+")");}catch(e){return x;}} return x; }),e:t.e};});',
+  ' var isClass=/^class[\\s{]/.test(Function.prototype.toString.call(fn));',
   ' var out=[];',
-  ' for(var i=0;i<tests.length;i++){ var t=tests[i]; logs=[]; var res,passed=false,err=null,rs=null;',
-  '  var isClass=/^class[\\s{]/.test(Function.prototype.toString.call(fn));',
-  '  if(!isClass){ try{ res=fn.apply(null,t.a); try{rs=JSON.stringify(res);}catch(e){rs=String(res);} passed=rs===JSON.stringify(t.e); }catch(te){ err=te&&te.message?te.message:String(te); } }',
-  '  if(cc){ var ok=false; try{ ok=!!cc(fn,t.a); }catch(ce){}',
-  '   if(!ok&&!err&&!isClass){ try{ ok=!!cc(res,t.a); }catch(ce){} }',
+  ' for(var i=0;i<d.tests.length;i++){ var t={a:revive(d.tests[i].a),e:d.tests[i].e}; logs=[]; var res,passed=false,err=null,rs=null;',
+  '  if(!isClass){ try{ res=fn.apply(null,t.a); if(res&&typeof res.then==="function"&&!cc){ res=await res; }',
+  '    try{rs=JSON.stringify(res);}catch(e){rs=String(res);} passed=rs===JSON.stringify(t.e); }catch(te){ err=te&&te.message?te.message:String(te); } }',
+  '  if(cc){ var ok=await tryCc(cc,fn,t.a);',
+  '   if(!ok&&!err&&!isClass){ ok=await tryCc(cc,res,t.a); }',
   '   passed=ok; if(ok){err=null;} else if(isClass&&!err){ err="الكلاس لا يعمل كما هو مطلوب — راجع الدوال المطلوبة"; } }',
-  '  out.push({a:d.rawTests[i].a,e:t.e,rs:err?null:rs,passed:passed,err:err,isUndef:(!err&&res===undefined),logs:logs.slice()}); }',
+  '  if(res&&typeof res.then==="function") rs="Promise";',
+  '  out.push({a:d.tests[i].a,e:t.e,rs:err?null:rs,passed:passed,err:err,isUndef:(!err&&res===undefined),logs:logs.slice()}); }',
   ' self.postMessage({results:out});',
   '};'].join('\n');
 }
-function sbRun(code, tests, fnName, customCheck, ccd){
+function _sbSer(x){
+  if(typeof x==='function') return '__FN__:'+String(x);
+  if(Array.isArray(x)) return x.map(_sbSer);
+  return x;
+}
+function _sbSerializeTests(tests){
+  return (tests||[]).map(function(t){ return {a:_sbSer(t.a||[]), e:t.e}; });
+}
+function sbRun(code, tests, fnName, customCheck, ccd, opts){
+  opts=opts||{};
   if(typeof Worker==='undefined' || typeof Blob==='undefined')
     return sbRunInline(code, tests, fnName, customCheck, ccd);
   return new Promise(function(resolve){
@@ -3082,6 +2588,7 @@ function sbRun(code, tests, fnName, customCheck, ccd){
         resolve({fatalError:'الدالة <strong style="color:#FF8C00">"'+fnName+'"</strong> غير موجودة<br>اكتب: <code>function '+fnName+'(...) { ... }</code>'});
         return;
       }
+      if(d.logs){ resolve({logs:d.logs}); return; }
       resolve({results:d.results, ccd:ccd});
     };
     w.onerror=function(ev){
@@ -3089,11 +2596,16 @@ function sbRun(code, tests, fnName, customCheck, ccd){
       if(ev && ev.preventDefault) ev.preventDefault();
       resolve({fatalError:_escHTML((ev&&ev.message)||'خطأ غير معروف'), errType:'runtime', suggestion:'راجع الكود بعناية'});
     };
-    w.postMessage({code:code, fnName:fnName, tests:tests, rawTests:tests,
-      ccSrc: customCheck ? String(customCheck) : null});
+    w.postMessage({code:code, fnName:fnName, tests:_sbSerializeTests(tests),
+      ccSrc: customCheck ? String(customCheck) : null, playground:!!opts.playground, waitMs: opts.playground?1200:0});
   });
 }
 
+function _fmtArg(a){
+  if(typeof a==='string'&&a.indexOf('__FN__:')===0) return a.slice(7);
+  if(Array.isArray(a)) return '['+a.map(_fmtArg).join(', ')+']';
+  try{ return JSON.stringify(a); }catch(e){ return String(a); }
+}
 function _escHTML(s){
   return String(s==null?'':s).replace(/[&<>"']/g,function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
@@ -3252,7 +2764,7 @@ function renderResults(res, preview){
   const items=preview ? res.results.slice(0,3) : res.results;
   let html='';
   for(const r of items){
-    const call=`${c.fn}(${r.a.map(a=>JSON.stringify(a)).join(', ')})`;
+    const call=`${c.fn}(${r.a.map(_fmtArg).join(', ')})`;
     if(r.err){
       const tr = translateErrMsg(r.err);
       html+=`<div class="ol oe">⚠ ${call}</div>
@@ -3300,25 +2812,26 @@ async function submitCode(){
   switchTabById('code');
   const res=await sbRun(code,c.tests,c.fn,c.customCheck,c.customCheckDesc);
   if(res.fatalError){
+    cnMarkFail(c.id); saveState();
     showFail(c,0,c.tests.length,[{call:'خطأ في الكود',got:res.fatalError,exp:'function '+c.fn+'(...){ return ...; }',pass:false}]);
     return;
   }
   const passed=res.results.filter(r=>r.passed).length;
   const total=res.results.length;
   const fails=res.results.filter(r=>!r.passed).map(r=>{
-    const call=`${c.fn}(${r.a.map(a=>JSON.stringify(a)).join(', ')})`;
+    const call=`${c.fn}(${r.a.map(_fmtArg).join(', ')})`;
     return {call,
       got: r.err?('خطأ: '+r.err):r.isUndef?'undefined (هل نسيت return؟)':r.rs,
       exp: res.ccd||JSON.stringify(r.e), pass:false};
   });
   if(passed===total){
     const wasNew=!S.solved.includes(c.id);
-    if(wasNew){ S.solved.push(c.id); S.xp+=c.xp; S.perfect++; checkBadges(); }
+    if(wasNew){ S.solved.push(c.id); addXP(c.xp); if(cnWasPerfect(c.id)) S.perfect=(S.perfect||0)+1; checkBadges(); }
     // Daily bonus
     let dailyBonus=0;
     if(S._pendingDailyKey && !isDailyDone(S._pendingDailyKey)){
       dailyBonus=S._pendingDailyBonus||20;
-      S.xp+=dailyBonus;
+      addXP(dailyBonus);
       markDailyDone(S._pendingDailyKey);
       delete S._pendingDailyKey;
       delete S._pendingDailyBonus;
@@ -3326,7 +2839,7 @@ async function submitCode(){
     saveState();
     if(wasNew) onChallengeCompleted();
     showResult(c, wasNew, dailyBonus);
-  } else { showFail(c,passed,total,fails); }
+  } else { cnMarkFail(c.id); saveState(); showFail(c,passed,total,fails); }
 }
 
 // ══════════════════════════════════════
@@ -3525,22 +3038,23 @@ function startDailyChallenge(challengeId, dateKey, bonusXP){
 // ══════════════════════════════════════
 function renderPaths(){
   const html=PATHS.map(p=>{
-    const catChs=CHALLENGES.filter(c=>c.cat===p.cat);
+    const catChs=realChallenges().filter(c=>c.cat===p.cat);
     const done=catChs.filter(c=>S.solved.includes(c.id)).length;
     const total=catChs.length;
     const pct=total>0?Math.round((done/total)*100):0;
-    const onclick=p.locked?"toast('قريباً! هذا المسار سيُفتح قريباً 🔒')":`setPathFilter('${p.cat}')`;
+    const onclick=p.locked?"toast('قريباً! هذا المسار سيُفتح قريباً 🔒')":`openLessons('${p.cat}')`;
+    const nLs=(typeof LESSONS!=='undefined'&&LESSONS[p.cat]||[]).length;
     return `<div class="path-card" onclick="${onclick}">
       <div class="path-ico" style="background:${p.bg};color:${p.color};font-size:14px;font-weight:900;letter-spacing:-1px">${p.icon}</div>
       <div class="path-inf">
         <div class="path-ttl">${p.title}</div>
         <div class="path-cnt">
-          <i class="fa-solid fa-code" style="font-size:10px"></i> ${total} تحدي
+          📖 ${nLs} دروس · <i class="fa-solid fa-code" style="font-size:10px"></i> ${total} تحدي
           ${!p.locked&&done>0?`· <span style="color:var(--gold)">${done} محلول</span>`:''}
         </div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:6px">${p.desc||''}</div>
         <div class="path-pbar"><div class="path-pfill" style="width:${p.locked?0:pct}%;background:${p.color}"></div></div>
-        <div class="path-pct" style="color:${p.color}">${p.locked?'<i class="fa-solid fa-lock"></i> قريباً':pct+'% مكتمل'}</div>
+        <div class="path-pct" style="color:${p.color}">${p.locked?'<i class="fa-solid fa-lock"></i> قريباً':pct+'% مكتمل'}${pct===100?` <span onclick="event.stopPropagation();openCertificate('${p.cat}')" style="margin-right:8px;background:${p.color}22;border:1px solid ${p.color};border-radius:8px;padding:1px 8px;cursor:pointer">🎓 الشهادة</span>`:''}</div>
       </div>
       <i class="fa-solid ${p.locked?'fa-lock':'fa-chevron-left'}" style="color:${p.locked?'var(--text3)':'var(--text2)'}"></i>
     </div>`;
@@ -3551,10 +3065,10 @@ function renderPaths(){
       <div style="font-size:20px;margin-bottom:6px">🏆</div>
       <div style="font-size:14px;font-weight:700;margin-bottom:4px">هل أنت جاهز؟</div>
       <div style="font-size:12px;color:var(--text2)">
-        أكمل جميع التحديات الـ 50 لتصبح مبرمج JavaScript محترف
+        أكمل جميع التحديات الـ ${realChallenges().length} لتصبح مبرمج JavaScript محترف
       </div>
       <div style="margin-top:12px;font-size:13px;font-weight:800;color:var(--gold)">
-        ${CHALLENGES.filter(c=>S.solved.includes(c.id)).length} / ${CHALLENGES.length} مكتملة
+        ${realChallenges().filter(c=>S.solved.includes(c.id)).length} / ${realChallenges().length} مكتملة
       </div>
     </div>
     <div style="height:20px"></div>`;
@@ -3581,7 +3095,8 @@ function calcBadges(){
   const medSolved=CHALLENGES.filter(c=>c.diff==='متوسط'&&S.solved.includes(c.id)).length;
   const easyChallenges=CHALLENGES.filter(c=>c.diff==='سهل');
   const allEasyDone=easyChallenges.every(c=>S.solved.includes(c.id));
-  const allDone=CHALLENGES.every(c=>S.solved.includes(c.id));
+  const allDone=realChallenges().every(c=>S.solved.includes(c.id));
+  const anyPathDone=PATHS.some(p=>{const cs=realChallenges().filter(c=>c.cat===p.cat);return cs.length&&cs.every(c=>S.solved.includes(c.id));});
 
   for(const b of BADGES){
     let e=false;
@@ -3591,6 +3106,7 @@ function calcBadges(){
     if(b.medThresh && medSolved>=b.medThresh) e=true;
     if(b.allEasyDone && allEasyDone) e=true;
     if(b.allDone && allDone) e=true;
+    if(b.pathDone && anyPathDone) e=true;
     if(b.hardOne && hardSolved>=1) e=true;
     if(b.perfectThresh && S.perfect>=b.perfectThresh) e=true;
     if(e) earned.push(b.id);
@@ -3643,7 +3159,8 @@ function setLbPeriod(p, el){
   curLbPeriod=p;
   document.querySelectorAll('.lb-ptab').forEach(t=>t.classList.remove('act'));
   el.classList.add('act');
-  renderLBFromData(_lbCache);
+  _lbLoading=false;
+  renderLB();
 }
 
 async function renderLB(){
@@ -3660,9 +3177,17 @@ async function renderLB(){
 
   try{
     let rows=[];
-    if(window._fbLoadLB){
-      rows=await window._fbLoadLB();
+    cnRollPeriods();
+    renderLeagueCard();
+    const period=curLbPeriod;
+    if(period==='weekly' && window._fbLoadLBBy){
+      rows=(await window._fbLoadLBBy('weekXp')).filter(r=>r.weekKey===S.week.key).map(r=>({...r,pxp:r.weekXp||0}));
+    } else if(period==='monthly' && window._fbLoadLBBy){
+      rows=(await window._fbLoadLBBy('monthXp')).filter(r=>r.monthKey===S.month.key).map(r=>({...r,pxp:r.monthXp||0}));
+    } else if(window._fbLoadLB){
+      rows=(await window._fbLoadLB()).map(r=>({...r,pxp:r.xp||0}));
     }
+    if(period!==curLbPeriod) return;
     // Merge current user
     const myEntry={
       uid:   S.uid||'__me__',
@@ -3670,11 +3195,13 @@ async function renderLB(){
       xp:    S.xp||0,
       solved:S.solved.length,
       level: getLv(S.xp),
+      league:S.league||0,
+      pxp:   period==='weekly'?S.week.xp:period==='monthly'?S.month.xp:(S.xp||0),
       isMe:  true
     };
     rows=rows.filter(r=>r.uid!==S.uid);
     rows.push(myEntry);
-    rows.sort((a,b)=>(b.xp||0)-(a.xp||0));
+    rows.sort((a,b)=>(b.pxp||0)-(a.pxp||0));
     _lbCache=rows;
     renderLBFromData(rows);
   }catch(e){
@@ -3705,12 +3232,9 @@ function renderLBFromData(rows){
     return;
   }
 
-  // Period multiplier
-  const mult=curLbPeriod==='weekly'?0.3:curLbPeriod==='monthly'?0.7:1;
-
-  // Sort & add display XP
+  // Real per-period XP (weekly / monthly / all-time) + escaped names
   const data=rows
-    .map(d=>({...d, xpShow: Math.round((d.xp||0)*mult)}))
+    .map(d=>({...d, name:_escHTML(d.name||d.nm||'مستخدم'), xpShow: d.pxp!=null?d.pxp:(d.xp||0)}))
     .sort((a,b)=>b.xpShow-a.xpShow);
 
   // Avatar helpers
@@ -3776,7 +3300,7 @@ function renderLBFromData(rows){
       </div>
       <div class="lb-info">
         <div class="lb-nm">
-          ${(d.name||d.nm||'مستخدم').slice(0,20)}
+          ${(d.name||d.nm||'مستخدم').slice(0,20)} ${(LEAGUES[d.league||0]||LEAGUES[0]).ic}
           ${d.isMe?'<span style="font-size:10px;color:var(--gold);margin-right:4px">أنت</span>':''}
         </div>
         <div class="lb-sub">مستوى ${d.level||1} · ${d.solved||0} تحدي محلول</div>
@@ -3960,6 +3484,10 @@ async function onAuthSuccess(user){
       if(remote){
         // Take higher XP
         if((remote.xp||0) > (S.xp||0)) S.xp=remote.xp;
+        cnRollPeriods();
+        if(remote.weekKey===S.week.key && (remote.weekXp||0)>S.week.xp) S.week.xp=remote.weekXp;
+        if(remote.monthKey===S.month.key && (remote.monthXp||0)>S.month.xp) S.month.xp=remote.monthXp;
+        if(typeof remote.league==='number' && remote.league>(S.league||0)) S.league=remote.league;
         // Merge solved IDs (union of local + remote)
         if(remote.solvedIds && Array.isArray(remote.solvedIds)){
           const merged=[...new Set([...S.solved,...remote.solvedIds])];
@@ -4346,4 +3874,285 @@ if(window.Capacitor){
   // Capacitor fires no deviceready, init after DOM settles
   setTimeout(()=>{ if(!_admobReady) initAdMob(); }, 1000);
 }
-</script></body></html>
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════
+// v1.3 FEATURES — الملعب، الدروس، الدوريات الأسبوعية، الشهادات،
+// والتحديات عن بُعد. (بُنيت فوق الدوال الموجودة بدون كسرها)
+// ══════════════════════════════════════════════════════════════
+
+// ── Period keys (أسبوع ISO وشهر) ──
+function cnWeekKey(d){
+  d=d?new Date(d):new Date();
+  const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const day=t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-day);
+  const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));
+  const wk=Math.ceil((((t-y0)/86400000)+1)/7);
+  return t.getUTCFullYear()+'-W'+String(wk).padStart(2,'0');
+}
+function cnMonthKey(d){ d=d?new Date(d):new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function cnDaysLeftInWeek(){ const g=new Date().getDay(); return g===0?1:8-g; } // الأسبوع ينتهي الأحد
+
+// ── Leagues ──
+const LEAGUES=[
+  {nm:'البرونزي',ic:'🥉',c:'#CD7F32'},
+  {nm:'الفضي',ic:'🥈',c:'#C0C0C0'},
+  {nm:'الذهبي',ic:'🥇',c:'#F5C100'},
+  {nm:'الماسي',ic:'💎',c:'#4DA6FF'},
+  {nm:'الأسطوري',ic:'👑',c:'#FF6B9D'}
+];
+const LEAGUE_PROMOTE_XP=150, LEAGUE_DEMOTE_XP=20;
+
+function cnRollPeriods(){
+  const wk=cnWeekKey(), mo=cnMonthKey();
+  if(!S.week) S.week={key:wk,xp:0};
+  if(!S.month) S.month={key:mo,xp:0};
+  if(typeof S.league!=='number') S.league=0;
+  if(S.week.key!==wk){
+    const prev=S.week.xp||0, before=S.league;
+    if(prev>=LEAGUE_PROMOTE_XP && S.league<LEAGUES.length-1) S.league++;
+    else if(prev<LEAGUE_DEMOTE_XP && S.league>0) S.league--;
+    S.lastWeek={key:S.week.key,xp:prev,from:before,to:S.league};
+    S._leagueNotice=S.league!==before;
+    S.week={key:wk,xp:0};
+  }
+  if(S.month.key!==mo) S.month={key:mo,xp:0};
+}
+function addXP(n){
+  n=Math.max(0,n|0); cnRollPeriods();
+  S.xp+=n; S.week.xp+=n; S.month.xp+=n;
+}
+cnRollPeriods();
+
+// ── Perfect-first-try tracking ──
+function cnMarkFail(id){ if(!S.failedIds) S.failedIds=[]; if(!S.failedIds.includes(id)) S.failedIds.push(id); }
+function cnWasPerfect(id){ return !(S.failedIds||[]).includes(id); }
+
+// ══════════════════════════════════════
+// REMOTE CHALLENGES (Firestore: challenges_extra)
+// ══════════════════════════════════════
+const CN_EXTRA_KEY='codenile_extra_ch';
+function cnValidChallenge(c){
+  return c && typeof c.id==='number' && typeof c.title==='string' && typeof c.fn==='string' &&
+    Array.isArray(c.tests) && c.tests.length>0 && typeof c.code==='string' && typeof c.cat==='string';
+}
+function cnMergeChallenges(list){
+  let added=0;
+  const finalIdx=CHALLENGES.findIndex(c=>c.type==='final');
+  (list||[]).forEach(c=>{
+    if(!cnValidChallenge(c)) return;
+    c.diff=c.diff||'متوسط'; c.xp=c.xp||20; c.hint=c.hint||''; c.desc=c.desc||''; c.exs=c.exs||[]; c.icon=c.icon||'fa-code';
+    const i=CHALLENGES.findIndex(x=>x.id===c.id);
+    if(i>=0){ if(CHALLENGES[i]._remote) CHALLENGES[i]=Object.assign(c,{_remote:true}); return; }
+    c._remote=true;
+    if(finalIdx>=0) CHALLENGES.splice(CHALLENGES.findIndex(x=>x.type==='final'),0,c); else CHALLENGES.push(c);
+    added++;
+  });
+  return added;
+}
+try{ cnMergeChallenges(JSON.parse(localStorage.getItem(CN_EXTRA_KEY)||'[]')); }catch(e){}
+async function cnSyncRemoteChallenges(){
+  for(let i=0;i<60 && !window._fbLoadExtraChallenges;i++) await new Promise(r=>setTimeout(r,200));
+  if(!window._fbLoadExtraChallenges) return;
+  const list=await window._fbLoadExtraChallenges();
+  if(!list || !list.length) return;
+  try{ localStorage.setItem(CN_EXTRA_KEY,JSON.stringify(list)); }catch(e){}
+  const n=cnMergeChallenges(list);
+  if(n>0){ toast('🆕 '+n+' تحديات جديدة أضيفت!'); if(currentScreen==='home') renderHome(); }
+}
+setTimeout(cnSyncRemoteChallenges,1500);
+
+// ══════════════════════════════════════
+// PLAYGROUND — ملعب حر
+// ══════════════════════════════════════
+const PG_KEY='codenile_playground';
+let pgEditor=null;
+const PG_DEFAULT="// 🧪 الملعب الحر — اكتب أي كود JavaScript وشغّله\n// console.log يطبع النتيجة بالأسفل\n\nconst names = ['علي', 'سارة', 'محمد'];\nnames.forEach((n, i) => console.log(i + 1, n));\n\nconsole.log('المجموع:', [1, 2, 3].reduce((a, b) => a + b, 0));\n";
+function renderPlayground(){
+  const ta=document.getElementById('pg-ed');
+  let saved=null; try{ saved=localStorage.getItem(PG_KEY); }catch(e){}
+  if(!pgEditor){
+    if(typeof CodeMirror!=='undefined'){
+      pgEditor=CodeMirror.fromTextArea(ta,{mode:'javascript',theme:'material-darker',lineNumbers:true,
+        matchBrackets:true,autoCloseBrackets:true,styleActiveLine:true,indentUnit:2,tabSize:2,direction:'ltr',
+        extraKeys:{'Tab':cm=>cm.execCommand('indentMore'),'Ctrl-Enter':()=>pgRun(),'Cmd-Enter':()=>pgRun()}});
+      pgEditor.setSize('100%','auto');
+      pgEditor.on('change',()=>{ try{ localStorage.setItem(PG_KEY,pgEditor.getValue()); }catch(e){} });
+    } else { ta.style.display='block'; }
+    pgSet(window._pgPending||saved||PG_DEFAULT);
+  } else if(window._pgPending){ pgSet(window._pgPending); }
+  window._pgPending=null;
+  setTimeout(()=>pgEditor&&pgEditor.refresh(),60);
+}
+function pgSet(code){ if(pgEditor){ pgEditor.setValue(code); pgEditor.clearHistory(); } else document.getElementById('pg-ed').value=code; }
+function pgGet(){ return pgEditor?pgEditor.getValue():document.getElementById('pg-ed').value; }
+function openInPlayground(code){ window._pgPending=code; go('playground'); }
+async function pgRun(){
+  const out=document.getElementById('pg-out');
+  out.innerHTML='<div style="color:var(--text2)">⏳ جاري التشغيل...</div>';
+  const t0=performance.now();
+  const res=await sbRun(pgGet(),[],'__cn_pg__',null,null,{playground:true});
+  const ms=Math.round(performance.now()-t0);
+  let html='';
+  if(res.fatalError){
+    if(res.errLine) html+=`<div class="ol oe">السطر ${res.errLine}: ${_escHTML(res.errLineContent||'')}</div>`;
+    html+=`<div class="ol oe">${res.errType==='syntax'?'🔴 خطأ نحوي:':'⚠️ خطأ:'} ${res.fatalError}</div>`;
+    if(res.suggestion) html+=`<div style="font-size:12px;color:var(--text2);margin-top:6px">💡 ${res.suggestion}</div>`;
+  } else {
+    const logs=res.logs||[];
+    html=logs.length?logs.map(l=>`<div class="ol ${l.indexOf('ERR:')===0?'oe':'op'}" style="white-space:pre-wrap;direction:ltr;text-align:left">${_escHTML(l)}</div>`).join('')
+      :'<div style="color:var(--text3)">لا توجد مخرجات — استخدم console.log()</div>';
+  }
+  html+=`<div style="font-size:10px;color:var(--text3);margin-top:8px;text-align:left">⏱ ${ms}ms</div>`;
+  out.innerHTML=html;
+}
+function pgClear(){ pgSet(''); document.getElementById('pg-out').innerHTML='<div style="color:var(--text3)">اضغط ▶ تشغيل</div>'; }
+function pgReset(){ pgSet(PG_DEFAULT); }
+
+// ══════════════════════════════════════
+// LESSONS — الدروس
+// ══════════════════════════════════════
+let curLessonCat=null;
+function openLessons(cat){ curLessonCat=cat; go('lessons'); }
+function renderLessons(){
+  const p=PATHS.find(x=>x.cat===curLessonCat)||PATHS[0];
+  curLessonCat=p.cat;
+  const ls=(typeof LESSONS!=='undefined'&&LESSONS[p.cat])||[];
+  if(!S.lessonsRead) S.lessonsRead=[];
+  document.getElementById('ls-title').textContent=p.title;
+  const chs=realChallenges().filter(c=>c.cat===p.cat);
+  const done=chs.filter(c=>S.solved.includes(c.id)).length;
+  let html=`<div style="background:${p.bg};border:1px solid ${p.color}55;border-radius:16px;padding:14px;margin-bottom:14px">
+      <div style="font-size:13px;color:var(--text2);line-height:1.8">${p.desc||''}</div>
+      <div style="display:flex;gap:14px;margin-top:8px;font-size:12px;font-weight:700">
+        <span style="color:${p.color}">📖 ${ls.length} دروس</span>
+        <span style="color:var(--text2)">💻 ${done}/${chs.length} تحدي</span>
+      </div></div>`;
+  html+=ls.map((l,i)=>{
+    const key=p.cat+'#'+i, read=S.lessonsRead.includes(key);
+    return `<div class="ls-card" id="ls-${i}">
+      <div class="ls-head" onclick="toggleLesson(${i})">
+        <div class="ls-num" style="background:${read?'var(--green)':p.color}">${read?'✓':i+1}</div>
+        <div style="flex:1;font-weight:800;font-size:14px">${l.title}</div>
+        <i class="fa-solid fa-chevron-left ls-chev"></i>
+      </div>
+      <div class="ls-body">
+        <div class="ls-txt">${l.body}</div>
+        ${l.example?`<pre class="ls-code">${_escHTML(l.example)}</pre>
+        <button class="btn-ol" style="width:100%;margin-top:8px" onclick='openInPlayground(${JSON.stringify(l.example).replace(/'/g,"&#39;")})'>▶ جرّبه في الملعب</button>`:''}
+      </div></div>`;
+  }).join('');
+  if(!ls.length) html+='<div style="text-align:center;color:var(--text2);padding:20px">لا توجد دروس لهذا المسار بعد</div>';
+  html+=`<button class="gbtn" style="margin-top:14px" onclick="setPathFilter('${p.cat}')">💻 ابدأ تحديات المسار</button>`;
+  if(chs.length && done===chs.length) html+=`<button class="btn-ol" style="width:100%;margin-top:10px" onclick="openCertificate('${p.cat}')">🎓 احصل على شهادة المسار</button>`;
+  html+='<div style="height:20px"></div>';
+  document.getElementById('ls-list').innerHTML=html;
+}
+function toggleLesson(i){
+  const el=document.getElementById('ls-'+i); if(!el) return;
+  el.classList.toggle('open');
+  const key=curLessonCat+'#'+i;
+  if(el.classList.contains('open') && !S.lessonsRead.includes(key)){
+    S.lessonsRead.push(key); saveState();
+    const n=el.querySelector('.ls-num'); if(n){ n.textContent='✓'; n.style.background='var(--green)'; }
+  }
+}
+
+// ══════════════════════════════════════
+// CERTIFICATES — شهادات إتمام المسار
+// ══════════════════════════════════════
+function cnCertId(cat){
+  let h=0; const s=(S.uid||S.username)+'|'+cat;
+  for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0;
+  return 'CN-'+h.toString(36).toUpperCase().padStart(7,'0');
+}
+async function drawCertificate(cat){
+  const p=PATHS.find(x=>x.cat===cat); if(!p) return null;
+  try{ if(document.fonts) await document.fonts.load('900 40px Cairo'); }catch(e){}
+  const W=1600,H=1130,cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const x=cv.getContext('2d');
+  const g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,'#0B1A0C'); g.addColorStop(1,'#1A2E1C');
+  x.fillStyle=g; x.fillRect(0,0,W,H);
+  x.strokeStyle='#F5C100'; x.lineWidth=10; x.strokeRect(40,40,W-80,H-80);
+  x.strokeStyle='rgba(245,193,0,.35)'; x.lineWidth=2; x.strokeRect(62,62,W-124,H-124);
+  x.direction='rtl'; x.textAlign='center'; const F='Cairo, sans-serif';
+  x.fillStyle='#F5C100'; x.font='900 64px '+F; x.fillText('CodeNile',W/2,175);
+  x.fillStyle='#E8F5E9'; x.font='800 54px '+F; x.fillText('شهادة إتمام مسار',W/2,285);
+  x.fillStyle='#9DB8A0'; x.font='600 32px '+F; x.fillText('تشهد CodeNile بأن',W/2,375);
+  x.fillStyle='#FFFFFF'; x.font='900 76px '+F; x.fillText(String(S.username||'').slice(0,30),W/2,480);
+  x.fillStyle='#F5C100'; x.fillRect(W/2-220,510,440,4);
+  x.fillStyle='#9DB8A0'; x.font='600 32px '+F; x.fillText('أتمّ بنجاح جميع تحديات مسار',W/2,590);
+  x.fillStyle=p.color||'#52B788'; x.font='900 62px '+F; x.fillText(p.title,W/2,690);
+  const n=realChallenges().filter(c=>c.cat===cat).length;
+  x.fillStyle='#9DB8A0'; x.font='600 28px '+F; x.fillText(n+' تحديات برمجية بلغة JavaScript',W/2,760);
+  const d=new Date().toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'});
+  x.font='700 26px '+F; x.fillStyle='#E8F5E9';
+  x.textAlign='right'; x.fillText('التاريخ: '+d,W-150,960);
+  x.textAlign='left'; x.direction='ltr'; x.fillText('ID: '+cnCertId(cat),150,960);
+  x.textAlign='center'; x.font='60px serif'; x.fillText('🎓',W/2,975);
+  return cv;
+}
+async function openCertificate(cat){
+  const chs=realChallenges().filter(c=>c.cat===cat);
+  if(!chs.length || !chs.every(c=>S.solved.includes(c.id))){ toast('🔒 أكمل كل تحديات المسار أولاً'); return; }
+  const cv=await drawCertificate(cat); if(!cv) return;
+  const url=cv.toDataURL('image/png');
+  const old=document.getElementById('_cert'); if(old) old.remove();
+  const m=document.createElement('div'); m.id='_cert';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px';
+  m.innerHTML=`<img src="${url}" style="width:100%;max-width:520px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.6)">
+    <button class="gbtn" style="max-width:520px" id="_certSave">📤 حفظ / مشاركة الشهادة</button>
+    <button class="btn-ol" style="width:100%;max-width:520px;background:transparent" onclick="document.getElementById('_cert').remove()">إغلاق</button>`;
+  document.body.appendChild(m);
+  m.addEventListener('click',e=>{ if(e.target===m) m.remove(); });
+  document.getElementById('_certSave').onclick=()=>saveCertificate(url,cat);
+  if(!S.certs) S.certs=[];
+  if(!S.certs.includes(cat)){ S.certs.push(cat); saveState(); spawnConfetti(); }
+}
+async function saveCertificate(dataUrl,cat){
+  const fname='CodeNile-'+cnCertId(cat)+'.png';
+  const P=window.Capacitor&&window.Capacitor.Plugins;
+  try{
+    if(P&&P.Filesystem&&P.Share){
+      const w=await P.Filesystem.writeFile({path:fname,data:dataUrl.split(',')[1],directory:'CACHE'});
+      await P.Share.share({title:'شهادة CodeNile',text:'أكملت مساراً في تطبيق CodeNile 🎓',files:[w.uri],url:w.uri});
+      return;
+    }
+    if(navigator.canShare){
+      const blob=await (await fetch(dataUrl)).blob();
+      const file=new File([blob],fname,{type:'image/png'});
+      if(navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:'شهادة CodeNile'}); return; }
+    }
+  }catch(e){ if(e&&e.name==='AbortError') return; }
+  const a=document.createElement('a'); a.href=dataUrl; a.download=fname; document.body.appendChild(a); a.click(); a.remove();
+  toast('✅ تم حفظ الشهادة');
+}
+
+// ══════════════════════════════════════
+// LEAGUE CARD (on leaderboard)
+// ══════════════════════════════════════
+function renderLeagueCard(){
+  cnRollPeriods();
+  const el=document.getElementById('lb-league'); if(!el) return;
+  const L=LEAGUES[S.league]||LEAGUES[0], next=LEAGUES[S.league+1];
+  const wxp=S.week.xp||0, pct=Math.min(100,Math.round(wxp/LEAGUE_PROMOTE_XP*100));
+  let note='';
+  if(S.lastWeek && S._leagueNotice){
+    note=S.lastWeek.to>S.lastWeek.from?`<div style="color:var(--green);font-size:12px;font-weight:800;margin-top:8px">🎉 صعدت إلى الدوري ${L.nm}!</div>`
+      :`<div style="color:var(--orange);font-size:12px;font-weight:800;margin-top:8px">⬇️ نزلت إلى الدوري ${L.nm} — عوّضها هذا الأسبوع!</div>`;
+    S._leagueNotice=false; saveState();
+  }
+  el.innerHTML=`<div style="margin:10px 14px 4px;background:linear-gradient(135deg,${L.c}22,transparent);border:1.5px solid ${L.c}66;border-radius:16px;padding:14px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="font-size:38px;line-height:1">${L.ic}</div>
+      <div style="flex:1">
+        <div style="font-size:16px;font-weight:900;color:${L.c}">الدوري ${L.nm}</div>
+        <div style="font-size:12px;color:var(--text2);font-weight:600">${wxp} XP هذا الأسبوع · متبقي ${cnDaysLeftInWeek()} يوم</div>
+      </div></div>
+    ${next?`<div class="xpbar-wrap" style="margin-top:10px"><div class="xpbar-fill" style="width:${pct}%;background:${L.c}"></div></div>
+      <div style="font-size:11px;color:var(--text2);margin-top:6px">اجمع ${LEAGUE_PROMOTE_XP} XP هذا الأسبوع للصعود إلى ${next.ic} ${next.nm}${S.league>0?` · أقل من ${LEAGUE_DEMOTE_XP} XP = هبوط`:''}</div>`
+      :`<div style="font-size:12px;color:var(--text2);margin-top:8px">أنت في القمة! حافظ على ${LEAGUE_DEMOTE_XP} XP أسبوعياً للبقاء.</div>`}
+    ${note}</div>`;
+}
+</script>
+</body></html>
