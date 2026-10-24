@@ -2536,7 +2536,7 @@ function _sbWorkerSrc(){
   ' var isClass=/^class[\\s{]/.test(Function.prototype.toString.call(fn));',
   ' var out=[];',
   ' for(var i=0;i<d.tests.length;i++){ var t={a:revive(d.tests[i].a),e:d.tests[i].e}; logs=[]; var res,passed=false,err=null,rs=null;',
-  '  if(!isClass){ try{ res=fn.apply(null,t.a); if(res&&typeof res.then==="function"&&!cc){ res=await res; }',
+  '  if(!isClass){ try{ res=fn.apply(null,t.a); if(res&&typeof res.then==="function"){ if(!cc){ res=await res; } else { res.then(null,function(){}); } }',
   '    try{rs=JSON.stringify(res);}catch(e){rs=String(res);} passed=rs===JSON.stringify(t.e); }catch(te){ err=te&&te.message?te.message:String(te); } }',
   '  if(cc){ var ok=await tryCc(cc,fn,t.a);',
   '   if(!ok&&!err&&!isClass){ ok=await tryCc(cc,res,t.a); }',

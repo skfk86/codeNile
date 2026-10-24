@@ -20,6 +20,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: 🧪 Unit tests (challenges + sandbox + HTML)
+        run: node tests/run-tests.js
+
       - name: Upgrade to Capacitor 8
         run: |
           cat > package.json << 'PKGJSON'
@@ -58,6 +61,20 @@ jobs:
           cp delete-data.html    www/ 2>/dev/null || true
           node --check challenges.js
           bash scripts/vendorize.sh www
+
+      - name: 🌐 E2E tests (offline Chromium on vendored www)
+        run: |
+          npm i --no-save playwright@1.48.2
+          npx playwright install --with-deps chromium
+          VENDORED=1 SHOTS=e2e-screens node tests/e2e.mjs www
+
+      - name: Upload E2E screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-screens-v${{ github.run_number }}
+          path: e2e-screens
+          retention-days: 14
 
       - name: Add Capacitor Android
         run: npx cap add android
