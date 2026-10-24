@@ -613,7 +613,7 @@ const CHALLENGES = [
 
 const PATHS = [
   {id:1,title:"JavaScript أساسي",icon:"JS",color:"#F5C100",bg:"rgba(245,193,0,.15)",cat:"أساسي",locked:false,
-   desc:"المتغيرات، الدوال، الشروط — 7 تحديات للبداية الصحيحة"},
+   desc:"المتغيرات، الدوال، الشروط، والحلقات — البداية الصحيحة"},
   {id:2,title:"هياكل البيانات",icon:"{}",color:"#52B788",bg:"rgba(82,183,136,.15)",cat:"هياكل البيانات",locked:false,
    desc:"المصفوفات، Stack، Queue، Linked List"},
   {id:3,title:"الدوال المتقدمة",icon:"fn",color:"#9C89FF",bg:"rgba(156,137,255,.15)",cat:"الدوال المتقدمة",locked:false,

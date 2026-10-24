@@ -44,7 +44,7 @@ try {
   if (VENDORED) {
     ok(await page.evaluate(() => typeof CodeMirror === 'function'), 'CodeMirror يعمل بدون إنترنت');
     ok(await page.evaluate(() => !document.body.classList.contains('no-fa')), 'أيقونات Font Awesome تعمل بدون إنترنت');
-    ok(await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('700 16px Cairo'); }), 'خط Cairo يعمل بدون إنترنت');
+    ok(await page.evaluate(async () => { await document.fonts.ready; const L=[...document.fonts].filter(f=>f.status==='loaded').map(f=>f.family); return L.some(f=>/Plex Sans Arabic/.test(f)) && L.some(f=>/Noto Kufi Arabic/.test(f)); }), 'الخطوط العربية (Plex + Kufi) تعمل بدون إنترنت');
     ok(await page.evaluate(() => !!window._fbOnAuth), 'مكتبة Firebase محمّلة محلياً');
     ok(!external.some(u => /cdnjs\.cloudflare|www\.gstatic|fonts\.(googleapis|gstatic)/.test(u)), 'لا طلبات لـ CDN: ' + external.filter(u => /cdnjs\.cloudflare|www\.gstatic|fonts\.(googleapis|gstatic)/.test(u)).slice(0, 3).join(' '));
   }

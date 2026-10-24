@@ -131,7 +131,7 @@ jobs:
             cat > "$ICONS_DST/$DENSITY/ic_launcher_background.xml" << 'XML'
           <?xml version="1.0" encoding="utf-8"?>
           <shape xmlns:android="http://schemas.android.com/apk/res/android">
-              <solid android:color="#0D1F0F"/>
+              <solid android:color="#0D1820"/>
           </shape>
           XML
           done

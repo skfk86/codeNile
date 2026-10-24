@@ -27,13 +27,15 @@ done
 for m in app analytics auth firestore; do get "$FB/firebase-$m.js" "$V/firebase/firebase-$m.js"; done
 sed -i "s#$FB/#./#g" $V/firebase/*.js
 
-# Cairo font (Google Fonts CSS → local woff2)
+# Google Fonts (IBM Plex Sans Arabic + Noto Kufi Arabic) → local woff2
 UA="Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/126 Mobile Safari/537.36"
-curl -fsSL -A "$UA" "https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" -o $V/fonts/cairo.css
+GF=$(grep -o 'https://fonts.googleapis.com/css2?[^"]*' "$WWW/index.html" | head -1 | sed 's/&amp;/\&/g')
+curl -fsSL -A "$UA" "$GF" -o $V/fonts/fonts.css
 i=0
-for u in $(grep -o 'https://fonts.gstatic.com[^)]*' $V/fonts/cairo.css | sort -u); do
-  i=$((i+1)); get "$u" "$V/fonts/cairo-$i.woff2"; sed -i "s#$u#cairo-$i.woff2#g" $V/fonts/cairo.css
+for u in $(grep -o 'https://fonts.gstatic.com[^)]*' $V/fonts/fonts.css | sort -u); do
+  i=$((i+1)); get "$u" "$V/fonts/f-$i.woff2"; sed -i "s#$u#f-$i.woff2#g" $V/fonts/fonts.css
 done
+echo "fonts: $i files"
 
 for f in "$WWW"/*.html; do
   sed -i \
@@ -46,7 +48,7 @@ for f in "$WWW"/*.html; do
     -e "s#$CM/addon/selection/active-line.min.js#vendor/cm/addon/active-line.min.js#g" \
     -e "s#$FA/css/all.min.css#vendor/fa/css/all.min.css#g" \
     -e "s#$FB/#./vendor/firebase/#g" \
-    -e "s#https://fonts.googleapis.com/css2?family=Cairo[^\"]*#vendor/fonts/cairo.css#g" \
+    -e "s#https://fonts.googleapis.com/css2?[^\"]*#vendor/fonts/fonts.css#g" \
     "$f"
 done
 echo "✅ vendorized:"; du -sh "$V"
