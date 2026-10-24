@@ -3019,7 +3019,87 @@ function _ldist(a,b){
   return dp[m][n];
 }
 
+// ── Sandboxed runner: user code runs in a Web Worker with a time limit,
+//    so infinite loops (while(true){}) can't freeze the app ──
+var SB_TIMEOUT_MS=3000;
+var _sbWorkerUrl=null;
+function _sbWorkerSrc(){
+  return [
+  'self.onmessage=function(ev){',
+  ' var d=ev.data,code=d.code,fnName=d.fnName,logs=[];',
+  ' function fmt(a){try{return typeof a==="object"?JSON.stringify(a):String(a);}catch(e){return String(a);}}',
+  ' var fc={log:function(){logs.push([].slice.call(arguments).map(fmt).join(" "));},',
+  '  error:function(){logs.push("ERR: "+[].slice.call(arguments).map(fmt).join(" "));},',
+  '  warn:function(){logs.push("WARN: "+[].slice.call(arguments).map(fmt).join(" "));},',
+  '  info:function(){logs.push([].slice.call(arguments).map(fmt).join(" "));}};',
+  ' var fn;',
+  ' try{ fn=(new Function("console",code+"\\n;return (typeof "+fnName+" !== \\"undefined\\") ? "+fnName+" : undefined;"))(fc); }',
+  ' catch(ge){ self.postMessage({compileError:{message:ge.message,stack:String(ge.stack||""),lineNumber:ge.lineNumber||null,isSyntax:ge instanceof SyntaxError}}); return; }',
+  ' if(typeof fn!=="function"){ self.postMessage({notFound:true}); return; }',
+  ' var cc=null; if(d.ccSrc){ try{ cc=(0,eval)("("+d.ccSrc+")"); }catch(e){} }',
+  ' var tests=d.tests.map(function(t){return {a:t.a.map(function(x){ if(typeof x==="string"&&x.indexOf("__FN__:")===0){try{return (0,eval)("("+x.slice(7)+")");}catch(e){return x;}} return x; }),e:t.e};});',
+  ' var out=[];',
+  ' for(var i=0;i<tests.length;i++){ var t=tests[i]; logs=[]; var res,passed=false,err=null,rs=null;',
+  '  var isClass=/^class[\\s{]/.test(Function.prototype.toString.call(fn));',
+  '  if(!isClass){ try{ res=fn.apply(null,t.a); try{rs=JSON.stringify(res);}catch(e){rs=String(res);} passed=rs===JSON.stringify(t.e); }catch(te){ err=te&&te.message?te.message:String(te); } }',
+  '  if(cc){ var ok=false; try{ ok=!!cc(fn,t.a); }catch(ce){}',
+  '   if(!ok&&!err&&!isClass){ try{ ok=!!cc(res,t.a); }catch(ce){} }',
+  '   passed=ok; if(ok){err=null;} else if(isClass&&!err){ err="الكلاس لا يعمل كما هو مطلوب — راجع الدوال المطلوبة"; } }',
+  '  out.push({a:d.rawTests[i].a,e:t.e,rs:err?null:rs,passed:passed,err:err,isUndef:(!err&&res===undefined),logs:logs.slice()}); }',
+  ' self.postMessage({results:out});',
+  '};'].join('\n');
+}
 function sbRun(code, tests, fnName, customCheck, ccd){
+  if(typeof Worker==='undefined' || typeof Blob==='undefined')
+    return sbRunInline(code, tests, fnName, customCheck, ccd);
+  return new Promise(function(resolve){
+    var w;
+    try{
+      if(!_sbWorkerUrl) _sbWorkerUrl=URL.createObjectURL(new Blob([_sbWorkerSrc()],{type:'text/javascript'}));
+      w=new Worker(_sbWorkerUrl);
+    }catch(e){ resolve(sbRunInline(code, tests, fnName, customCheck, ccd)); return; }
+    var done=false;
+    var timer=setTimeout(function(){
+      if(done) return; done=true; try{w.terminate();}catch(e){}
+      resolve({fatalError:'استغرق الكود وقتاً طويلاً جداً (أكثر من '+(SB_TIMEOUT_MS/1000)+' ثوانٍ) — غالباً في حلقة لا نهائية',
+        errType:'runtime', suggestion:'تأكد أن شرط التوقف في حلقة while/for سيتحقق في النهاية'});
+    }, SB_TIMEOUT_MS);
+    w.onmessage=function(ev){
+      if(done) return; done=true; clearTimeout(timer); try{w.terminate();}catch(e){}
+      var d=ev.data;
+      if(d.compileError){
+        var ge=d.compileError, lineNum=null, lineContent='';
+        var lm=ge.stack.match(/<anonymous>:(\d+):\d+/)||ge.stack.match(/Function:(\d+):\d+/);
+        if(lm) lineNum=Math.max(1, parseInt(lm[1])-2);
+        if(ge.lineNumber) lineNum=ge.lineNumber;
+        if(lineNum && code) lineContent=(code.split('\n')[lineNum-1]||'').trim();
+        var ar=_translateError(ge.message, code);
+        resolve({fatalError:ar.msg, errLine:lineNum, errLineContent:lineContent,
+          errType:ge.isSyntax?'syntax':'runtime', suggestion:ar.tip});
+        return;
+      }
+      if(d.notFound){
+        resolve({fatalError:'الدالة <strong style="color:#FF8C00">"'+fnName+'"</strong> غير موجودة<br>اكتب: <code>function '+fnName+'(...) { ... }</code>'});
+        return;
+      }
+      resolve({results:d.results, ccd:ccd});
+    };
+    w.onerror=function(ev){
+      if(done) return; done=true; clearTimeout(timer); try{w.terminate();}catch(e){}
+      if(ev && ev.preventDefault) ev.preventDefault();
+      resolve({fatalError:_escHTML((ev&&ev.message)||'خطأ غير معروف'), errType:'runtime', suggestion:'راجع الكود بعناية'});
+    };
+    w.postMessage({code:code, fnName:fnName, tests:tests, rawTests:tests,
+      ccSrc: customCheck ? String(customCheck) : null});
+  });
+}
+
+function _escHTML(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+}
+
+function sbRunInline(code, tests, fnName, customCheck, ccd){
   return new Promise(function(resolve){
     setTimeout(function(){
       // Capture console output
@@ -3148,7 +3228,7 @@ function renderResults(res, preview){
         ${res.errLineContent?`<code style="font-size:12px;color:var(--orange);
           background:rgba(255,77,77,.1);padding:3px 8px;border-radius:6px;
           direction:ltr;text-align:left;flex:1;overflow:hidden;text-overflow:ellipsis;
-          white-space:nowrap">${res.errLineContent}</code>`:''}
+          white-space:nowrap">${_escHTML(res.errLineContent)}</code>`:''}
       </div>`;
       // Highlight the line in editor
       highlightErrorLine(res.errLine);
@@ -3181,17 +3261,17 @@ function renderResults(res, preview){
           <span style="color:var(--text2);font-size:11px">💡 ${tr.tip}</span>
         </div>`;
     } else if(r.passed){
-      html+=`<div class="ol op">✓ ${call} = ${r.rs}</div>`;
-      if(r.logs.length) html+=`<div style="font-size:11px;color:var(--text2);padding:2px 0 6px 0">📋 ${r.logs.join(' | ')}</div>`;
+      html+=`<div class="ol op">✓ ${_escHTML(call)} = ${_escHTML(r.rs)}</div>`;
+      if(r.logs.length) html+=`<div style="font-size:11px;color:var(--text2);padding:2px 0 6px 0">📋 ${_escHTML(r.logs.join(' | '))}</div>`;
     } else if(r.isUndef){
       html+=`<div class="ol of">✗ ${call} = <strong>undefined</strong></div>`;
       html+=`<div style="font-size:11px;color:var(--orange);padding:2px 0 6px 14px">
         💡 هل نسيت كلمة <strong style="color:var(--gold)">return</strong>؟</div>`;
-      if(r.logs.length) html+=`<div style="font-size:11px;color:var(--text2);padding:0 0 6px 14px">📋 console.log: ${r.logs.join(' | ')}</div>`;
+      if(r.logs.length) html+=`<div style="font-size:11px;color:var(--text2);padding:0 0 6px 14px">📋 console.log: ${_escHTML(r.logs.join(' | '))}</div>`;
     } else {
-      html+=`<div class="ol of">✗ ${call}</div>`;
+      html+=`<div class="ol of">✗ ${_escHTML(call)}</div>`;
       html+=`<div style="font-size:11px;padding:2px 0 6px 14px">
-        <span style="color:var(--red)">● ناتجك: ${r.rs}</span><br>
+        <span style="color:var(--red)">● ناتجك: ${_escHTML(r.rs)}</span><br>
         <span style="color:var(--green)">✓ المطلوب: ${res.ccd||JSON.stringify(r.e)}</span></div>`;
     }
   }
