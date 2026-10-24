@@ -1195,6 +1195,13 @@ button,input,textarea,select{font-family:var(--ff)}
 /* Result screen */
 #s-result{background:radial-gradient(ellipse at 50% 10%,#163A44 0%,var(--bg) 62%)}
 
+
+/* Real icons (replacing emoji) */
+.cn-ic{font-style:normal;display:inline-block;line-height:1;vertical-align:-0.08em;margin:0 .12em}
+.cn-ic-gold{color:var(--gold)}.cn-ic-green{color:var(--green)}.cn-ic-red{color:var(--red)}.cn-ic-orange{color:var(--orange)}
+.cn-ic-blue{color:var(--blue)}.cn-ic-purple{color:var(--purple)}.cn-ic-silver{color:#C9D3DA}.cn-ic-bronze{color:#D08B4E}
+#toast .cn-ic{color:inherit}
+.gbtn .cn-ic,.db-btn .cn-ic,.btn-sub .cn-ic{color:inherit}
 /* Toast */
 #toast{background:var(--text)!important;color:var(--bg)!important;font-weight:600;border-radius:999px!important}
 </style>
@@ -4229,7 +4236,7 @@ function cnCertId(cat){
 }
 async function drawCertificate(cat){
   const p=PATHS.find(x=>x.cat===cat); if(!p) return null;
-  try{ if(document.fonts) await document.fonts.load('800 40px "Noto Kufi Arabic"'); }catch(e){}
+  try{ if(document.fonts) await Promise.all([document.fonts.load('800 40px "Noto Kufi Arabic"'),document.fonts.load('900 40px "Font Awesome 6 Free"')]); }catch(e){}
   const W=1600,H=1130,cv=document.createElement('canvas'); cv.width=W; cv.height=H;
   const x=cv.getContext('2d');
   const g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,'#0D1820'); g.addColorStop(1,'#1A2D3A');
@@ -4250,7 +4257,7 @@ async function drawCertificate(cat){
   x.font='700 26px '+F; x.fillStyle='#EEF4F7';
   x.textAlign='right'; x.fillText('التاريخ: '+d,W-150,960);
   x.textAlign='left'; x.direction='ltr'; x.fillText('ID: '+cnCertId(cat),150,960);
-  x.textAlign='center'; x.font='60px serif'; x.fillText('🎓',W/2,975);
+  x.textAlign='center'; x.fillStyle='#E8B64A'; x.font='900 64px "Font Awesome 6 Free"'; x.fillText('\uf19d',W/2,985);
   return cv;
 }
 async function openCertificate(cat){
@@ -4315,5 +4322,63 @@ function renderLeagueCard(){
       :`<div style="font-size:12px;color:var(--text2);margin-top:8px">أنت في القمة! حافظ على ${LEAGUE_DEMOTE_XP} XP أسبوعياً للبقاء.</div>`}
     ${note}</div>`;
 }
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════
+// ICONS — تحويل الإيموجي إلى أيقونات Font Awesome حقيقية في كل الواجهة
+// (يعمل تلقائياً على أي محتوى يُضاف لاحقاً، ويتجاهل مناطق الكود)
+// ══════════════════════════════════════════════════════════════
+const CN_ICONS={
+  '🇸🇩':'flag cn-ic-gold','✅':'circle-check cn-ic-green','✔':'check cn-ic-green','✓':'check cn-ic-green',
+  '❌':'circle-xmark cn-ic-red','✗':'xmark cn-ic-red','✖':'xmark cn-ic-red',
+  '🏆':'trophy cn-ic-gold','💡':'lightbulb cn-ic-gold','⚠':'triangle-exclamation cn-ic-orange','💻':'laptop-code',
+  '🔒':'lock','🎉':'wand-magic-sparkles cn-ic-gold','⏳':'hourglass-half','⌛':'hourglass-end','🎓':'graduation-cap cn-ic-gold',
+  '🔥':'fire cn-ic-orange','🚀':'rocket cn-ic-blue','📖':'book-open cn-ic-green','🧪':'flask cn-ic-purple',
+  '🗑':'trash-can cn-ic-red','🔖':'bookmark cn-ic-gold','🎁':'gift cn-ic-red','👋':'hand cn-ic-gold','⭐':'star cn-ic-gold',
+  '⚡':'bolt cn-ic-gold','🔴':'circle-exclamation cn-ic-red','📋':'clipboard','💎':'gem cn-ic-blue','📡':'wifi',
+  '🥇':'medal cn-ic-gold','🥈':'medal cn-ic-silver','🥉':'medal cn-ic-bronze','🏅':'medal cn-ic-gold','🔑':'key cn-ic-gold',
+  '😅':'face-grin-beam-sweat cn-ic-gold','🐊':'water cn-ic-blue','❤':'heart cn-ic-red','🏠':'house','📅':'calendar-day',
+  '🗺':'map','☰':'bars','🔍':'magnifying-glass','🌱':'seedling cn-ic-green','📂':'folder-open cn-ic-gold','🚪':'right-from-bracket',
+  '🔄':'rotate','👑':'crown cn-ic-gold','⏱':'stopwatch','📤':'share-nodes','⬇':'arrow-down cn-ic-orange','⬆':'arrow-up cn-ic-green',
+  '🎯':'bullseye cn-ic-red','🏗':'trowel-bricks cn-ic-orange','🐆':'paw cn-ic-gold','🦁':'shield-halved cn-ic-gold',
+  '🆕':'certificate cn-ic-green','📨':'paper-plane','👤':'user','📊':'chart-simple','🧠':'brain cn-ic-purple','📈':'chart-line cn-ic-green',
+  '✏':'pen','📝':'pen-to-square','🔔':'bell','🌙':'moon','☀':'sun','💪':'dumbbell cn-ic-orange','🤖':'robot','✨':'wand-magic-sparkles cn-ic-gold',
+  '▶':'play'
+};
+const CN_ICON_RE=new RegExp('('+Object.keys(CN_ICONS).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\uFE0F?','gu');
+const CN_SKIP='.CodeMirror,pre,code,textarea,input,script,style,#pg-out,.ls-code,[data-noicon]';
+function cnIconize(root){
+  if(!root || document.body.classList.contains('no-fa')) return;
+  if(root.nodeType===3){ root=root.parentNode; if(!root) return; }
+  if(root.nodeType!==1 || (root.closest && root.closest(CN_SKIP))) return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){
+    CN_ICON_RE.lastIndex=0;
+    if(!CN_ICON_RE.test(n.nodeValue)) return NodeFilter.FILTER_SKIP;
+    return n.parentElement && n.parentElement.closest(CN_SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+  }});
+  const nodes=[]; while(w.nextNode()) nodes.push(w.currentNode);
+  for(const n of nodes){
+    const frag=document.createDocumentFragment(); let last=0; const t=n.nodeValue;
+    t.replace(CN_ICON_RE,(m,k,off)=>{
+      if(off>last) frag.appendChild(document.createTextNode(t.slice(last,off)));
+      const i=document.createElement('i'); const [nm,...cls]=CN_ICONS[k].split(' ');
+      i.className='fa-solid fa-'+nm+' cn-ic '+cls.join(' '); i.setAttribute('aria-hidden','true');
+      frag.appendChild(i); last=off+m.length; return m;
+    });
+    if(last<t.length) frag.appendChild(document.createTextNode(t.slice(last)));
+    n.parentNode.replaceChild(frag,n);
+  }
+}
+(function(){
+  const run=()=>{
+    cnIconize(document.body);
+    let pend=new Set(), raf=0;
+    new MutationObserver(ms=>{
+      for(const m of ms){ if(m.type==='characterData') pend.add(m.target); else m.addedNodes.forEach(n=>pend.add(n)); }
+      if(!raf) raf=requestAnimationFrame(()=>{ raf=0; const p=[...pend]; pend.clear(); p.forEach(cnIconize); });
+    }).observe(document.body,{childList:true,subtree:true,characterData:true});
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run); else run();
+})();
 </script>
 </body></html>

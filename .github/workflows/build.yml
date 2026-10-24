@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build Release AAB (Signed)
@@ -67,6 +70,16 @@ jobs:
           npm i --no-save playwright@1.48.2
           npx playwright install --with-deps chromium
           VENDORED=1 SHOTS=e2e-screens node tests/e2e.mjs www
+
+      - name: Publish E2E screenshots to branch e2e-shots
+        if: always()
+        run: |
+          [ -d e2e-screens ] || exit 0
+          cd e2e-screens
+          git init -q -b e2e-shots
+          git config user.name "ci"; git config user.email "ci@users.noreply.github.com"
+          git add -A && git commit -qm "screens run ${{ github.run_number }}"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" e2e-shots || true
 
       - name: Upload E2E screenshots
         if: always()

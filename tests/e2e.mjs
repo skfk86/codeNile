@@ -123,6 +123,23 @@ try {
   await page.evaluate(() => { const d = getDailyChallenge(getTodayKey()); window.__d = d; });
   ok(await page.evaluate(() => window.__d && window.__d.type !== 'final'), 'تحدي اليوم ليس الشاشة الختامية');
 
+  // ── لا إيموجي في الواجهة (كلها أيقونات حقيقية) ──
+  if (VENDORED) {
+    const left = [];
+    for (const sc of ['home', 'challenges', 'daily', 'paths', 'badges', 'leaderboard', 'profile', 'playground']) {
+      await page.evaluate(x => go(x), sc); await page.waitForTimeout(250);
+      left.push(...await page.evaluate(() => {
+        const re = /[\u{1F300}-\u{1FAFF}\u2600-\u27BF\u2B50\u2B06\u2B07]/u, out = [];
+        const w = document.createTreeWalker(document.querySelector('.scr.on'), NodeFilter.SHOW_TEXT);
+        while (w.nextNode()) { const n = w.currentNode; if (re.test(n.nodeValue) && !n.parentElement.closest('.CodeMirror,pre,code,textarea,#pg-out,.ls-code')) out.push(n.nodeValue.trim().slice(0, 20)); }
+        return out;
+      }));
+      await shot('icons-' + sc);
+    }
+    ok(left.length === 0, 'كل الإيموجي تحولت لأيقونات حقيقية ' + [...new Set(left)].slice(0, 8).join(' | '));
+    ok(await page.evaluate(() => document.querySelectorAll('.cn-ic').length > 5), 'الأيقونات ظاهرة في الواجهة');
+  }
+
   // ── عرض بدون تمرير أفقي ──
   ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'لا يوجد تمرير أفقي على شاشة الهاتف');
 } catch (e) {
