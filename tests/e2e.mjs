@@ -140,6 +140,13 @@ try {
     ok(await page.evaluate(() => document.querySelectorAll('.cn-ic').length > 5), 'الأيقونات ظاهرة في الواجهة');
   }
 
+  // ── البانر لا يغطي شريط التنقل ──
+  await page.evaluate(() => { go('home'); _setBannerSpace(60); }); await page.waitForTimeout(200);
+  const navBottom = await page.evaluate(() => document.querySelector('.scr.on [id^="bnav-"]').getBoundingClientRect().bottom);
+  ok(navBottom <= 820 - 60 + 1, 'شريط التنقل فوق إعلان البانر (' + Math.round(navBottom) + 'px)');
+  await shot('09-with-banner');
+  await page.evaluate(() => _setBannerSpace(0));
+
   // ── عرض بدون تمرير أفقي ──
   ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'لا يوجد تمرير أفقي على شاشة الهاتف');
 } catch (e) {

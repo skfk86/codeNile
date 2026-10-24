@@ -75,9 +75,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
 #app{width:100%;height:100%;position:relative;overflow:hidden}
 .scr{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
 .scr.on{display:flex}
-.sc{flex:1;overflow-y:auto;padding:14px 14px calc(var(--nav) + var(--banner) + 14px)}
+.sc{flex:1;overflow-y:auto;padding:14px 14px calc(var(--nav) + 14px)}
 .sc::-webkit-scrollbar{display:none}
-.sc0{flex:1;overflow-y:auto;padding-bottom:calc(var(--nav) + var(--banner) + 14px)}
+.sc0{flex:1;overflow-y:auto;padding-bottom:calc(var(--nav) + 14px)}
 .sc0::-webkit-scrollbar{display:none}
 
 /* ── SPLASH ── */
@@ -356,7 +356,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
   transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;
   font-family:var(--ff)}
 .tabi.act{color:var(--gold);border-bottom-color:var(--gold)}
-.tbc{display:none;padding:14px;padding-bottom:calc(var(--nav) + var(--banner) + 14px);
+.tbc{display:none;padding:14px;padding-bottom:calc(var(--nav) + 14px);
   overflow-y:auto;flex:1}
 .tbc::-webkit-scrollbar{display:none}
 .tbc.on{display:block}
@@ -1202,6 +1202,10 @@ button,input,textarea,select{font-family:var(--ff)}
 .cn-ic-blue{color:var(--blue)}.cn-ic-purple{color:var(--purple)}.cn-ic-silver{color:#C9D3DA}.cn-ic-bronze{color:#D08B4E}
 #toast .cn-ic{color:inherit}
 .gbtn .cn-ic,.db-btn .cn-ic,.btn-sub .cn-ic{color:inherit}
+
+/* AdMob banner sits under the WebView bottom: keep the whole app above it */
+#app{height:calc(100% - var(--banner))}
+html[data-banner] #bnav,html[data-banner] [id^="bnav-"]{height:var(--nav);padding-bottom:2px}
 /* Toast */
 #toast{background:var(--text)!important;color:var(--bg)!important;font-weight:600;border-radius:999px!important}
 </style>
@@ -3949,16 +3953,26 @@ function initAdMob(){
     setTimeout(_loadInterstitial, 2000);
   });
 
+  // Banner size → shrink the app area above it
+  AdMob.addListener('bannerAdSizeChanged', info=>{ if(info&&info.height) _setBannerSpace(info.height); });
+  AdMob.addListener('bannerAdFailedToLoad', ()=>_setBannerSpace(0));
+
   // Initialize
   AdMob.initialize({ requestTrackingAuthorization: false, initializeForTesting: false })
     .then(()=>{
       _admobReady = true;
       _showBanner(AdMob);
       _loadInterstitial();
-      // Push content above banner
-      document.documentElement.style.setProperty('--banner','60px');
+      // Reserve space so the banner never covers the bottom nav (real height comes from SizeChanged)
+      _setBannerSpace(60);
     })
     .catch(e => console.warn('AdMob init error:', e));
+}
+
+function _setBannerSpace(h){
+  h=Math.max(0,Math.round(h||0));
+  document.documentElement.style.setProperty('--banner',h+'px');
+  document.documentElement.toggleAttribute('data-banner',h>0);
 }
 
 function _onRewardEarned(){
