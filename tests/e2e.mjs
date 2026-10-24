@@ -140,6 +140,23 @@ try {
     ok(await page.evaluate(() => document.querySelectorAll('.cn-ic').length > 5), 'الأيقونات ظاهرة في الواجهة');
   }
 
+  // ── البانر مخفي في شاشة الدخول وظاهر داخل التطبيق ──
+  await page.evaluate(() => {
+    window.__ad = [];
+    const P = n => (...a) => { window.__ad.push(n); return Promise.resolve(); };
+    window.Capacitor = Object.assign(window.Capacitor || {}, { Plugins: { AdMob: { showBanner: P('show'), hideBanner: P('hide'), resumeBanner: P('resume') } } });
+    _admobReady = true; _bannerState = 'none';
+    document.querySelectorAll('.scr').forEach(s => s.classList.remove('on')); document.getElementById('s-auth').classList.add('on');
+  });
+  await page.waitForTimeout(150);
+  ok(await page.evaluate(() => !window.__ad.includes('show') && getComputedStyle(document.documentElement).getPropertyValue('--banner').trim() === '0px'), 'لا بانر في شاشة تسجيل الدخول');
+  await page.evaluate(() => go('home')); await page.waitForTimeout(150);
+  ok(await page.evaluate(() => window.__ad.includes('show')), 'البانر يظهر بعد الدخول للتطبيق');
+  await page.evaluate(() => { document.querySelectorAll('.scr').forEach(s => s.classList.remove('on')); document.getElementById('s-auth').classList.add('on'); });
+  await page.waitForTimeout(150);
+  ok(await page.evaluate(() => window.__ad.at(-1) === 'hide'), 'البانر يختفي عند الرجوع لتسجيل الدخول (تسجيل خروج)');
+  await page.evaluate(() => { _admobReady = false; _setBannerSpace(0); go('home'); });
+
   // ── البانر لا يغطي شريط التنقل ──
   await page.evaluate(() => { go('home'); _setBannerSpace(60); }); await page.waitForTimeout(200);
   const navBottom = await page.evaluate(() => document.querySelector('.scr.on [id^="bnav-"]').getBoundingClientRect().bottom);

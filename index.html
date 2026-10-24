@@ -3954,20 +3954,43 @@ function initAdMob(){
   });
 
   // Banner size → shrink the app area above it
-  AdMob.addListener('bannerAdSizeChanged', info=>{ if(info&&info.height) _setBannerSpace(info.height); });
+  AdMob.addListener('bannerAdSizeChanged', info=>{ if(info&&info.height&&_bannerState==='shown') _setBannerSpace(info.height); });
   AdMob.addListener('bannerAdFailedToLoad', ()=>_setBannerSpace(0));
 
   // Initialize
   AdMob.initialize({ requestTrackingAuthorization: false, initializeForTesting: false })
     .then(()=>{
       _admobReady = true;
-      _showBanner(AdMob);
       _loadInterstitial();
-      // Reserve space so the banner never covers the bottom nav (real height comes from SizeChanged)
-      _setBannerSpace(60);
+      _syncBanner();
     })
     .catch(e => console.warn('AdMob init error:', e));
 }
+
+// ── Banner only on in-app screens (never on splash / login / onboarding) ──
+const NO_BANNER_SCREENS=['s-splash','s-auth','s-onboard'];
+let _bannerState='none'; // none | shown | hidden
+function _bannerAllowed(){
+  const on=[...document.querySelectorAll('#app .scr.on')].map(e=>e.id);
+  return on.length>0 && !on.some(id=>NO_BANNER_SCREENS.includes(id));
+}
+function _syncBanner(){
+  const AdMob=_getAdMob();
+  if(!_admobReady || !AdMob) return;
+  const want=_bannerAllowed();
+  if(want && _bannerState!=='shown'){
+    (_bannerState==='none' ? _showBanner(AdMob) : AdMob.resumeBanner().catch(()=>_showBanner(AdMob)));
+    _bannerState='shown'; _setBannerSpace(60); // real height arrives via bannerAdSizeChanged
+  } else if(!want && _bannerState==='shown'){
+    AdMob.hideBanner().catch(()=>{});
+    _bannerState='hidden'; _setBannerSpace(0);
+  }
+}
+(function(){
+  const watch=()=>{ const app=document.getElementById('app'); if(!app) return;
+    new MutationObserver(()=>_syncBanner()).observe(app,{subtree:true,attributes:true,attributeFilter:['class']}); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',watch); else watch();
+})();
 
 function _setBannerSpace(h){
   h=Math.max(0,Math.round(h||0));
